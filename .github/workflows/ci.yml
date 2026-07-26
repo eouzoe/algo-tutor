@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # 完整 bootstrap 驗證：Nix → devenv → 依賴 → forge doctor
+  bootstrap-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v30
+      - run: nix profile install nixpkgs#devenv
+      - run: devenv shell -- nu -c 'cd mcp; bun install'
+      - name: 同步 CF 題庫（失敗不擋，doctor 為選配項）
+        run: devenv shell -- nu -c 'use .nu/forge.nu *; try { forge sync } catch { print "sync failed (non-blocking)" }'
+      - name: forge doctor（環境 + 功能自檢）
+        run: devenv shell -- nu -c 'use .nu/forge.nu *; forge doctor'
+
+  # bootstrap.sh 本身的殼層語法與關鍵段落
+  bootstrap-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh -n deploy/bootstrap.sh
+      - run: |
+          for kw in "install.determinate.systems" "devenv" "forge doctor"; do
+            grep -q "$kw" deploy/bootstrap.sh || { echo "missing: $kw"; exit 1; }
+          done
+
+  # Windows：驗證 cmd 一行安裝塊（hosted runner 無巢狀虛擬化，WSL2 無法真裝；
+  # 靜態驗證 + wsl.exe 呼叫存在性為 best-effort）
+  check-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: windows.cmd 存在且包含關鍵指令
+        shell: powershell
+        run: |
+          $c = Get-Content deploy/windows.cmd -Raw
+          foreach ($kw in @("NixOS-WSL", "wsl --install --from-file", "bootstrap.sh")) {
+            if ($c -notmatch [regex]::Escape($kw)) { Write-Error "missing: $kw"; exit 1 }
+          }
+          Write-Host "OK deploy/windows.cmd"
+      - name: wsl.exe 可用性（best-effort，runner 不支援 WSL2）
+        continue-on-error: true
+        shell: powershell
+        run: wsl --version
