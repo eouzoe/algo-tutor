@@ -17,10 +17,24 @@ log/recognition.jsonl    識別訓練日誌
 
 ```nu
 use .nu/forge.nu *
-forge add        # 互動式記錄一次解題
-forge due        # 今日到期的複習題
-forge stats      # 近況統計：解出率、錯誤分佈、時間分解
+
+# 解題 session（推薦，時間自動計、提示有閘道）
+forge start cses/1621 -r 1100 -t sorting   # 開始計時
+forge status     # 進度與下一級提示倒數
+forge hint -n "卡在..."   # 申請提示（未到時限會拒絕並留痕）
+forge code       # 進入實作
+forge debug      # 首次提交失敗時打
+forge finish ac  # 收尾：問錯誤分類/摘要/線索卡，寫日誌
+
+forge add        # 手動補記一次解題（不經 session）
+forge due        # 今日到期的複習題（空白重推）
+forge done <id>  # 記錄複習結果（--failed 為失敗）
+forge rec        # 記錄一筆識別訓練
+forge stats      # 近況統計：解出率、錯誤分佈、弱點熱圖
 ```
+
+提示來源：設 `$env.FORGE_LLM_CMD`（如 `"codex exec -"`，從 stdin 讀提示詞）；
+未設定時印出提示詞，手動貼給任何 LLM。閘道防不了繞過，防的是無痕繞過。
 
 ## 原則
 

@@ -3,3 +3,4 @@
 {"kind":"review","ref":"20260715120000","date":"2026-07-22","recalled":true}
 {"kind":"review","ref":"20260715120000","date":"2026-07-27","recalled":true}
 {"kind":"attempt","id":"20260718100000","date":"2026-07-18","problem":"cses/1193","rating":1400,"topics":["bfs","grid"],"mode":"solve","result":"fail","score":null,"hint_level":3,"t_think":60,"t_code":30,"t_debug":25,"error_primary":"K","error_secondary":"B","summary":"BFS 記錄父方向重建路徑","cue":"看到『最短路徑+輸出方案』就想 BFS+parent 陣列","needs_review":true}
+{"kind":"attempt","id":"20260727051738","date":"2026-07-27","problem":"cses/1621","rating":1100,"topics":["sorting"],"mode":"solve","result":"ac_hint","score":null,"hint_level":1,"t_think":0,"t_code":1,"t_debug":0,"error_primary":"I","error_secondary":null,"summary":"排序後 set 去重","cue":"看到去重就想 set","needs_review":true,"hints":[{"level":1,"at":"2026-07-27T05:16:34.131067427+08:00"}],"hint_denied":0}
