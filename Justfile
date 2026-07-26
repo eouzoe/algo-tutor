@@ -80,6 +80,14 @@ anki *args:
 doctor:
     {{_forge}} doctor
 
+# 編譯執行 work/sol.cpp：just run -i "3 4"
+run *args:
+    {{_forge}} run {{args}}
+
+# 概念帳本：just concept fuzzy "名稱" / just concept ok "名稱" / just concept
+concept *args:
+    {{_forge}} concept {{args}}
+
 # 首次安裝：mcp 依賴 + 題庫 + 自檢
 setup:
     cd mcp; ^bun install; cd ..; {{_forge}} sync; {{_forge}} doctor

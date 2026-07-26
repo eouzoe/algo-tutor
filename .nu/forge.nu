@@ -668,10 +668,15 @@ export def "forge learn" [
 檢核題：(if ($ud.problems | is-empty) { '無，以課內練習為準' } else { $ud.problems | str join '、' })
 
 規則：
-- 開場先用 2–3 個小問題探測學生已會的程度：會的快速複習帶過，不會的從零教起
+- 開場探測：至多 3 個小問題、3 分鐘內收斂出起點，不展開討論；會的快速複習帶過，不會的從零教起
+- 模糊概念用「提醒＋確認」語氣（『確認一下：__，對吧？』），禁止說『你不熟』『概念不好』這類診斷句；仍模糊就記入概念帳本，繼續主線，不當場開補
 - 費曼式推進：每講完一個概念，立即出一個 30 秒微練習，學生答對才前進
+- 競程慣例先給理由再給規則：明說這是『這項競技的方言，不是好工程』；學生有工程直覺時，對照工程慣例解釋此處為何不同（例：全域陣列因為生命週期=單次執行、宏因為打字速度是資源）。承認怪，再給存在理由，不強迫吞
+- 嚴禁提及未教內容；非提不可就一句話帶過：『之後單元的東西，現在不用懂』，不展開
+- 學生問『為什麼』：三句內答完；更深的討論記入概念帳本，拉回主線
+- 學生在另一個 vim 窗口手打代碼（機械記憶必要）；學生說『看』你就讀代碼、要跑就代為編譯執行，不叫學生開終端打指令
 - 示例代碼用最小片段，要求學生自己動手打一遍；不要餵完整大段程式
-- 收尾時指派檢核題，要求學生在終端打 just start <題號> 開始解題，不劇透解法
+- 收尾時指派檢核題，開題交給系統，不劇透解法
 - 全程繁體中文；一次訊息只推進一小步，等學生回應($source)"
   let cmd = ($env.FORGE_LLM_CMD? | default "")
   if ($cmd | is-empty) {
@@ -753,6 +758,76 @@ export def "forge log" [--limit (-l): int = 20] {
     } }
 }
 
+# ===================== 概念帳本與代碼執行 =====================
+
+def concepts-file [] { root | path join "log/concepts.jsonl" }
+
+def load-concepts [] {
+  let f = (concepts-file)
+  if ($f | path exists) {
+    open --raw $f | lines | where ($it | str trim | is-not-empty) | each { $in | from json }
+  } else { [] }
+}
+
+def fuzzy-concepts [] {
+  load-concepts
+  | group-by concept
+  | transpose concept entries
+  | each {|r| $r.entries | last }
+  | where status == "fuzzy"
+}
+
+# 概念帳本：模糊概念記帳不打斷主線，複習時銷帳
+# forge concept fuzzy "前綴和邊界" -n "l..r 轉 pre[r]-pre[l-1] 還會猶豫"
+# forge concept ok "前綴和邊界"
+# forge concept list
+export def "forge concept" [
+  action: string = "list"   # list / fuzzy / ok
+  name?: string
+  --note (-n): string = ""
+] {
+  match $action {
+    "fuzzy" | "ok" => {
+      if $name == null { error make { msg: "要給概念名稱" } }
+      append-line (concepts-file) {
+        date: (date now | format date "%Y-%m-%d")
+        concept: $name
+        status: $action
+        note: $note
+      }
+      print (if $action == "fuzzy" { $"已記帳：($name)（不打斷，複習時處理）" } else { $"已銷帳：($name)" })
+    }
+    _ => {
+      let f = (fuzzy-concepts)
+      if ($f | is-empty) { print "沒有待複習的模糊概念" } else { $f | select date concept note }
+    }
+  }
+}
+
+# 編譯並執行（LLM 代勞，學生不用開 bash 窗口）
+export def "forge run" [
+  file: string = "work/sol.cpp"
+  --input (-i): string = ""   # stdin 測資
+] {
+  let f = if ($file | path exists) { $file } else { root | path join $file }
+  if not ($f | path exists) { error make { msg: $"找不到 ($f)" } }
+  let comp = (do { ^g++ -O2 -std=c++17 -Wall -Wextra -o /tmp/forge_run $f } | complete)
+  if $comp.exit_code != 0 {
+    return { compiled: false, errors: $comp.stderr }
+  }
+  let t0 = (date now)
+  let r = (do { $input | ^timeout 5 /tmp/forge_run } | complete)
+  {
+    compiled: true
+    warnings: (if ($comp.stderr | is-empty) { null } else { $comp.stderr })
+    exit_code: $r.exit_code
+    timed_out: ($r.exit_code == 124)
+    output: $r.stdout
+    stderr: (if ($r.stderr | is-empty) { null } else { $r.stderr })
+    ms: (((date now) - $t0) / 1ms | math round)
+  }
+}
+
 # 每日入口：今天該做什麼（按進度漸進顯示，零基礎只看到上課）
 export def "forge today" [] {
   let today = (date now | format date "%Y-%m-%d")
@@ -786,6 +861,10 @@ export def "forge today" [] {
 
   # 識別訓練從單元 10（已學過多個主題）才加入日課
   if $cur >= 10 { print $"■ 識別訓練：今日 ($recs_today)/10（just rec 記錄）" }
+  let fuzzy = (fuzzy-concepts)
+  if not ($fuzzy | is-empty) {
+    print $"■ 模糊概念待銷帳 ($fuzzy | length) 個：($fuzzy | get concept | str join '、')"
+  }
   if not ($done_today | is-empty) {
     print $"■ 今日已解：($done_today | length) 題（乾淨 AC ($done_today | where result == 'ac' and hint_level == 0 | length)）"
   }

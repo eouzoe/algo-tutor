@@ -1,0 +1,17 @@
+{
+  "problem": "zj/a001",
+  "rating": null,
+  "topics": [],
+  "mode": "solve",
+  "stuck_min": 30,
+  "started": "2026-07-27T06:23:43.176340143+08:00",
+  "phase": "think",
+  "events": [
+    {
+      "at": "2026-07-27T06:23:43.176340143+08:00",
+      "kind": "start"
+    }
+  ],
+  "hints": [],
+  "denied": 0
+}

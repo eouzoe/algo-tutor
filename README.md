@@ -20,6 +20,8 @@ Justfile                 教練用終端包裝
 
 **學生：LLM 對話（MCP）。** 學生不打終端指令，直接跟接了 MCP 的 harness（codex 等）對話：「今天做什麼」「上課」「我要提示」。閘道、計時、日誌全在 server 端，LLM 繞不掉留痕。
 
+**雙窗口工作流**：左邊 vim 打 `work/sol.cpp`（語法要手打、機械記憶），右邊 LLM 對話。存檔後對 LLM 說「看」→ 它讀代碼（read_code）、代為編譯執行（run_code）。不需要第三個 bash 窗口。
+
 codex 註冊（`~/.codex/config.toml`）：
 ```toml
 [mcp_servers.ioi-forge]
