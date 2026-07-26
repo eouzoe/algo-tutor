@@ -542,3 +542,61 @@ export def "forge diagnose" [--days (-d): int = 7] {
     $prompt | ^sh -c $cmd
   }
 }
+
+# ===================== 對拍 =====================
+
+# 用 LLM 從約束生成 C++ 測資生成器（argv[1]=seed，偏向小數據）
+export def "forge gen" [
+  constraints: string    # 例 "第一行 n (1..1e5)，第二行 n 個整數 (1..1e9)"
+  --out (-o): string = "gen.cpp"
+] {
+  let prompt = $"寫一個 C++17 測資生成器，用於競程對拍。
+輸入格式約束：($constraints)
+
+要求：
+- argv[1] 是隨機種子（mt19937 seed）
+- 產生的測資偏向小規模（例如 n 多半取 1..8，偶爾取大），小數據更容易逼出反例且方便肉眼除錯
+- 覆蓋邊界：最小值、相等元素、極值都要有機率出現
+- 只輸出一組合法測資到 stdout
+- 只輸出程式碼本身，不要 markdown 圍欄、不要解釋"
+  let cmd = ($env.FORGE_LLM_CMD? | default "")
+  if ($cmd | is-empty) {
+    print "--- 未設定 FORGE_LLM_CMD，把以下貼給你的 LLM，回覆存成 gen.cpp ---"
+    return $prompt
+  }
+  let code = ($prompt | ^sh -c $cmd | str replace -ra '```[a-z+]*' '' | str trim)
+  $code | save -f $out
+  print $"已寫入 ($out)，請人眼過一遍再用"
+}
+
+# 對拍：sol vs brute，跑到出反例或滿 runs 次
+export def "forge stress" [
+  sol: string            # 正解 .cpp
+  brute: string          # 暴力 .cpp
+  --gen (-g): string = "gen.cpp"
+  --runs (-n): int = 300
+] {
+  for f in [$sol $brute $gen] {
+    if not ($f | path exists) { error make { msg: $"找不到 ($f)" } }
+  }
+  print "編譯中..."
+  ^g++ -O2 -std=c++17 -o /tmp/forge_sol $sol
+  ^g++ -O2 -std=c++17 -o /tmp/forge_brute $brute
+  ^g++ -O2 -std=c++17 -o /tmp/forge_gen $gen
+
+  for i in 1..$runs {
+    let inp = (^/tmp/forge_gen $i)
+    let o1 = ($inp | ^/tmp/forge_sol | str trim)
+    let o2 = ($inp | ^/tmp/forge_brute | str trim)
+    if $o1 != $o2 {
+      $inp | save -f counterexample.txt
+      print $"反例！第 ($i) 次（已存 counterexample.txt）"
+      print $"--- 輸入 ---\n($inp)"
+      print $"--- 正解輸出 ---\n($o1)"
+      print $"--- 暴力輸出 ---\n($o2)"
+      return
+    }
+    if ($i mod 50) == 0 { print $"($i)/($runs) 通過" }
+  }
+  print $"($runs) 次全部一致，沒抓到反例"
+}

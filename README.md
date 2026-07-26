@@ -39,7 +39,14 @@ forge pick -t dp -c 5 --lo 100 --hi 300   # 塊狀練習期鎖定主題
 
 forge report --save        # 訓練週報 markdown → reports/
 forge diagnose             # 週報 + 教練診斷 prompt → FORGE_LLM_CMD
+
+forge gen "n 1..1e5，n 個整數 1..1e9"   # LLM 生成測資生成器 gen.cpp
+forge stress sol.cpp brute.cpp          # 對拍到出反例（存 counterexample.txt）
 ```
+
+所有命令也有 `just` 包裝：`just pick`、`just start cses/1621`、`just hint`、`just stress sol.cpp brute.cpp`…
+
+題面來源（識別訓練用）：CF 主站有 Cloudflare，但洛谷鏡像（luogu.com.cn/problem/CF{id}）、CSES、AtCoder 均可直接抓取。
 
 提示來源：設 `$env.FORGE_LLM_CMD`（如 `"codex exec -"`，從 stdin 讀提示詞）；
 未設定時印出提示詞，手動貼給任何 LLM。閘道防不了繞過，防的是無痕繞過。
