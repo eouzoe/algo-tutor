@@ -8,10 +8,26 @@
 docs/methodology.md      訓練迴路、提示階梯、分期里程碑
 docs/error-taxonomy.md   錯誤分類法（日誌與診斷的地基）
 docs/schema.md           日誌資料格式定義
+data/curriculum.json     18 單元課綱（零語法 → 初選考點，對應 USACO Guide 模組）
 log/attempts.jsonl       每題一筆的解題日誌
 log/recognition.jsonl    識別訓練日誌
-.nu/forge.nu             記錄與查詢工具（nushell）
+.nu/forge.nu             核心邏輯（nushell）
+mcp/server.ts            MCP server——學生的主介面
+Justfile                 教練用終端包裝
 ```
+
+## 兩個介面
+
+**學生：LLM 對話（MCP）。** 學生不打終端指令，直接跟接了 MCP 的 harness（codex 等）對話：「今天做什麼」「上課」「我要提示」。閘道、計時、日誌全在 server 端，LLM 繞不掉留痕。
+
+codex 註冊（`~/.codex/config.toml`）：
+```toml
+[mcp_servers.ioi-forge]
+command = "bun"
+args = ["/path/to/ioi-forge/mcp/server.ts"]
+```
+
+**教練：終端（just）。** `just today / log / stats / report / diagnose / anki` 看人類可讀視圖；JSONL 是機器層，人不直接讀。
 
 ## 用法
 

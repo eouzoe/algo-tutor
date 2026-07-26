@@ -3,3 +3,4 @@
 *.o
 a.out
 data/cf-problems.json
+mcp/node_modules/

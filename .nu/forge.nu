@@ -696,15 +696,55 @@ export def "forge pass" [--force] {
   }
 }
 
-# 匯出線索卡為 Anki TSV（正面=題目觸發問題，背面=線索+摘要）；Anki 負責背誦，forge 負責整題重推
-export def "forge anki" [--out (-o): string = "anki-cards.tsv"] {
+# 匯出線索卡：預設直推本機 Anki（AnkiConnect），--tsv 改存檔
+export def "forge anki" [--tsv: string] {
   let cards = (load | where kind == "attempt")
     | where { ($in.cue? | default "" | str trim | is-not-empty) }
   if ($cards | is-empty) { print "還沒有線索卡（finish 時填的『下次遇到__就__』）"; return }
-  $cards
-  | each {|r| $"($r.problem)：這題的關鍵觸發線索與第一步是？\t($r.cue)<br>($r.summary)" }
-  | str join "\n" | save -f $out
-  print $"已匯出 ($cards | length) 張卡 → ($out)（Anki：檔案→匯入，欄位以 Tab 分隔）"
+
+  if $tsv != null {
+    $cards
+    | each {|r| $"($r.problem)：這題的關鍵觸發線索與第一步是？\t($r.cue)<br>($r.summary)" }
+    | str join "\n" | save -f $tsv
+    print $"已匯出 ($cards | length) 張卡 → ($tsv)（Anki：檔案→匯入，Tab 分隔）"
+    return
+  }
+
+  try {
+    http post -t application/json http://127.0.0.1:8765 {action: "createDeck", version: 6, params: {deck: "ioi-forge"}} | ignore
+    let notes = ($cards | each {|r| {
+      deckName: "ioi-forge"
+      modelName: "Basic"
+      fields: {
+        Front: $"($r.problem)：這題的關鍵觸發線索與第一步是？"
+        Back: $"($r.cue)<br>($r.summary)"
+      }
+      options: { allowDuplicate: false }
+      tags: ["ioi-forge" $r.id]
+    }})
+    let res = (http post -t application/json http://127.0.0.1:8765 {action: "addNotes", version: 6, params: {notes: $notes}})
+    let added = ($res.result | where {|x| $x != null } | length)
+    print $"已推送 ($added)/($cards | length) 張新卡到 Anki 牌組 ioi-forge（重複自動跳過）"
+  } catch {
+    print "連不到 Anki：請開著 Anki 並安裝 AnkiConnect 插件（插件代碼 2055492159）"
+    print "或改用 just anki --tsv cards.tsv 匯出手動匯入"
+  }
+}
+
+# 人類可讀的近期日誌
+export def "forge log" [--limit (-l): int = 20] {
+  let rows = (load | where kind == "attempt")
+  if ($rows | is-empty) { print "還沒有解題記錄"; return }
+  $rows | last $limit | reverse
+  | each {|r| {
+      date: $r.date
+      problem: $r.problem
+      result: $r.result
+      hint: $r.hint_level
+      "think/code/debug": $"($r.t_think)/($r.t_code)/($r.t_debug)m"
+      err: ($r.error_primary? | default "")
+      cue: $r.cue
+    } }
 }
 
 # 每日入口：今天該做什麼（按進度漸進顯示，零基礎只看到上課）
@@ -731,8 +771,8 @@ export def "forge today" [] {
   if $cur <= ($c | length) {
     let ud = ($c | where id == $cur | first)
     let rem = (unit-remaining $ud)
-    print $"■ 今日主線：單元 ($cur)/($c | length)〈($ud.name)〉 → 上課打 just learn"
-    if not ($rem | is-empty) { print $"  課後檢核題：($rem | str join '、')（just start <題號> 開始，全 AC 後 just pass）" }
+    print $"■ 今日主線：單元 ($cur)/($c | length)〈($ud.name)〉 → 對 AI 家教說「上課」"
+    if not ($rem | is-empty) { print $"  課後檢核題：($rem | str join '、')（AC 後推進單元）" }
   } else {
     print "■ 課綱已完成，今日題單："
     try { print (forge pick | table) } catch { print "  （先 just sync，再 just profile -r <rating>）" }
