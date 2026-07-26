@@ -195,7 +195,7 @@ export def "forge start" [
     hints: []
     denied: 0
   } | save $sf
-  print $"開始 ($problem)。L1 提示 ($stuck_min) 分鐘後解鎖。進入實作時 forge code。"
+  print $"開始 ($problem)。L1 提示 ($stuck_min) 分鐘後解鎖（just hint）。進入實作時 just code。"
 }
 
 # 目前 session 狀態與下一級提示倒數
@@ -235,7 +235,7 @@ export def "forge hint" [
   let sf = (session-file)
   let s = (load-session)
   let lvl = ($s.hints | length) + 1
-  if $lvl > 4 { error make { msg: "四級提示已用盡——這題按 fail 收，finish 後從空白重做題解" } }
+  if $lvl > 4 { error make { msg: "四級提示已用盡——這題按 fail 收（just finish fail），之後從空白重做題解" } }
 
   let since = if $lvl == 1 { mins-since $s.started } else { mins-since ($s.hints | last | get at) }
   let need = if $lvl == 1 { $s.stuck_min } else { 15 }
@@ -415,10 +415,10 @@ export def "forge pick" [
   --spoil                # 顯示 tags 與弱點命中數
 ] {
   let f = (data-dir | path join "cf-problems.json")
-  if not ($f | path exists) { error make { msg: "題庫快取不存在，先 forge sync" } }
+  if not ($f | path exists) { error make { msg: "題庫快取不存在，先 just sync" } }
   let base = if $rating != null { $rating } else {
     let p = (forge profile)
-    if ($p | is-empty) { error make { msg: "給 --rating 或先 forge profile --rating N" } }
+    if ($p | is-empty) { error make { msg: "給 --rating 或先 just profile -r N" } }
     $p.cf_rating
   }
   let done = (load | where kind == "attempt" | get problem)
@@ -628,14 +628,14 @@ export def "forge learn" [
   let cur = if $unit != null { $unit } else { $prof.unit? | default 1 }
   let c = (curriculum)
   if $cur > ($c | length) {
-    print "課綱 18 單元已完成——之後以 forge pick 純題目訓練為主"
+    print "課綱 18 單元已完成——之後以 just pick 純題目訓練為主"
     return
   }
   let ud = ($c | where id == $cur | first)
   print $"單元 ($ud.id)/($c | length)：($ud.name)"
   print $"目標：($ud.goals | str join '、')"
   if not ($ud.problems | is-empty) {
-    print $"檢核題（AC 後 forge pass）：($ud.problems | str join '、')，剩餘：(unit-remaining $ud | str join '、')"
+    print $"檢核題（AC 後 just pass）：($ud.problems | str join '、')，剩餘：(unit-remaining $ud | str join '、')"
   }
 
   let source = if $no_source or (($ud.usaco? | default []) | is-empty) { "" } else {
@@ -665,7 +665,7 @@ export def "forge learn" [
 - 開場先用 2–3 個小問題探測學生已會的程度：會的快速複習帶過，不會的從零教起
 - 費曼式推進：每講完一個概念，立即出一個 30 秒微練習，學生答對才前進
 - 示例代碼用最小片段，要求學生自己動手打一遍；不要餵完整大段程式
-- 收尾時指派檢核題，要求學生用 forge start 開 session 去解，不劇透解法
+- 收尾時指派檢核題，要求學生在終端打 just start <題號> 開始解題，不劇透解法
 - 全程繁體中文；一次訊息只推進一小步，等學生回應($source)"
   let cmd = ($env.FORGE_LLM_CMD? | default "")
   if ($cmd | is-empty) {
@@ -692,11 +692,22 @@ export def "forge pass" [--force] {
   if ($next | is-empty) {
     print $"單元 ($cur)〈($ud.name)〉通過——課綱全部完成！"
   } else {
-    print $"單元 ($cur)〈($ud.name)〉通過 → 下一單元：($next.0.name)。開課：forge learn"
+    print $"單元 ($cur)〈($ud.name)〉通過 → 下一單元：($next.0.name)。開課：just learn"
   }
 }
 
-# 每日入口：今天該做什麼
+# 匯出線索卡為 Anki TSV（正面=題目觸發問題，背面=線索+摘要）；Anki 負責背誦，forge 負責整題重推
+export def "forge anki" [--out (-o): string = "anki-cards.tsv"] {
+  let cards = (load | where kind == "attempt")
+    | where { ($in.cue? | default "" | str trim | is-not-empty) }
+  if ($cards | is-empty) { print "還沒有線索卡（finish 時填的『下次遇到__就__』）"; return }
+  $cards
+  | each {|r| $"($r.problem)：這題的關鍵觸發線索與第一步是？\t($r.cue)<br>($r.summary)" }
+  | str join "\n" | save -f $out
+  print $"已匯出 ($cards | length) 張卡 → ($out)（Anki：檔案→匯入，欄位以 Tab 分隔）"
+}
+
+# 每日入口：今天該做什麼（按進度漸進顯示，零基礎只看到上課）
 export def "forge today" [] {
   let today = (date now | format date "%Y-%m-%d")
   let prof = (forge profile)
@@ -708,25 +719,28 @@ export def "forge today" [] {
 
   print $"=== ($today) ==="
   if (session-file | path exists) {
-    print "▶ 有進行中的 session："
+    print "▶ 進行中的題目："
     print (forge status | table)
   }
 
   if not ($due | is-empty) {
-    print $"■ 到期複習 ($due | length) 題（空白重推，最優先）："
+    print $"■ 到期複習 ($due | length) 題（空白重推，最優先）：just done <id> 記錄結果"
     print ($due | table)
   }
 
   if $cur <= ($c | length) {
     let ud = ($c | where id == $cur | first)
     let rem = (unit-remaining $ud)
-    print $"■ 課綱單元 ($cur)/($c | length)：($ud.name)（上課：forge learn）"
-    if not ($rem | is-empty) { print $"  待 AC 檢核題：($rem | str join '、')" }
+    print $"■ 今日主線：單元 ($cur)/($c | length)〈($ud.name)〉 → 上課打 just learn"
+    if not ($rem | is-empty) { print $"  課後檢核題：($rem | str join '、')（just start <題號> 開始，全 AC 後 just pass）" }
   } else {
     print "■ 課綱已完成，今日題單："
-    try { print (forge pick | table) } catch { print "  （先 forge sync + forge profile -r N）" }
+    try { print (forge pick | table) } catch { print "  （先 just sync，再 just profile -r <rating>）" }
   }
 
-  print $"■ 識別訓練：今日 ($recs_today)/10"
-  print $"■ 今日已解：($done_today | length) 題（乾淨 AC ($done_today | where result == 'ac' and hint_level == 0 | length)）"
+  # 識別訓練從單元 10（已學過多個主題）才加入日課
+  if $cur >= 10 { print $"■ 識別訓練：今日 ($recs_today)/10（just rec 記錄）" }
+  if not ($done_today | is-empty) {
+    print $"■ 今日已解：($done_today | length) 題（乾淨 AC ($done_today | where result == 'ac' and hint_level == 0 | length)）"
+  }
 }

@@ -1,5 +1,6 @@
 # ioi-forge — just 包裝（shell 為 nushell）
 set shell := ["nu", "-c"]
+set quiet := true
 
 _forge := "use .nu/forge.nu *; forge"
 
@@ -70,6 +71,10 @@ report *args:
 # LLM 教練診斷
 diagnose *args:
     {{_forge}} diagnose {{args}}
+
+# 匯出線索卡為 Anki TSV
+anki *args:
+    {{_forge}} anki {{args}}
 
 # 同步 CF 題庫
 sync:
