@@ -2,3 +2,4 @@
 .direnv/
 *.o
 a.out
+data/cf-problems.json

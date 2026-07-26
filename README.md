@@ -31,6 +31,11 @@ forge due        # 今日到期的複習題（空白重推）
 forge done <id>  # 記錄複習結果（--failed 為失敗）
 forge rec        # 記錄一筆識別訓練
 forge stats      # 近況統計：解出率、錯誤分佈、弱點熱圖
+
+forge sync                 # 同步 CF 題庫快取（~11k 題）
+forge profile -r 1100      # 設定學生當前 rating
+forge pick                 # 今日題單：rating+200~400、排除已做、弱點加權
+forge pick -t dp -c 5 --lo 100 --hi 300   # 塊狀練習期鎖定主題
 ```
 
 提示來源：設 `$env.FORGE_LLM_CMD`（如 `"codex exec -"`，從 stdin 讀提示詞）；

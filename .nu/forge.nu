@@ -356,3 +356,82 @@ export def "forge abort" [] {
   rm (session-file)
   print $"已放棄 ($s.problem)（未寫入日誌）"
 }
+
+# ===================== 選題引擎 =====================
+
+def data-dir [] { root | path join "data" }
+
+# 同步 Codeforces 題庫快取（含難度、tags、過題數）
+export def "forge sync" [] {
+  mkdir (data-dir)
+  let resp = (http get "https://codeforces.com/api/problemset.problems")
+  if $resp.status != "OK" { error make { msg: "CF API 回應異常" } }
+  let probs = ($resp.result.problems | insert key {|p| $"($p.contestId)($p.index)" })
+  let stats = ($resp.result.problemStatistics
+    | insert key {|p| $"($p.contestId)($p.index)" }
+    | select key solvedCount)
+  let merged = ($probs | join $stats key | each {|p| {
+    id: $"cf/($p.contestId)($p.index)"
+    name: $p.name
+    rating: ($p.rating? | default null)
+    tags: $p.tags
+    solved: $p.solvedCount
+    url: $"https://codeforces.com/problemset/problem/($p.contestId)/($p.index)"
+  }})
+  $merged | save -f (data-dir | path join "cf-problems.json")
+  print $"已同步 ($merged | length) 題（含 rating: ($merged | where rating != null | length)）"
+}
+
+# 讀/設學生檔案（目前只有 cf_rating）
+export def "forge profile" [--rating (-r): int] {
+  let pf = (data-dir | path join "profile.json")
+  if $rating == null {
+    if ($pf | path exists) { open $pf } else { {} }
+  } else {
+    mkdir (data-dir)
+    let cur = if ($pf | path exists) { open $pf } else { {} }
+    let updated = ($cur | upsert cf_rating $rating)
+    $updated | save -f $pf
+    $updated
+  }
+}
+
+def weak-topics [] {
+  let cutoff = ((date now) - 30day | format date "%Y-%m-%d")
+  load
+  | where kind == "attempt" and date >= $cutoff and error_primary != null
+  | flatten-topics | group-by topic | transpose topic n
+  | update n { length } | sort-by -r n | first 5 | get topic
+}
+
+# 出今日題單：rating+lo~hi、排除已做、弱點 tag 加權、經典度(過題數)次序
+export def "forge pick" [
+  --count (-c): int = 3
+  --rating (-r): int     # 不給則讀 forge profile
+  --topic (-t): string   # 鎖定單一 tag（塊狀練習期用）
+  --lo: int = 200
+  --hi: int = 400
+] {
+  let f = (data-dir | path join "cf-problems.json")
+  if not ($f | path exists) { error make { msg: "題庫快取不存在，先 forge sync" } }
+  let base = if $rating != null { $rating } else {
+    let p = (forge profile)
+    if ($p | is-empty) { error make { msg: "給 --rating 或先 forge profile --rating N" } }
+    $p.cf_rating
+  }
+  let done = (load | where kind == "attempt" | get problem)
+  let weak = (weak-topics)
+  let pool = (open $f
+    | where rating != null
+    | where rating >= ($base + $lo) and rating <= ($base + $hi)
+    | where {|p| $p.id not-in $done })
+  let pool = if $topic == null { $pool } else { $pool | where {|p| $topic in $p.tags } }
+  if ($pool | is-empty) { error make { msg: "沒有符合條件的題，放寬 --lo/--hi 或換 --topic" } }
+  $pool
+  | insert weak_hits {|p| $p.tags | where $it in $weak | length }
+  | sort-by -r weak_hits solved
+  | first ([($count * 4) ($pool | length)] | math min)
+  | shuffle
+  | first $count
+  | select id name rating tags weak_hits url
+}
