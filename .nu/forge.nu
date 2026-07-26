@@ -4,7 +4,13 @@
 const INTERVALS = [7 30 90]
 
 def root [] {
-  $env.FORGE_ROOT? | default ($env.HOME | path join "src/active/ioi-forge")
+  $env.FORGE_ROOT? | default (
+    if ($env.PWD | path join ".nu/forge.nu" | path exists) {
+      $env.PWD
+    } else {
+      $env.HOME | path join "src/active/ioi-forge"
+    }
+  )
 }
 
 def attempts-file [] { root | path join "log/attempts.jsonl" }
