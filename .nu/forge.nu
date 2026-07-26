@@ -620,7 +620,10 @@ def unit-remaining [u: record] {
 }
 
 # 當前單元的 LLM 家教課（會的快速複習、不會的從零教）
-export def "forge learn" [--unit (-u): int] {
+export def "forge learn" [
+  --unit (-u): int
+  --no-source     # 不抓 USACO Guide 教材（離線/省流量）
+] {
   let prof = (forge profile)
   let cur = if $unit != null { $unit } else { $prof.unit? | default 1 }
   let c = (curriculum)
@@ -635,6 +638,23 @@ export def "forge learn" [--unit (-u): int] {
     print $"檢核題（AC 後 forge pass）：($ud.problems | str join '、')，剩餘：(unit-remaining $ud | str join '、')"
   }
 
+  let source = if $no_source or (($ud.usaco? | default []) | is-empty) { "" } else {
+    let cache_dir = (data-dir | path join "usaco")
+    mkdir $cache_dir
+    let texts = ($ud.usaco | each {|path|
+      let cache = ($cache_dir | path join ($path | str replace "/" "__"))
+      if not ($cache | path exists) {
+        try {
+          http get $"https://raw.githubusercontent.com/cpinitiative/usaco-guide/master/content/($path)" | save -f $cache
+        } catch { print $"（教材 ($path) 抓取失敗，略過）" }
+      }
+      if ($cache | path exists) { $"### 教材：($path)\n(open --raw $cache)" } else { "" }
+    } | where ($it | is-not-empty))
+    if ($texts | is-empty) { "" } else {
+      $"\n\n以下是本課參考教材（USACO Guide 原文，英文 MDX）。以它的內容結構與例題為教學藍本，但全部用繁體中文重新講解，MDX 標記忽略即可：\n\n($texts | str join "\n\n")"
+    }
+  }
+
   let prompt = $"你是一對一 C++ 競程家教，學生目標是台灣 TOI 選訓營（APCS/能競/初選路線）。
 本課單元：($ud.name)
 教學目標：($ud.goals | str join '、')
@@ -646,7 +666,7 @@ export def "forge learn" [--unit (-u): int] {
 - 費曼式推進：每講完一個概念，立即出一個 30 秒微練習，學生答對才前進
 - 示例代碼用最小片段，要求學生自己動手打一遍；不要餵完整大段程式
 - 收尾時指派檢核題，要求學生用 forge start 開 session 去解，不劇透解法
-- 全程繁體中文；一次訊息只推進一小步，等學生回應"
+- 全程繁體中文；一次訊息只推進一小步，等學生回應($source)"
   let cmd = ($env.FORGE_LLM_CMD? | default "")
   if ($cmd | is-empty) {
     print "--- 未設定 FORGE_LLM_CMD，把以下貼給你的 LLM 開始上課 ---"
