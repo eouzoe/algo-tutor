@@ -405,12 +405,14 @@ def weak-topics [] {
 }
 
 # 出今日題單：rating+lo~hi、排除已做、弱點 tag 加權、經典度(過題數)次序
+# tags 預設隱藏（劇透=免費 L1 提示）；--spoil 顯示（教練用/賽後複盤/塊狀期）
 export def "forge pick" [
   --count (-c): int = 3
   --rating (-r): int     # 不給則讀 forge profile
   --topic (-t): string   # 鎖定單一 tag（塊狀練習期用）
   --lo: int = 200
   --hi: int = 400
+  --spoil                # 顯示 tags 與弱點命中數
 ] {
   let f = (data-dir | path join "cf-problems.json")
   if not ($f | path exists) { error make { msg: "題庫快取不存在，先 forge sync" } }
@@ -427,11 +429,116 @@ export def "forge pick" [
     | where {|p| $p.id not-in $done })
   let pool = if $topic == null { $pool } else { $pool | where {|p| $topic in $p.tags } }
   if ($pool | is-empty) { error make { msg: "沒有符合條件的題，放寬 --lo/--hi 或換 --topic" } }
-  $pool
-  | insert weak_hits {|p| $p.tags | where $it in $weak | length }
-  | sort-by -r weak_hits solved
-  | first ([($count * 4) ($pool | length)] | math min)
-  | shuffle
-  | first $count
-  | select id name rating tags weak_hits url
+  let picked = ($pool
+    | insert weak_hits {|p| $p.tags | where $it in $weak | length }
+    | sort-by -r weak_hits solved
+    | first ([($count * 4) ($pool | length)] | math min)
+    | shuffle
+    | first $count)
+  if $spoil {
+    $picked | select id name rating tags weak_hits url
+  } else {
+    $picked | select id name rating url
+  }
+}
+
+# ===================== 週報與診斷 =====================
+
+def load-rec [] {
+  let f = (rec-file)
+  if ($f | path exists) {
+    open --raw $f | lines | where ($it | str trim | is-not-empty) | each { $in | from json }
+  } else { [] }
+}
+
+def err-dist [rows] {
+  $rows | where error_primary != null | group-by error_primary
+  | transpose class n | update n { length } | sort-by -r n
+}
+
+# 產出訓練週報（markdown）。--save 存入 reports/
+export def "forge report" [
+  --days (-d): int = 7
+  --save
+] {
+  let now = (date now)
+  let cutoff = ($now - ($days * 1day) | format date "%Y-%m-%d")
+  let prev_cutoff = ($now - (($days * 2) * 1day) | format date "%Y-%m-%d")
+  let all = (load)
+  let a = ($all | where kind == "attempt" and date >= $cutoff)
+  let prev = ($all | where kind == "attempt" and date >= $prev_cutoff and date < $cutoff)
+  let reviews = ($all | where kind == "review" and date >= $cutoff)
+  let recs = (load-rec | where date >= $cutoff)
+  let profile = (forge profile)
+
+  let clean_rate = {|rows|
+    if ($rows | is-empty) { 0 } else {
+      ($rows | where result == "ac" and hint_level == 0 | length) / ($rows | length) * 100 | math round
+    }
+  }
+
+  let fails = ($a | where result in ["fail" "partial"] or hint_level > 2)
+  let denied_total = ($a | each { $in.hint_denied? | default 0 } | math sum)
+  let topic_err = ($a | where error_primary != null | flatten-topics
+    | group-by topic | transpose topic n | update n { length } | sort-by -r n | first 8)
+
+  let lines = [
+    $"# 訓練週報 ($cutoff) → ($now | format date '%Y-%m-%d')"
+    ""
+    $"當前 rating 檔案：(if ($profile | is-empty) { '未設定' } else { $profile.cf_rating })"
+    ""
+    "## 量與質"
+    $"- 解題數：($a | length)（前一期 ($prev | length)）"
+    $"- 乾淨 AC 率：(do $clean_rate $a)%（前一期 (do $clean_rate $prev)%，目標帶 30–50%）"
+    $"- 平均提示等級：(if ($a | is-empty) { 0 } else { $a | get hint_level | math avg | math round --precision 2 })"
+    $"- 閘道拒絕次數：($denied_total)（提前要提示的衝動指標）"
+    $"- 思考時間中位數：(if ($a | is-empty) { 0 } else { $a | get t_think | math median })m"
+    ""
+    "## 錯誤分佈（主因）"
+    (err-dist $a | each {|r| $"- ($r.class)：($r.n)" } | str join "\n")
+    ""
+    "## 弱點主題（錯誤 × 主題）"
+    ($topic_err | each {|r| $"- ($r.topic)：($r.n)" } | str join "\n")
+    ""
+    "## 失敗與重提示題（需覆盤）"
+    ($fails | each {|r| $"- ($r.problem) [($r.rating)] ($r.result) hint L($r.hint_level) 主因 ($r.error_primary? | default '-')：($r.cue)" } | str join "\n")
+    ""
+    "## 複習"
+    $"- 本期完成複習：($reviews | length)，成功率：(if ($reviews | is-empty) { '-' } else { $"(($reviews | where recalled | length) / ($reviews | length) * 100 | math round)%" })"
+    $"- 目前積壓到期：(forge due | length) 題"
+    ""
+    "## 識別訓練"
+    $"- 題數：($recs | length)，方向正確率：(if ($recs | is-empty) { '-' } else { $"(($recs | where correct | length) / ($recs | length) * 100 | math round)%" })"
+  ]
+  let md = ($lines | str join "\n")
+  if $save {
+    let dir = (root | path join "reports")
+    mkdir $dir
+    let f = ($dir | path join $"report-($now | format date '%Y-%m-%d').md")
+    $md | save -f $f
+    print $"已存 ($f)"
+  }
+  $md
+}
+
+# 週報 + 教練診斷 prompt → FORGE_LLM_CMD（未設定則印出）
+export def "forge diagnose" [--days (-d): int = 7] {
+  let md = (forge report --days $days)
+  let prompt = $"你是 IOI 訓練教練。以下是學生本期訓練週報（資料由日誌自動統計，錯誤分類定義：R讀題/K知識缺口/P檢索失敗/M建模/I實作/B邊界/E效率/T時間分配）。
+
+($md)
+
+任務（用繁體中文，直接、具體，不客套）：
+1. 診斷：本期最大的一個瓶頸是什麼？用數據佐證。
+2. 檢查訓練健康度：乾淨 AC 率是否在 30–50% 目標帶？偏離的話，難度該怎麼調？
+3. 開下週處方：主題配比（塊狀 vs 交錯）、每個弱點主題對應的矯正動作（對照錯誤分類的處方表）。
+4. 紅旗：有沒有過度依賴提示、複習積壓、或錯誤分佈惡化的跡象？
+輸出不超過 400 字。"
+  let cmd = ($env.FORGE_LLM_CMD? | default "")
+  if ($cmd | is-empty) {
+    print "--- 未設定 FORGE_LLM_CMD，把以下貼給你的 LLM ---"
+    $prompt
+  } else {
+    $prompt | ^sh -c $cmd
+  }
 }
