@@ -52,10 +52,9 @@ jobs:
         run: wsl --version
 
   # 全真端到端：空白 Windows → 裝 NixOS-WSL → WSL 內 curl 跑 bootstrap → doctor
-  # （已實證 runner 支援 WSL2；首跑 nix 冷快取較慢，先 continue-on-error 觀察）
+  # （已實證可跑、約 5 分鐘；若遇 nix 快取抖動再放寬）
   wsl-bootstrap-windows:
     runs-on: windows-latest
-    continue-on-error: true
     timeout-minutes: 45
     steps:
       - name: 安裝 NixOS-WSL
