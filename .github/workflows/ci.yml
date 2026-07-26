@@ -51,17 +51,20 @@ jobs:
         shell: powershell
         run: wsl --version
 
-  # 實驗：hosted runner 真裝 NixOS-WSL 試試（永不擋 CI，純實證）
-  wsl-install-experiment:
+  # 全真端到端：空白 Windows → 裝 NixOS-WSL → WSL 內 curl 跑 bootstrap → doctor
+  # （已實證 runner 支援 WSL2；首跑 nix 冷快取較慢，先 continue-on-error 觀察）
+  wsl-bootstrap-windows:
     runs-on: windows-latest
     continue-on-error: true
+    timeout-minutes: 45
     steps:
-      - name: 下載並安裝 NixOS-WSL
+      - name: 安裝 NixOS-WSL
         shell: powershell
         run: |
           curl.exe -L -o "$env:TEMP\nixos.wsl" "https://github.com/nix-community/NixOS-WSL/releases/latest/download/nixos.wsl"
           wsl --install --from-file "$env:TEMP\nixos.wsl" --no-launch
           wsl --list --verbose
-      - name: 進 WSL 執行指令
+      - name: WSL 內執行 bootstrap.sh（一行安裝全流程）
         shell: powershell
-        run: wsl -d NixOS -- echo "WSL BOOT OK"
+        run: |
+          wsl -d NixOS -- sh -lc "nix-shell -p curl git bash --command 'curl -fsSL https://raw.githubusercontent.com/eouzoe/ioi-forge/main/deploy/bootstrap.sh | sh'"
