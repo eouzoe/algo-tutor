@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "ioi-forge": {
+      "type": "local",
+      "command": ["bun", "run", "mcp/server.ts"],
+      "environment": { "FORGE_ROOT": "/home/eouzoe/src/active/ioi-forge" },
+      "timeout": 60000,
+      "enabled": true
+    }
+  }
+}

@@ -784,3 +784,55 @@ export def "forge today" [] {
     print $"■ 今日已解：($done_today | length) 題（乾淨 AC ($done_today | where result == 'ac' and hint_level == 0 | length)）"
   }
 }
+
+# ===================== 自檢 =====================
+
+# 環境與功能自檢（bootstrap 驗收也用它）
+export def "forge doctor" [] {
+  mut rows = []
+
+  for t in [nu just g++ bun git] {
+    $rows = ($rows | append { check: $"工具 ($t)", ok: (which $t | is-not-empty), required: true, fix: "devenv shell 內執行" })
+  }
+  $rows = ($rows | append { check: "工具 codex（學生 harness）", ok: (which codex | is-not-empty), required: false, fix: "bun install -g @openai/codex" })
+
+  $rows = ($rows | append { check: "課綱 data/curriculum.json", ok: ((root | path join "data/curriculum.json") | path exists), required: true, fix: "repo 不完整，重新 clone" })
+  $rows = ($rows | append { check: "CF 題庫快取", ok: ((data-dir | path join "cf-problems.json") | path exists), required: false, fix: "just sync" })
+  $rows = ($rows | append { check: "mcp 依賴", ok: ((root | path join "mcp/node_modules") | path exists), required: true, fix: "cd mcp; bun install" })
+
+  # 功能：編譯器真的能編
+  "int main(){return 0;}" | save -f /tmp/forge_doctor.cpp
+  let comp = (do { ^g++ -o /tmp/forge_doctor /tmp/forge_doctor.cpp } | complete)
+  $rows = ($rows | append { check: "功能 g++ 編譯", ok: ($comp.exit_code == 0), required: true, fix: "檢查 gcc 安裝" })
+
+  # 功能：提示閘道邏輯（隔離 FORGE_ROOT，不污染日誌）
+  let forge_mod = (root | path join ".nu/forge.nu")
+  let tmp = (mktemp -d)
+  mkdir ($tmp | path join "log")
+  let gate = (with-env { FORGE_ROOT: $tmp } {
+    do { ^nu -c $"use '($forge_mod)' *; forge start doctor/test --stuck-min 30; forge hint" } | complete
+  })
+  rm -rf $tmp
+  $rows = ($rows | append { check: "功能 提示閘道", ok: ($gate.stdout | str contains "閘道拒絕"), required: true, fix: "forge.nu 損壞，git checkout" })
+
+  # 功能：MCP server 能啟動（送 initialize，5 秒後殺掉、驗已捕獲的回應）
+  let mcp_ok = if ((root | path join "mcp/node_modules") | path exists) {
+    let r = (do {
+      '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"doctor","version":"0"}}}' + (char newline)
+      | ^timeout 5 bun (root | path join "mcp/server.ts")
+    } | complete)
+    ($r.stdout | str contains '"name":"ioi-forge"')
+  } else { false }
+  $rows = ($rows | append { check: "功能 MCP server", ok: $mcp_ok, required: true, fix: "cd mcp; bun install 後重試" })
+
+  $rows = ($rows | append { check: "AnkiConnect（選配）", ok: (try { http post -t application/json http://127.0.0.1:8765 {action: "version", version: 6} | get result | is-not-empty } catch { false }), required: false, fix: "開著 Anki + 插件 2055492159" })
+
+  let bad = ($rows | where {|r| $r.required and (not $r.ok) })
+  print ($rows | select check ok required fix | table)
+  if ($bad | is-empty) {
+    print "✔ 必要項全部通過"
+  } else {
+    print $"✘ ($bad | length) 個必要項未通過"
+    error make { msg: "doctor 未通過" }
+  }
+}

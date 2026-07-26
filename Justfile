@@ -76,6 +76,14 @@ diagnose *args:
 anki *args:
     {{_forge}} anki {{args}}
 
+# 環境與功能自檢
+doctor:
+    {{_forge}} doctor
+
+# 首次安裝：mcp 依賴 + 題庫 + 自檢
+setup:
+    cd mcp; ^bun install; cd ..; {{_forge}} sync; {{_forge}} doctor
+
 # 同步 CF 題庫
 sync:
     {{_forge}} sync
