@@ -1,0 +1,5 @@
+{"kind":"attempt","id":"20260715120000","date":"2026-07-15","problem":"cses/1640","rating":1200,"topics":["sorting","two-pointers"],"mode":"solve","result":"ac_hint","score":null,"hint_level":2,"t_think":45,"t_code":15,"t_debug":10,"error_primary":"P","error_secondary":null,"summary":"排序後雙指針夾逼找兩數和","cue":"看到『兩數和/配對』先想排序+雙指針","needs_review":true}
+{"kind":"attempt","id":"20260720093000","date":"2026-07-20","problem":"cf/1850C","rating":900,"topics":["implementation"],"mode":"speed","result":"ac","score":null,"hint_level":0,"t_think":5,"t_code":8,"t_debug":0,"error_primary":null,"error_secondary":null,"summary":"直接掃描網格找連續字元","cue":"","needs_review":false}
+{"kind":"review","ref":"20260715120000","date":"2026-07-22","recalled":true}
+{"kind":"review","ref":"20260715120000","date":"2026-07-27","recalled":true}
+{"kind":"attempt","id":"20260718100000","date":"2026-07-18","problem":"cses/1193","rating":1400,"topics":["bfs","grid"],"mode":"solve","result":"fail","score":null,"hint_level":3,"t_think":60,"t_code":30,"t_debug":25,"error_primary":"K","error_secondary":"B","summary":"BFS 記錄父方向重建路徑","cue":"看到『最短路徑+輸出方案』就想 BFS+parent 陣列","needs_review":true}
