@@ -3,6 +3,18 @@ set shell := ["nu", "-c"]
 
 _forge := "use .nu/forge.nu *; forge"
 
+# 每日入口：今天該做什麼（預設命令）
+today:
+    {{_forge}} today
+
+# 當前單元上課（LLM 家教）
+learn *args:
+    {{_forge}} learn {{args}}
+
+# 通過當前單元
+pass *args:
+    {{_forge}} pass {{args}}
+
 # 今日題單（--spoil 顯示 tags）
 pick *args:
     {{_forge}} pick {{args}}

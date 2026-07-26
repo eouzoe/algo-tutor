@@ -600,3 +600,113 @@ export def "forge stress" [
   }
   print $"($runs) 次全部一致，沒抓到反例"
 }
+
+# ===================== 課綱與每日入口 =====================
+
+def curriculum [] { open (root | path join "data/curriculum.json") }
+
+def save-profile [rec: record] {
+  mkdir (data-dir)
+  $rec | save -f (data-dir | path join "profile.json")
+}
+
+def solved-ids [] {
+  load | where kind == "attempt" and result in ["ac" "ac_hint"] | get problem | uniq
+}
+
+def unit-remaining [u: record] {
+  let done = (solved-ids)
+  $u.problems | where $it not-in $done
+}
+
+# 當前單元的 LLM 家教課（會的快速複習、不會的從零教）
+export def "forge learn" [--unit (-u): int] {
+  let prof = (forge profile)
+  let cur = if $unit != null { $unit } else { $prof.unit? | default 1 }
+  let c = (curriculum)
+  if $cur > ($c | length) {
+    print "課綱 18 單元已完成——之後以 forge pick 純題目訓練為主"
+    return
+  }
+  let ud = ($c | where id == $cur | first)
+  print $"單元 ($ud.id)/($c | length)：($ud.name)"
+  print $"目標：($ud.goals | str join '、')"
+  if not ($ud.problems | is-empty) {
+    print $"檢核題（AC 後 forge pass）：($ud.problems | str join '、')，剩餘：(unit-remaining $ud | str join '、')"
+  }
+
+  let prompt = $"你是一對一 C++ 競程家教，學生目標是台灣 TOI 選訓營（APCS/能競/初選路線）。
+本課單元：($ud.name)
+教學目標：($ud.goals | str join '、')
+教學重點：($ud.tutor)
+檢核題：(if ($ud.problems | is-empty) { '無，以課內練習為準' } else { $ud.problems | str join '、' })
+
+規則：
+- 開場先用 2–3 個小問題探測學生已會的程度：會的快速複習帶過，不會的從零教起
+- 費曼式推進：每講完一個概念，立即出一個 30 秒微練習，學生答對才前進
+- 示例代碼用最小片段，要求學生自己動手打一遍；不要餵完整大段程式
+- 收尾時指派檢核題，要求學生用 forge start 開 session 去解，不劇透解法
+- 全程繁體中文；一次訊息只推進一小步，等學生回應"
+  let cmd = ($env.FORGE_LLM_CMD? | default "")
+  if ($cmd | is-empty) {
+    print "--- 未設定 FORGE_LLM_CMD，把以下貼給你的 LLM 開始上課 ---"
+    $prompt
+  } else {
+    $prompt | ^sh -c $cmd
+  }
+}
+
+# 通過當前單元，推進課綱（檢核題未全 AC 會擋）
+export def "forge pass" [--force] {
+  let prof = (forge profile)
+  let cur = ($prof.unit? | default 1)
+  let c = (curriculum)
+  if $cur > ($c | length) { print "課綱已完成"; return }
+  let ud = ($c | where id == $cur | first)
+  let remaining = (unit-remaining $ud)
+  if (not ($remaining | is-empty)) and (not $force) {
+    error make { msg: $"檢核題未完成：($remaining | str join '、')。AC 後再 pass（或 --force）" }
+  }
+  save-profile ($prof | upsert unit ($cur + 1))
+  let next = ($c | where id == ($cur + 1))
+  if ($next | is-empty) {
+    print $"單元 ($cur)〈($ud.name)〉通過——課綱全部完成！"
+  } else {
+    print $"單元 ($cur)〈($ud.name)〉通過 → 下一單元：($next.0.name)。開課：forge learn"
+  }
+}
+
+# 每日入口：今天該做什麼
+export def "forge today" [] {
+  let today = (date now | format date "%Y-%m-%d")
+  let prof = (forge profile)
+  let cur = ($prof.unit? | default 1)
+  let c = (curriculum)
+  let due = (forge due)
+  let recs_today = (load-rec | where date == $today | length)
+  let done_today = (load | where kind == "attempt" and date == $today)
+
+  print $"=== ($today) ==="
+  if (session-file | path exists) {
+    print "▶ 有進行中的 session："
+    print (forge status | table)
+  }
+
+  if not ($due | is-empty) {
+    print $"■ 到期複習 ($due | length) 題（空白重推，最優先）："
+    print ($due | table)
+  }
+
+  if $cur <= ($c | length) {
+    let ud = ($c | where id == $cur | first)
+    let rem = (unit-remaining $ud)
+    print $"■ 課綱單元 ($cur)/($c | length)：($ud.name)（上課：forge learn）"
+    if not ($rem | is-empty) { print $"  待 AC 檢核題：($rem | str join '、')" }
+  } else {
+    print "■ 課綱已完成，今日題單："
+    try { print (forge pick | table) } catch { print "  （先 forge sync + forge profile -r N）" }
+  }
+
+  print $"■ 識別訓練：今日 ($recs_today)/10"
+  print $"■ 今日已解：($done_today | length) 題（乾淨 AC ($done_today | where result == 'ac' and hint_level == 0 | length)）"
+}

@@ -18,6 +18,10 @@ log/recognition.jsonl    識別訓練日誌
 ```nu
 use .nu/forge.nu *
 
+forge today      # 每日入口：複習→課綱→題單→識別訓練（just today）
+forge learn      # 當前課綱單元上課（LLM 家教：會的複習、不會的從零教）
+forge pass       # 檢核題全 AC 後推進單元（18 單元：零語法 → 初選考點）
+
 # 解題 session（推薦，時間自動計、提示有閘道）
 forge start cses/1621 -r 1100 -t sorting   # 開始計時
 forge status     # 進度與下一級提示倒數

@@ -1,0 +1,20 @@
+[
+  {"id": 1, "name": "環境與第一支程式", "goals": ["編譯執行流程", "main/標頭檔", "變數與型別 int/long long/double/char/bool", "cin/cout", "算術運算與溢位概念"], "tutor": "從零教起：什麼是編譯、寫出第一支讀入兩數輸出總和的程式。強調 long long 習慣（競賽預設）。", "problems": ["zj/a001", "zj/a002"], "exit": "能獨立寫出讀入→計算→輸出的完整程式"},
+  {"id": 2, "name": "控制流", "goals": ["if/else", "for/while", "巢狀迴圈", "break/continue"], "tutor": "用模擬類小題教條件與迴圈；教 while 讀到 EOF 的競賽輸入模式。", "problems": ["cses/1068", "zj/a003"], "exit": "巢狀迴圈畫圖形、模擬簡單過程不卡"},
+  {"id": 3, "name": "函式與遞迴初步", "goals": ["函式定義與參數", "回傳值", "遞迴的 base case 思維"], "tutor": "教函式拆分思維；遞迴只到階乘/費氏程度，深入放單元 9。", "problems": [], "exit": "能把重複邏輯抽成函式；手寫階乘遞迴"},
+  {"id": 4, "name": "陣列、vector、字串", "goals": ["陣列與索引", "vector push_back/size", "string 基本操作", "二維陣列"], "tutor": "教 vector 為預設容器；string 遍歷與比較；越界是什麼。", "problems": ["cses/1069", "cses/1083"], "exit": "能處理一維/二維資料與字串掃描"},
+  {"id": 5, "name": "STL 核心 I：排序", "goals": ["sort", "pair/tuple", "自訂比較 lambda", "greater<>"], "tutor": "排序是競賽第一工具：教 sort + pair 排序 + lambda 比較器。", "problems": ["cses/1621"], "exit": "能對任意結構排序"},
+  {"id": 6, "name": "STL 核心 II：關聯容器", "goals": ["set/multiset", "map", "priority_queue", "queue/stack/deque"], "tutor": "每個容器講「什麼時候想到它」：去重→set、計數→map、動態最值→priority_queue。", "problems": ["cses/1090"], "exit": "能為需求選對容器並說出複雜度"},
+  {"id": 7, "name": "STL 演算法與迭代器", "goals": ["lower_bound/upper_bound", "unique/reverse/max_element", "迭代器概念"], "tutor": "教有序容器上的二分家族；unique 去重慣用法。", "problems": ["cses/1091"], "exit": "熟練 lower_bound 在陣列與 set/map 上的用法"},
+  {"id": 8, "name": "複雜度與對拍工作流", "goals": ["big-O 直覺", "由 n 規模選演算法（1e5→O(n log n)）", "forge stress 對拍", "邊界清單習慣"], "tutor": "教「看到約束先算複雜度預算」；帶著跑一次完整對拍流程（含 forge gen）。", "problems": [], "exit": "動筆前能寫出複雜度預算；獨立跑通一次對拍"},
+  {"id": 9, "name": "遞迴與完全搜索", "goals": ["子集枚舉", "排列枚舉", "回溯", "位元枚舉"], "tutor": "從遞迴樹圖像教回溯；APCS/能競常靠完全搜索撈分。", "problems": ["cses/1623", "cses/1624"], "exit": "能寫出子集/排列枚舉並估算可行規模"},
+  {"id": 10, "name": "貪心", "goals": ["排序後貪心", "交換論證直覺", "區間排程"], "tutor": "教「貪心要有理由」：用交換論證檢驗；反例意識（對拍驗貪心）。", "problems": ["cses/1629"], "exit": "能陳述貪心策略為何正確"},
+  {"id": 11, "name": "二分搜", "goals": ["值域二分", "答案二分（單調性）", "浮點二分"], "tutor": "教「答案具單調性→二分答案」的識別線索；邊界收斂模板。", "problems": ["cses/1620"], "exit": "手寫二分無 off-by-one；能識別答案二分題"},
+  {"id": 12, "name": "前綴和與雙指針", "goals": ["一維/二維前綴和", "雙指針/滑動窗口", "差分"], "tutor": "教「區間和查詢→前綴和」「有序+配對→雙指針」的觸發線索。", "problems": ["cses/1640", "cses/1661"], "exit": "兩類線索能即時觸發"},
+  {"id": 13, "name": "基礎 DP", "goals": ["狀態定義思維", "一維 DP", "背包", "網格 DP"], "tutor": "DP 是大坎：先教「狀態=子問題答案」的定義訓練，再轉移。多花時間，變體練習加倍。", "problems": ["cses/1633", "cses/1158", "cses/1638"], "exit": "能自己定義狀態並寫出轉移，不背模板"},
+  {"id": 14, "name": "圖論基礎", "goals": ["鄰接表", "DFS/BFS", "連通塊", "網格圖", "BFS 最短路+還原路徑"], "tutor": "教建圖慣用法與 DFS/BFS 模板；網格圖是能競常客。", "problems": ["cses/1192", "cses/1666"], "exit": "圖/網格的遍歷題 15 分鐘內出手"},
+  {"id": 15, "name": "最短路與拓撲", "goals": ["Dijkstra", "拓撲排序", "DAG 上 DP"], "tutor": "教 priority_queue 版 Dijkstra 與 toposort；何時用哪個的判斷。", "problems": ["cses/1671", "cses/1679"], "exit": "兩模板能默寫並知道適用條件"},
+  {"id": 16, "name": "樹與 DSU", "goals": ["樹遍歷與樹上 DP 入門", "並查集"], "tutor": "教樹=無環連通圖的遞迴思維；DSU 模板與「動態連通性→DSU」線索。", "problems": ["cses/1674", "cses/1676"], "exit": "DSU 默寫；樹遍歷計數不卡"},
+  {"id": 17, "name": "初選特化 I：區間資結", "goals": ["BIT", "線段樹（單點改/區間查）", "區間改懶標入門"], "tutor": "初選考點：從 BIT 到基礎線段樹，模板+觸發線索（區間查詢+修改→線段樹）。", "problems": ["cses/1648", "cses/1649"], "exit": "兩模板默寫；能改造線段樹維護不同資訊"},
+  {"id": 18, "name": "初選特化 II：矩陣快速冪、哈希、子題策略", "goals": ["快速冪", "矩陣快速冪", "滾動哈希", "子題撈分策略"], "tutor": "初選考點收尾：線性遞推→矩陣冪、字串匹配→哈希；教「先掃全部子題撈保底分」的考試策略。", "problems": ["cses/1722", "cses/1753"], "exit": "初選模擬卷能撈到安全分數線"}
+]
