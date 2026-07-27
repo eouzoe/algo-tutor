@@ -181,27 +181,41 @@ export def "forge start" [
   problem: string
   --rating (-r): int
   --topics (-t): string = ""
-  --mode (-m): string = "solve"
-  --stuck-min: int = 30   # 首個提示解鎖前的最短思考分鐘
+  --mode (-m): string = "solve"   # solve / speed（速練，短提示閘）/ virtual / contest / upsolve
+  --phase: string = "practice"    # learn / practice / exam
+  --stuck-min: int = -1   # 首個提示解鎖分鐘；-1 = 按模式預設（solve 30、speed 3）
 ] {
   let sf = (session-file)
   if ($sf | path exists) {
     error make { msg: $"已有進行中 session：(open $sf | get problem)。先 forge finish 或 forge abort" }
   }
+  let stuck = if $stuck_min >= 0 { $stuck_min } else if $mode == "speed" { 3 } else if $phase == "exam" { 60 } else { 30 }
   let now = (now-iso)
+  # 記錄當前編輯檔案
+  let active_file = if (root | path join "work/sol.cpp" | path exists) { "work/sol.cpp" } else { null }
   {
     problem: $problem
     rating: $rating
     topics: ($topics | split row "," | each { str trim | str downcase } | where ($it | is-not-empty))
     mode: $mode
-    stuck_min: $stuck_min
+    session_phase: $phase   # 三階段中的哪個階段
+    stuck_min: $stuck
     started: $now
-    phase: "think"
+    phase: "think"          # session 狀態機的階段（think/code/debug）
     events: [{ at: $now, kind: "start" }]
     hints: []
     denied: 0
+    active_file: $active_file
   } | save $sf
-  print $"開始 ($problem)。L1 提示 ($stuck_min) 分鐘後解鎖（just hint）。進入實作時 just code。"
+  if $mode == "speed" {
+    print $"速練 ($problem)：計時開始，目標一次寫對、越快越好。"
+  } else if $phase == "learn" {
+    print $"跟打練習 ($problem)：跟著語法模板打，不用想解法。完成後說「看」"
+  } else if $phase == "exam" {
+    print $"考試 ($problem)：60 分鐘後才可開提示。獨立解題。"
+  } else {
+    print $"開始 ($problem)。L1 提示 ($stuck) 分鐘後解鎖（just hint）。進入實作時 just code。"
+  }
 }
 
 # 目前 session 狀態與下一級提示倒數
@@ -215,13 +229,25 @@ export def "forge status" [] {
     let need = if $lvl == 1 { $s.stuck_min } else { 15 }
     if $since >= $need { $"L($lvl) 可解鎖" } else { $"L($lvl) 還需 ($need - $since) 分鐘" }
   }
+  # stale 偵測：最後一個事件離現在超過 4 小時 → 疑似進程被中斷沒收尾
+  let last_ev = ($s.events | last | default {})
+  let stale_h = if ($last_ev | is-empty) { null } else { ((date now) - ($last_ev.at | into datetime)) / 1hr | math round }
+  let stale = if $stale_h == null { false } else { $stale_h >= 4 }
+  if $stale {
+    print $"⚠ session 疑似卡住：上次事件在 ($stale_h) 小時前（($s.problem) 開於 ($s.started)）。可能進程被中斷沒走 finish。"
+    print "  補登就 `just finish ac --t-think <m> --t-code <m> --err <...> -s <摘要> -c <線索卡>`；放棄就 `just abort`。"
+  }
+  let joint_phase = if ($s.session_phase? | default "" | is-empty) { $s.phase } else { $"($s.session_phase)/($s.phase)" }
   {
     problem: $s.problem
-    phase: $s.phase
+    phase: $joint_phase
     elapsed_min: (mins-since $s.started)
+    stale_age_h: $stale_h
+    stale: $stale
     hints_used: ($s.hints | length)
     denied: $s.denied
     next_hint: $next
+    active_file: ($s.active_file? | default null)
   }
 }
 
@@ -305,6 +331,9 @@ export def "forge finish" [
   --err2: string       # 次因（非互動模式）
   --summary (-s): string  # 費曼摘要（非互動模式）
   --cue (-c): string      # 線索卡（非互動模式）
+  --t-think: int          # 覆寫推算的思考分鐘（用於 stale session 事後補登）
+  --t-code: int
+  --t-debug: int
 ] {
   let sf = (session-file)
   let s = (load-session)
@@ -316,9 +345,10 @@ export def "forge finish" [
   let code_at = if ($code_ev | is-empty) { null } else { $code_ev | first | get at | into datetime }
   let debug_at = if ($debug_ev | is-empty) { null } else { $debug_ev | first | get at | into datetime }
 
-  let t_think = if $code_at == null { ($now - $started) / 1min } else { ($code_at - $started) / 1min } | math round
-  let t_code = if $code_at == null { 0 } else if $debug_at == null { ($now - $code_at) / 1min | math round } else { ($debug_at - $code_at) / 1min | math round }
-  let t_debug = if $debug_at == null { 0 } else { ($now - $debug_at) / 1min | math round }
+  # stale session 事後補登時，T 旗標直接覆寫推算值（卡 12h 沒收尾不該算 720 分鐘思考）
+  let t_think = if $t_think != null { $t_think } else if $code_at == null { ($now - $started) / 1min | math round } else { ($code_at - $started) / 1min | math round }
+  let t_code = if $t_code != null { $t_code } else if $code_at == null { 0 } else if $debug_at == null { ($now - $code_at) / 1min | math round } else { ($debug_at - $code_at) / 1min | math round }
+  let t_debug = if $t_debug != null { $t_debug } else if $debug_at == null { 0 } else { ($now - $debug_at) / 1min | math round }
 
   let hint_level = if ($s.hints | is-empty) { 0 } else { $s.hints | get level | math max }
   let final_result = if $result == "ac" and $hint_level > 0 { "ac_hint" } else { $result }
@@ -661,6 +691,33 @@ export def "forge learn" [
     }
   }
 
+  # 如果 phase_learn 有定義，加入語法模板與跟打練習資訊
+  let learn_extra = if ($ud.phase_learn? | default {} | get -o topics | length) > 0 {
+    let raw = ($ud.phase_learn.topics | each {|t|
+      [ $"### ($t.name)"
+        $"($t.description)"
+        ""
+        "語法模板："
+        "```cpp"
+        $"($t.syntax_template)"
+        "```"
+        (if ($t.vim_drills | is-empty) { "" } else {
+          $"vim 練習：\n- ($t.vim_drills | str join '\n- ')"
+        })
+        $"確認標準：($t.evidence | str join '、')"
+      ] | where ($it | is-not-empty) | str join "\n"
+    } | str join "\n---\n")
+    let files = ($ud.phase_learn.follow_along? | default [])
+    let ref = if ($files | is-empty) { "" } else { $"\n跟打檔案：($files | str join '、')——要求學生開 vim 打開這些檔案，跟著打一遍後說「看」，然後你幫他編譯執行看輸出" }
+    [$"\n\n## 本課語法點與跟打練習" "教學順序：逐一教以下每個語法點。先展示語法模板（在對話中），要求學生在 vim 中自己打一遍（可以用 work/templates/ 下的檔案或自己開新檔）。學生說「看」你就讀代碼，然後 forge run 給他看輸出。確認學生理解每個語法點（依 evidence 檢核）後才進入下一個。" "所有語法點教完後，才進入檢核題階段。" "" $raw $ref] | where ($it | is-not-empty) | str join "\n\n"
+  } else { "" }
+
+  # 三階段說明
+  let phase_note = if ($ud.phase_learn? | default {} | get -o topics | length) > 0 {
+    let practice_ref = if ($ud.phase_practice? | default {} | get -o syntax_ref_provided | default true) { "" } else { "- **練習階段不提供語法參考**——學生必須靠自己回想剛剛學的語法" }
+    ["## 三階段教學流程" "本課分三階段：\n1. **學習**（你現在在這裡）：展示語法 → 學生 vim 跟著打 → 看輸出 → 確認理解\n2. **練習**：指派檢核題，不再提供語法展示，學生靠自己回想剛學的語法來解題\n3. **考試**（如果有）：獨立解題，完全不給提示" $practice_ref "當前階段是「學習」——一次教一個語法點，確保學生打過、看過輸出、確認理解再前進。直到所有語法點教完才進練習。"] | where ($it | is-not-empty) | str join "\n\n"
+  } else { "" }
+
   let prompt = $"你是一對一 C++ 競程家教，學生目標是台灣 TOI 選訓營（APCS/能競/初選路線）。
 本課單元：($ud.name)
 教學目標：($ud.goals | str join '、')
@@ -670,13 +727,14 @@ export def "forge learn" [
 規則：
 - 開場探測：至多 3 個小問題、3 分鐘內收斂出起點，不展開討論；會的快速複習帶過，不會的從零教起
 - 模糊概念用「提醒＋確認」語氣（『確認一下：__，對吧？』），禁止說『你不熟』『概念不好』這類診斷句；仍模糊就記入概念帳本，繼續主線，不當場開補
-- 費曼式推進：每講完一個概念，立即出一個 30 秒微練習，學生答對才前進
+- 費曼式推進：每講完一個概念（一個語法點），立即出一個 30 秒微練習（在 vim 裡打出來），學生完成才前進
 - 競程慣例先給理由再給規則：明說這是『這項競技的方言，不是好工程』；學生有工程直覺時，對照工程慣例解釋此處為何不同（例：全域陣列因為生命週期=單次執行、宏因為打字速度是資源）。承認怪，再給存在理由，不強迫吞
 - 嚴禁提及未教內容；非提不可就一句話帶過：『之後單元的東西，現在不用懂』，不展開
 - 學生問『為什麼』：三句內答完；更深的討論記入概念帳本，拉回主線
-- 學生在另一個 vim 窗口手打代碼（機械記憶必要）；學生說『看』你就讀代碼、要跑就代為編譯執行，不叫學生開終端打指令
-- 示例代碼用最小片段，要求學生自己動手打一遍；不要餵完整大段程式
-- 收尾時指派檢核題，開題交給系統，不劇透解法
+- **學生問『某某語法是什麼/怎麼寫』時，不得直接回答。** 用系統工具（forge concept index / forge concept show / forge drill）找出對應概念 → 讓學生動手練。回答語法問題永遠等於害他——他需要的是肌肉記憶不是聽解釋。
+- 學生在另一個 vim 窗口手打代碼（肌肉記憶必要）；學生說『看』你就讀代碼、要跑就 forge run，不叫學生開終端打指令
+- 示例代碼用最小片段，要求學生自己動手打一遍；不要餵完整大段程式($learn_extra)($phase_note)
+- 收尾時指派檢核題（進練習階段），開題交給系統，不劇透解法
 - 全程繁體中文；一次訊息只推進一小步，等學生回應($source)"
   let cmd = ($env.FORGE_LLM_CMD? | default "")
   if ($cmd | is-empty) {
@@ -698,7 +756,7 @@ export def "forge pass" [--force] {
   if (not ($remaining | is-empty)) and (not $force) {
     error make { msg: $"檢核題未完成：($remaining | str join '、')。AC 後再 pass（或 --force）" }
   }
-  save-profile ($prof | upsert unit ($cur + 1))
+  save-profile ($prof | upsert unit ($cur + 1) | upsert phase "learn")
   let next = ($c | where id == ($cur + 1))
   if ($next | is-empty) {
     print $"單元 ($cur)〈($ud.name)〉通過——課綱全部完成！"
@@ -804,6 +862,130 @@ export def "forge concept" [
   }
 }
 
+# ===================== 概念索引與結構化 Drill =====================
+
+def concept-index [] {
+  let f = (root | path join "data/concept-index.json")
+  if not ($f | path exists) {
+    error make { msg: "concept-index.json 不存在，系統結構不完整" }
+  }
+  open $f
+}
+
+# 列出概念索引（支援搜尋）
+# forge concept index         → 所有概念
+# forge concept index -q for  → 搜尋名稱含 "for" 的概念
+export def "forge concept index" [
+  --query (-q): string = ""
+] {
+  let idx = (concept-index)
+  let result = if ($query | is-empty) { $idx } else {
+    $idx | where {|c| $c.name =~ $query or $c.id =~ $query }
+  }
+  if ($result | is-empty) { print "沒有符合的概念" } else {
+    $result | select id name unit drills | each {|c|
+      let drill_summary = ($c.drills | length)
+      let problem_count = ($c.drills | where type == "problem" | length)
+      { id: $c.id, name: $c.name, unit: $c.unit, total_drills: $drill_summary, problems: $problem_count }
+    }
+  }
+}
+
+# 顯示某個概念的完整 drill 資訊
+# LLM 用這個取代「直接回答語法問題」
+# forge concept show mt_u1_eof  → 顯示 syntax_template + drills
+export def "forge concept show" [
+  concept: string
+] {
+  let idx = (concept-index)
+  let c = ($idx | where id == $concept)
+  if ($c | is-empty) {
+    # 嘗試模糊搜尋
+    let fuzzy = ($idx | where {|x| $x.name =~ $concept or $x.id =~ $concept })
+    if ($fuzzy | is-empty) { error make { msg: $"找不到概念 '($concept)'。用 forge concept index 列出所有" } }
+    print $"找到多個：($fuzzy | each {|x| $'($x.id) — ($x.name)' } | str join '\n')"
+    print "用完整 id 重新查詢"
+    return
+  }
+  let c = ($c | first)
+  print $"概念：($c.id)"
+  print $"名稱：($c.name)"
+  print $"單元：($c.unit)"
+  print $"前置觀念：($c.prerequisites | str join ', ')"
+  print ""
+  print "語法模板："
+  print "```cpp"
+  print $c.syntax_template
+  print "```"
+  print ""
+  print "Drills："
+  let lines = ($c.drills | enumerate | each {|d|
+    let tag = (match $d.item.type { "learn" => "跟打", "fill" => "填空", "problem" => "題目", _ => $d.item.type })
+    $"  ($d.index). [($tag)] ($d.item.desc) → forge drill ($c.id) --mode ($d.item.type)" + (if $d.item.type == "problem" { $" --problem ($d.item.id)" } else { "" })
+  } | str join "\n")
+  print $lines
+}
+
+# 對某個概念啟動 drill session
+# —mode learn: 複製模板到 work/sol.cpp，learn phase 開題
+# —mode fill: 顯示填空提示
+# —mode problem: 練習 phase 開題
+export def "forge drill" [
+  concept: string
+  --mode (-m): string = "learn"    # learn / fill / problem
+  --problem (-p): string = ""       # problem mode 時指定題目
+] {
+  let idx = (concept-index)
+  let c = ($idx | where id == $concept)
+  if ($c | is-empty) {
+    error make { msg: $"找不到概念 '($concept)'。用 forge concept index 列出所有" }
+  }
+  let c = ($c | first)
+
+  match $mode {
+    "learn" => {
+      # 找第一個 learn drill
+      let drill = ($c.drills | where type == "learn" | first)
+      if $drill == null { error make { msg: $"概念 '($concept)' 沒有 learn 模式的 drill" } }
+      let src = (root | path join $drill.file)
+      if not ($src | path exists) { error make { msg: $"模板檔案不存在：($drill.file)" } }
+      cp -f $src (root | path join "work/sol.cpp")
+      # 記錄 active_file
+      let now = (now-iso)
+      { problem: $"drill/($concept)", phase: "learn", session_phase: "learn", started: $now, mode: "drill",
+        events: [{ at: $now, kind: "start" }], hints: [], denied: 0, active_file: "work/sol.cpp" }
+      | save -f (session-file)
+      print $"已開始概念 drill：($c.name)"
+      print $"模板已複製到 work/sol.cpp"
+      print "要求學生在 vim 中打開 work/sol.cpp，跟著語法模板打一遍。"
+      print "完成後說「看」，我幫他編譯執行看輸出。"
+      print ""
+      print $c.syntax_template
+    }
+    "fill" => {
+      let drill = ($c.drills | where type == "fill" | first)
+      if $drill == null { error make { msg: $"概念 '($concept)' 沒有 fill 模式的 drill" } }
+      print $"填空練習：($c.name)"
+      print "要求學生開新檔案，填入以下缺漏的部分："
+      print ""
+      print "```cpp"
+      print $drill.prompt
+      print "```"
+      print ""
+      print "完成後說「看」，我檢查正確性。"
+    }
+    "problem" => {
+      let pid = if ($problem | is-empty) {
+        let drills = ($c.drills | where type == "problem")
+        if ($drills | is-empty) { error make { msg: $"概念 '($concept)' 沒有 problem 模式的 drill" } }
+        $drills | first | get id
+      } else { $problem }
+      print $"forge start ($pid) --phase practice"
+      print (forge start $pid --phase practice)
+    }
+  }
+}
+
 # 編譯並執行（LLM 代勞，學生不用開 bash 窗口）
 export def "forge run" [
   file: string = "work/sol.cpp"
@@ -828,7 +1010,74 @@ export def "forge run" [
   }
 }
 
-# 每日入口：今天該做什麼（按進度漸進顯示，零基礎只看到上課）
+# 詳細 OJ 模擬：對題目執行多筆測資並回傳時間/記憶體/逐筆結果
+# forge bench work/sol.cpp -i "3"    → 單筆含詳細資源
+# forge bench work/sol.cpp -t 5      → 連續跑 5 次取統計
+export def "forge bench" [
+  file: string = "work/sol.cpp"
+  --input (-i): string = ""       # 單筆測資
+  --times (-t): int = 1            # 連續執行次數
+] {
+  let f = if ($file | path exists) { $file } else { root | path join $file }
+  if not ($f | path exists) { error make { msg: $"找不到 ($f)" } }
+
+  let comp = (do { ^g++ -O2 -std=c++17 -Wall -Wextra -o /tmp/forge_bench $f } | complete)
+  if $comp.exit_code != 0 {
+    return { compiled: false, errors: $comp.stderr }
+  }
+
+  let timing = (1..$times | each {|i|
+    let t0 = (date now)
+    let inp = if ($input | is-empty) { "" } else { $input }
+    let r = (do { $inp | ^timeout 5 /tmp/forge_bench } | complete)
+    let elapsed = ((date now) - $t0) / 1ms | math round
+    {
+      run: $i
+      exit: $r.exit_code
+      timed_out: ($r.exit_code == 124)
+      ms: $elapsed
+      output: ($r.stdout | str trim)
+      stderr: ($r.stderr | str trim)
+    }
+  })
+
+  let total_ms = ($timing | get ms | math sum)
+  let avg_ms = ($total_ms / $times | math round)
+  let max_ms = ($timing | get ms | math max)
+  let min_ms = ($timing | get ms | math min)
+
+  print $"編譯：OK（無警告）"
+  print $"執行：($times) 次"
+  print $"時間：avg ($avg_ms)ms / max ($max_ms)ms / min ($min_ms)ms"
+  print ""
+  $timing | each {|r|
+    let tag = if $r.timed_out { " ⏰ TLE" } else if $r.exit != 0 { " 💥 RE" } else { " ✅" }
+    print $"Run ($r.run)($tag): ($r.ms)ms"
+    if ($r.output | is-not-empty) { print $"  輸出：($r.output)" }
+    if ($r.stderr | is-not-empty) { print $"  stderr：($r.stderr)" }
+  }
+}
+
+# 判斷當前單元進入到哪個階段（learn / practice / exam）
+def unit-phase [unit: record, prof: record] {
+  # 檢查 phase_learn 是否完成：看哪些 topics 有 syntax_template 且 evidence 被確認
+  # 簡單啟發式：如果檢核題有剩，且 phase_learn 有 topics → 還在 learn 階段
+  # 如果檢核題有處理但未全 AC → practice 階段
+  # 如果檢核題全 AC → 單元完成，可進 exam 或下一單元
+  let remaining = (unit-remaining $unit)
+  if ($remaining | is-empty) {
+    if (($unit.phase_exam? | default {} | get -o problems | length) > 0) {
+      "exam"
+    } else { "complete" }
+  } else if ($unit.phase_practice? | default {} | get -o syntax_ref_provided | default true) {
+    # phase_practice 有 syntax_ref → 仍在 learn 階段的可能性高
+    # 用 profile 裡的 phase 記錄判斷
+    let saved = ($prof.phase? | default "learn")
+    $saved
+  } else { "practice" }
+}
+
+# 每日入口：偵測學生狀態 → 顯示當前最優先事項
 export def "forge today" [] {
   let today = (date now | format date "%Y-%m-%d")
   let prof = (forge profile)
@@ -837,37 +1086,109 @@ export def "forge today" [] {
   let due = (forge due)
   let recs_today = (load-rec | where date == $today | length)
   let done_today = (load | where kind == "attempt" and date == $today)
+  let fuzzy = (fuzzy-concepts)
 
   print $"=== ($today) ==="
+
+  # ── 1. 進行中的 session（最高優先）──
   if (session-file | path exists) {
     print "▶ 進行中的題目："
     print (forge status | table)
   }
 
+  # ── 2. 到期複習 ──
   if not ($due | is-empty) {
-    print $"■ 到期複習 ($due | length) 題（空白重推，最優先）：just done <id> 記錄結果"
+    print $"■ 到期複習：($due | length) 題（最優先，空白重推）"
     print ($due | table)
   }
 
+  # ── 3. 主線進度 ──
   if $cur <= ($c | length) {
     let ud = ($c | where id == $cur | first)
+    let phase = (unit-phase $ud $prof)
     let rem = (unit-remaining $ud)
-    print $"■ 今日主線：單元 ($cur)/($c | length)〈($ud.name)〉 → 對 AI 家教說「上課」"
-    if not ($rem | is-empty) { print $"  課後檢核題：($rem | str join '、')（AC 後推進單元）" }
+
+    # 前置知識鏈
+    let prereqs = ($ud.prerequisites? | default [])
+    if not ($prereqs | is-empty) {
+      let prereq_names = ($prereqs | each {|id|
+        let u = ($c | where id == $id | first)
+        if ($u | is-empty) { null } else {
+          let done = (solved-ids)
+          let unit_problems = ($u.problems? | default [])
+          let all_done = ($unit_problems | all {|p| $p in $done})
+          if $all_done { null } else { $u.name }
+        }
+      } | compact)
+      if not ($prereq_names | is-empty) {
+        print $"  前置未完成：($prereq_names | str join '、') —— 先完成前置單元"
+      }
+    }
+
+    print $"■ 主線：單元 ($cur)/($c | length) 〈($ud.name)〉"
+    match $phase {
+      "learn" => {
+        print "  階段：學習（跟老師學語法、vim 跟著打） → 對 AI 家教說「上課」"
+        if ($ud.phase_learn? | default {} | get -o topics | length) > 0 {
+          let topics = ($ud.phase_learn.topics | get name)
+          print $"  本課語法點：($topics | str join '、')"
+        }
+      }
+      "practice" => {
+        print "  階段：練習（不給語法參考，自己回想）"
+        if not ($rem | is-empty) {
+          print $"  檢核題剩餘：($rem | str join '、')"
+        }
+      }
+      "exam" => {
+        print "  階段：考試（空白環境，獨立解題）"
+      }
+      "complete" => {
+        print "  ✅ 檢核題全 AC，可推進至下一單元（對老師說「通過」）"
+      }
+    }
   } else {
     print "■ 課綱已完成，今日題單："
     try { print (forge pick | table) } catch { print "  （先 just sync，再 just profile -r <rating>）" }
   }
 
-  # 識別訓練從單元 10（已學過多個主題）才加入日課
+  # ── 4. 識別訓練（從單元 10 起）──
   if $cur >= 10 { print $"■ 識別訓練：今日 ($recs_today)/10（just rec 記錄）" }
-  let fuzzy = (fuzzy-concepts)
+
+  # ── 5. 模糊概念 ──
   if not ($fuzzy | is-empty) {
     print $"■ 模糊概念待銷帳 ($fuzzy | length) 個：($fuzzy | get concept | str join '、')"
   }
+
+  # ── 6. 今日已解 ──
   if not ($done_today | is-empty) {
     print $"■ 今日已解：($done_today | length) 題（乾淨 AC ($done_today | where result == 'ac' and hint_level == 0 | length)）"
   }
+}
+
+# 格式化並回傳差異（人肉 fmt 的對照教材）
+# 預設「只 diff 不改原檔」——LLM 家教可放心呼叫不會把學生手打風格覆蓋掉。
+export def "forge fmt" [
+  file: string = "work/sol.cpp"
+  --apply (-a)   # 真的把 clang-format 的結果寫回原檔；學生主動要求才開
+] {
+  let f = if ($file | path exists) { $file } else { root | path join $file }
+  if not ($f | path exists) { error make { msg: $"找不到 ($f)" } }
+  let laid = (mktemp -t forge_fmt.XXXX.cpp)
+  open --raw $f | save -f $laid
+  ^clang-format $"-style=file:(root | path join '.clang-format')" -i $laid
+  let d = (do { ^diff -u $f $laid } | complete)
+  let diff = ($d.stdout | str trim)
+  let verdict = if ($diff | is-empty) {
+    "已是標準格式，人肉 fmt 及格"
+  } else if $apply {
+    cp -f $laid $f
+    $"已套用 clang-format 改動到 ($f)。差異（學習用）：\n($diff)"
+  } else {
+    $"人肉 fmt 對照教材（未動 ($f)；要套用就 --apply）：\n($diff)"
+  }
+  rm -f $laid
+  $verdict
 }
 
 # ===================== 自檢 =====================

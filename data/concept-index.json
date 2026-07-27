@@ -1,0 +1,176 @@
+[
+  {
+    "id": "mt_u1_skeleton",
+    "name": "C++ 程式骨架",
+    "unit": 1,
+    "prerequisites": [],
+    "syntax_template": "#include <iostream>\nusing namespace std;\nint main() {\n  return 0;\n}",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u1_skeleton.cpp", "desc": "跟著語法模板打一次" },
+      { "type": "fill", "prompt": "補齊 #include <iostream>\nusing namespace std;\n__ main() {\n  return __;\n}", "desc": "填空骨架" },
+      { "type": "problem", "id": "zj/a002", "desc": "兩數相加——練習完整骨架" }
+    ]
+  },
+  {
+    "id": "mt_u1_cout",
+    "name": "cout 輸出",
+    "unit": 1,
+    "prerequisites": ["mt_u1_skeleton"],
+    "syntax_template": "cout << \"文字\" << 123 << endl;",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u1_hello.cpp", "desc": "跟著 hello world 打" },
+      { "type": "fill", "prompt": "cout __ \"hello\" __ endl;", "desc": "填空 << 與 <<" },
+      { "type": "problem", "id": "zj/a001", "desc": "hello 題——練習 cout + EOF 輸入" }
+    ]
+  },
+  {
+    "id": "mt_u1_variables",
+    "name": "變數宣告與型別",
+    "unit": 1,
+    "prerequisites": ["mt_u1_skeleton"],
+    "syntax_template": "int a = 10;\nlong long b = 1000000000000LL;\ndouble c = 3.14;\nchar d = 'A';\nbool e = true;",
+    "drills": [
+      { "type": "fill", "prompt": "int x __ 5;\nlong long y __ 1000000000000LL;\nchar c __ 'A';", "desc": "填空 = 與型別" },
+      { "type": "problem", "id": "zj/a002", "desc": "兩數和——用正確型別存大數" }
+    ]
+  },
+  {
+    "id": "mt_u1_cin",
+    "name": "cin >> 輸入",
+    "unit": 1,
+    "prerequisites": ["mt_u1_variables"],
+    "syntax_template": "int x;\ncin >> x;\ncout << x * 2 << endl;",
+    "drills": [
+      { "type": "fill", "prompt": "int x;\n__ __ x;\ncout __ x __ endl;", "desc": "填空 cin >> 與 cout <<" },
+      { "type": "problem", "id": "zj/a002", "desc": "兩數相加——cin/cout 完整" }
+    ]
+  },
+  {
+    "id": "mt_u1_eof",
+    "name": "EOF 多筆輸入",
+    "unit": 1,
+    "prerequisites": ["mt_u1_cin"],
+    "syntax_template": "string s;\nwhile (cin >> s) {\n  cout << \"hello, \" << s << endl;\n}",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u1_hello.cpp", "desc": "跟著打 while(cin>>) 範例" },
+      { "type": "fill", "prompt": "string s;\n__ (__ >> s) {\n  cout << s << endl;\n}", "desc": "填空 while(cin>>)" },
+      { "type": "problem", "id": "zj/a001", "desc": "hello 題——while(cin>>) 實戰" }
+    ]
+  },
+  {
+    "id": "mt_u1_io_perf",
+    "name": "IO 優化慣用語",
+    "unit": 1,
+    "prerequisites": ["mt_u1_cin"],
+    "syntax_template": "ios_base::sync_with_stdio(false);\ncin.tie(nullptr);",
+    "drills": [
+      { "type": "fill", "prompt": "__::sync_with_stdio(false);\n__.tie(nullptr);", "desc": "填空 IO 優化" },
+      { "type": "problem", "id": "zj/a002", "desc": "加上最佳化的兩數和" }
+    ]
+  },
+  {
+    "id": "mt_u2_if",
+    "name": "if / else if / else",
+    "unit": 2,
+    "prerequisites": ["mt_u1_cin"],
+    "syntax_template": "int x; cin >> x;\nif (x > 0) {\n  cout << \"positive\";\n} else if (x == 0) {\n  cout << \"zero\";\n} else {\n  cout << \"negative\";\n}",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u2_if.cpp", "desc": "跟著打 if/else if/else" },
+      { "type": "fill", "prompt": "int x; cin >> x;\n__ (x % 2 == 0) {\n  cout << \"even\";\n} __ {\n  cout << \"odd\";\n}", "desc": "填空 if/else 判斷奇偶" },
+      { "type": "problem", "id": "zj/a003", "desc": "if/else 條件判斷題" }
+    ]
+  },
+  {
+    "id": "mt_u2_for",
+    "name": "for 迴圈",
+    "unit": 2,
+    "prerequisites": ["mt_u1_skeleton"],
+    "syntax_template": "for (int i = 0; i < 5; i++) {\n  cout << i << ' ';\n}",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u2_loop.cpp", "desc": "跟著打 for 迴圈範例" },
+      { "type": "fill", "prompt": "__ (int i = 0; i __ n; i++) {\n  sum += i;\n}", "desc": "填空 for 三要素" },
+      { "type": "problem", "id": "cses/1068", "desc": "模擬題——for/while 實戰" }
+    ]
+  },
+  {
+    "id": "mt_u2_while",
+    "name": "while 迴圈與 EOF",
+    "unit": 2,
+    "prerequisites": ["mt_u1_eof", "mt_u2_for"],
+    "syntax_template": "int x, sum = 0;\nwhile (cin >> x) {\n  if (x < 0) continue;\n  if (x > 100) break;\n  sum += x;\n}",
+    "drills": [
+      { "type": "fill", "prompt": "int x;\n__ (cin >> x) {\n  cout << x * 2 << endl;\n}", "desc": "填空 while(cin>>) EOF 模式" },
+      { "type": "problem", "id": "cses/1068", "desc": "Collatz——while 實戰" }
+    ]
+  },
+  {
+    "id": "mt_u3_func_def",
+    "name": "函式定義與呼叫",
+    "unit": 3,
+    "prerequisites": ["mt_u2_for"],
+    "syntax_template": "int add(int a, int b) {\n  return a + b;\n}\nint main() {\n  cout << add(3, 4);\n}",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u3_func.cpp", "desc": "跟著打函式範例" },
+      { "type": "fill", "prompt": "__ max2(int a, int b) {\n  if (a > b) __ a;\n  else __ b;\n}", "desc": "填空 return 型別與值" },
+      { "type": "problem", "id": "cses/1068", "desc": "用函式封裝 Collatz 步驟" }
+    ]
+  },
+  {
+    "id": "mt_u3_recursion",
+    "name": "遞迴入門",
+    "unit": 3,
+    "prerequisites": ["mt_u3_func_def"],
+    "syntax_template": "int fact(int n) {\n  if (n <= 1) return 1;\n  return n * fact(n - 1);\n}",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u3_func.cpp", "desc": "跟著打階乘遞迴" },
+      { "type": "fill", "prompt": "int fib(int n) {\n  if (n <= 1) __ n;\n  __ fib(n-1) + fib(n-2);\n}", "desc": "填入 base case 與遞迴呼叫" }
+    ]
+  },
+  {
+    "id": "mt_u4_array",
+    "name": "陣列宣告與遍歷",
+    "unit": 4,
+    "prerequisites": ["mt_u2_for"],
+    "syntax_template": "int a[5] = {2, 4, 6, 8, 10};\nfor (int i = 0; i < 5; i++) {\n  cout << a[i] << ' ';\n}",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u4_array.cpp", "desc": "跟著打陣列範例" },
+      { "type": "fill", "prompt": "int arr[100];\nfor (int i = 0; i < n; i++) {\n  cin >> __[i];\n}", "desc": "填空陣列名稱" },
+      { "type": "problem", "id": "cses/1069", "desc": "陣列遍歷——連續字元計數" }
+    ]
+  },
+  {
+    "id": "mt_u4_vector",
+    "name": "vector 動態陣列",
+    "unit": 4,
+    "prerequisites": ["mt_u4_array"],
+    "syntax_template": "vector<int> v;\nv.push_back(10);\nv.push_back(20);\ncout << v.size() << ' ' << v[0];",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u4_array.cpp", "desc": "跟著打 vector 範例" },
+      { "type": "fill", "prompt": "vector<int> v;\nint x;\nwhile (cin >> x) {\n  v.___(x);\n}\nfor (int i = 0; i < v.___(); i++) {\n  cout << v[i] << ' ';\n}", "desc": "填空 push_back/size" },
+      { "type": "problem", "id": "cses/1083", "desc": "vector——找缺失數" }
+    ]
+  },
+  {
+    "id": "mt_u4_string",
+    "name": "string 操作",
+    "unit": 4,
+    "prerequisites": ["mt_u4_array"],
+    "syntax_template": "string s = \"hello\";\ncout << s.length() << ' ' << s[0] << endl;\ns += \" world\";",
+    "drills": [
+      { "type": "learn", "file": "work/templates/u4_array.cpp", "desc": "跟著打 string 範例" },
+      { "type": "fill", "prompt": "string s;\ncin >> s;\nfor (int i = 0; i < s.___(); i++) {\n  cout << s[i] << endl;\n}", "desc": "填空 length() 與 []" },
+      { "type": "problem", "id": "cses/1069", "desc": "string 遍歷" }
+    ]
+  },
+  {
+    "id": "mt_u4_2d_array",
+    "name": "二維陣列",
+    "unit": 4,
+    "prerequisites": ["mt_u4_array", "mt_u2_for"],
+    "syntax_template": "int g[3][4] = {};\nfor (int r = 0; r < 3; r++)\n  for (int c = 0; c < 4; c++)\n    g[r][c] = r * 4 + c;",
+    "drills": [
+      { "type": "fill", "prompt": "int grid[10][10];\nfor (int r = 0; r < 5; r++)\n  for (int c = 0; c < 5; c++)\n    grid[__][__] = r * 5 + c;", "desc": "填空二維索引" },
+      { "type": "problem", "id": "cses/1083", "desc": "陣列操作" }
+    ]
+  }
+]

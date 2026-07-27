@@ -1,6 +1,6 @@
 { pkgs, ... }: {
   packages = with pkgs; [
-    nushell just ripgrep fd git jujutsu gcc gdb bun
+    nushell just ripgrep fd git jujutsu gcc gdb bun zellij
   ];
 
   dotenv.enable = false;

@@ -4,3 +4,29 @@
 a.out
 data/cf-problems.json
 mcp/node_modules/
+**/node_modules/
+
+# sols/ 解題歸檔：只收原始碼，排除編譯產物與 vim swap
+sols/*
+!sols/*.cpp
+!sols/*.h
+!sols/README.md
+
+# work/ 學生練習區：排除編譯產物與測試輸入
+work/*
+!work/templates/
+
+# log/ 訓練日誌（本機學生資料）
+log/*
+
+# PDF 論文（過大，不進 git）
+docs/papers/*.pdf
+
+# 大 PDF 另用 git-lfs 或外部連結
+docs/papers/Burton_1981_Diagnosing_Bugs_Simple_Procedural_Skill.pdf
+docs/papers/Corbett_Anderson_1995_Knowledge_Tracing.pdf
+docs/papers/atkinson2000-learning-from-examples.pdf
+
+# vim swap
+*.swp
+*.swo

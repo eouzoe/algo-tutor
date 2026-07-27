@@ -1,0 +1,171 @@
+[
+  {
+    "id": "A01-fft-ntt",
+    "name": "FFT / NTT",
+    "group": "代數工具",
+    "resources": [
+      { "name": "CP-Algorithms: FFT", "url": "https://cp-algorithms.com/algebra/fft.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: 快速傅里葉變換", "url": "https://oi-wiki.org/math/poly/fft/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "CF: Tutorial on FFT/NTT (sidhant)", "url": "https://codeforces.com/blog/entry/43499", "lang": "en", "format": "blog", "rating": 4 },
+      { "name": "CF: [Tutorial] FFT (-is-this-fft-)", "url": "https://codeforces.com/blog/entry/111371", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "USACO Guide: FFT", "url": "https://usaco.guide/adv/fft", "lang": "en", "format": "guide", "rating": 4 },
+      { "name": "peltorator FFT 影片 (3h)", "url": "https://youtu.be/UiozqkITgXQ", "lang": "en", "format": "video", "rating": 5 }
+    ]
+  },
+  {
+    "id": "A02-generating-functions",
+    "name": "生成函數 (OGF/EGF)",
+    "group": "代數工具",
+    "resources": [
+      { "name": "CF: OGF/EGF Part 1 (zscoder)", "url": "https://codeforces.com/blog/entry/77468", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "CF: OGF/EGF Part 2 (zscoder)", "url": "https://codeforces.com/blog/entry/77551", "lang": "en", "format": "blog", "rating": 4 },
+      { "name": "OI Wiki: OGF / EGF", "url": "https://oi-wiki.org/math/poly/ogf/", "lang": "zh", "format": "article", "rating": 4 },
+      { "name": "Generatingfunctionology (Wilf)", "url": "https://www.math.upenn.edu/~wilf/DownldGF.html", "lang": "en", "format": "book", "rating": 5 },
+      { "name": "3Blue1Brown 直觀介紹", "url": "https://youtu.be/bOXCLR3Wric", "lang": "en", "format": "video", "rating": 5 },
+      { "name": "CF: Combinatorial Species (adamant)", "url": "https://codeforces.com/blog/entry/103979", "lang": "en", "format": "blog", "rating": 4 }
+    ]
+  },
+  {
+    "id": "A03-bm-kitamasa",
+    "name": "BM + Kitamasa",
+    "group": "代數工具",
+    "resources": [
+      { "name": "CF: BM 教學 (smax)", "url": "https://codeforces.com/blog/entry/96199", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "CF: Linear Recurrence (TLE)", "url": "https://codeforces.com/blog/entry/61306", "lang": "en", "format": "blog", "rating": 4 },
+      { "name": "OI Wiki: Berlekamp–Massey", "url": "https://oi-wiki.org/math/berlekamp-massey/", "lang": "zh", "format": "article", "rating": 4 },
+      { "name": "CF: Kitamasa 教學 (Justice_Hui)", "url": "https://codeforces.com/blog/entry/88760", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "CF: Bostan-Mori (maspy)", "url": "https://codeforces.com/blog/entry/111862", "lang": "en", "format": "blog", "rating": 5 }
+    ]
+  },
+  {
+    "id": "B01-mobius",
+    "name": "莫比烏斯反演",
+    "group": "數論深度",
+    "resources": [
+      { "name": "OI Wiki: 莫比烏斯反演", "url": "https://oi-wiki.org/math/number-theory/mobius/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "CF: Möbius Inversion", "url": "https://codeforces.com/blog/entry/53925", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "CF: Zeta/Möbius Transform", "url": "https://codeforces.com/blog/entry/119082", "lang": "en", "format": "blog", "rating": 4 },
+      { "name": "USACO Guide: PIE (Möbius)", "url": "https://usaco.guide/plat/PIE", "lang": "en", "format": "guide", "rating": 3 }
+    ]
+  },
+  {
+    "id": "B02-lucas-crt",
+    "name": "exCRT / Lucas",
+    "group": "數論深度",
+    "resources": [
+      { "name": "CP-Algorithms: CRT", "url": "https://cp-algorithms.com/algebra/chinese-remainder-theorem.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: CRT", "url": "https://oi-wiki.org/math/number-theory/crt/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: Lucas / exLucas", "url": "https://oi-wiki.org/math/number-theory/lucas/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "CF: CRT blog", "url": "https://codeforces.com/blog/entry/61290", "lang": "en", "format": "blog", "rating": 4 }
+    ]
+  },
+  {
+    "id": "B03-mr-pollard-rho",
+    "name": "MR + Pollard-Rho",
+    "group": "數論深度",
+    "resources": [
+      { "name": "CP-Algorithms: Primality Tests", "url": "https://cp-algorithms.com/algebra/primality_tests.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "CP-Algorithms: Factorization", "url": "https://cp-algorithms.com/algebra/factorization.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: 素性測試", "url": "https://oi-wiki.org/math/number-theory/prime/", "lang": "zh", "format": "article", "rating": 4 },
+      { "name": "OI Wiki: Pollard-Rho", "url": "https://oi-wiki.org/math/number-theory/pollard-rho/", "lang": "zh", "format": "article", "rating": 4 },
+      { "name": "KACTL: Factor.h", "url": "https://github.com/kth-competitive-programming/kactl", "lang": "en", "format": "code", "rating": 5 }
+    ]
+  },
+  {
+    "id": "C01-segment-tree-beats",
+    "name": "線段樹 Beats",
+    "group": "資料結構",
+    "resources": [
+      { "name": "CF: Segment Tree Beats (jiry_2)", "url": "https://codeforces.com/blog/entry/57319", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "OI Wiki: 線段樹 Beats", "url": "https://oi-wiki.org/ds/seg-beats/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "USACO Guide: Segtree Beats", "url": "https://usaco.guide/adv/segtree-beats", "lang": "en", "format": "guide", "rating": 4 },
+      { "name": "peltorator 影片", "url": "https://codeforces.com/blog/entry/90460", "lang": "en", "format": "video", "rating": 4 }
+    ]
+  },
+  {
+    "id": "C03-wavelet-matrix",
+    "name": "Wavelet Matrix",
+    "group": "資料結構",
+    "resources": [
+      { "name": "原始論文 (Navarro 2012)", "url": "https://users.dcc.uchile.cl/~gnavarro/ps/spire12.4.pdf", "lang": "en", "format": "paper", "rating": 5 },
+      { "name": "Enter the Wavelet Matrix", "url": "https://yuri.is/writing/enter-the-wavelet-matrix/", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "WM Construction", "url": "https://yuri.is/writing/wavelet-matrix-construction/", "lang": "en", "format": "blog", "rating": 4 },
+      { "name": "IOI Journal 論文", "url": "https://ioinformatics.org/journal/v10_2016_19_37.pdf", "lang": "en", "format": "paper", "rating": 4 },
+      { "name": "USACO Guide: Wavelet", "url": "https://usaco.guide/adv/wavelet", "lang": "en", "format": "guide", "rating": 4 },
+      { "name": "洛谷: 淺談 Wavelet Matrix", "url": "https://www.luogu.com.cn/article/w6s63rpj", "lang": "zh", "format": "blog", "rating": 4 }
+    ]
+  },
+  {
+    "id": "D01-dinic",
+    "name": "Dinic 最大流",
+    "group": "圖論進階",
+    "resources": [
+      { "name": "CP-Algorithms: Dinic", "url": "https://cp-algorithms.com/graph/dinic.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: 最大流", "url": "https://oi-wiki.org/graph/flow/max-flow/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "USACO Guide: Max Flow", "url": "https://usaco.guide/adv/max-flow", "lang": "en", "format": "guide", "rating": 4 },
+      { "name": "USACO Guide: Min Cut", "url": "https://usaco.guide/adv/min-cut", "lang": "en", "format": "guide", "rating": 4 },
+      { "name": "CF: Dinic 深入理解 (adamant)", "url": "https://codeforces.com/blog/entry/104960", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "CF: Min Cut 建模大全", "url": "https://codeforces.com/blog/entry/136761", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "VisuAlgo: Max Flow", "url": "https://visualgo.net/en/maxflow", "lang": "en", "format": "interactive", "rating": 5 }
+    ]
+  },
+  {
+    "id": "E01-cht",
+    "name": "凸包優化 CHT",
+    "group": "DP 優化",
+    "resources": [
+      { "name": "CP-Algorithms: CHT & Li Chao", "url": "https://cp-algorithms.com/geometry/convex_hull_trick.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: 李超線段樹", "url": "https://oi-wiki.org/ds/li-chao-tree/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: 斜率優化", "url": "https://oi-wiki.org/dp/opt/slope/", "lang": "zh", "format": "article", "rating": 4 },
+      { "name": "CF: CHT (643Algo)", "url": "https://codeforces.com/blog/entry/63823", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "USACO Guide: CHT", "url": "https://usaco.guide/plat/convex-hull-trick", "lang": "en", "format": "guide", "rating": 4 },
+      { "name": "Algorithms Live: CHT", "url": "https://youtu.be/PPFx7iCwWxQ", "lang": "en", "format": "video", "rating": 4 }
+    ]
+  },
+  {
+    "id": "E03-aliens",
+    "name": "Aliens Trick",
+    "group": "DP 優化",
+    "resources": [
+      { "name": "CF: The trick from aliens", "url": "https://codeforces.com/blog/entry/68778", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "OI Wiki: WQS 二分", "url": "https://oi-wiki.org/dp/opt/wqs-binary-search/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "CF: 理論基礎 (Lagrange duality)", "url": "https://codeforces.com/blog/entry/98334", "lang": "en", "format": "blog", "rating": 4 },
+      { "name": "Algo-Science: Alien's Trick", "url": "https://www.takeuhigh.org/docs/greedy-course/chapter-07-wqs-binary-search/01-the-aliens-trick/", "lang": "en", "format": "tutorial", "rating": 4 },
+      { "name": "IOI 2016 Aliens", "url": "https://oj.uz/problem/view/IOI16_aliens", "lang": "en", "format": "problem", "rating": 4 }
+    ]
+  },
+  {
+    "id": "E04-plug-dp",
+    "name": "Plug DP",
+    "group": "DP 優化",
+    "resources": [
+      { "name": "OI Wiki: 插頭 DP", "url": "https://oi-wiki.org/dp/plug/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "陳丹琦 2008 國集論文", "url": "https://www.cs.princeton.edu/~danqic/papers/dynamic-programming.pdf", "lang": "zh", "format": "paper", "rating": 5 },
+      { "name": "CF: Plug DP 介紹 (jxin314)", "url": "https://codeforces.com/blog/entry/90841", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "模板題: Luogu P5056", "url": "https://www.luogu.com.cn/problem/P5056", "lang": "zh", "format": "problem", "rating": 4 }
+    ]
+  },
+  {
+    "id": "G01-sam",
+    "name": "後綴自動機 SAM",
+    "group": "字串進階",
+    "resources": [
+      { "name": "CP-Algorithms: SAM", "url": "https://cp-algorithms.com/string/suffix-automaton.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: 後綴自動機", "url": "https://oi-wiki.org/string/sam/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "CF: SAM 簡明指南 (quasisphere)", "url": "https://codeforces.com/blog/entry/20861", "lang": "en", "format": "blog", "rating": 5 },
+      { "name": "CF: SAM and Suffix Tree (adamant)", "url": "https://codeforces.com/blog/entry/22420", "lang": "en", "format": "blog", "rating": 4 },
+      { "name": "e-maxx 原始文章", "url": "https://e-maxx.ru/algo/suffix_automata", "lang": "ru", "format": "article", "rating": 5 }
+    ]
+  },
+  {
+    "id": "G03-suffix-array",
+    "name": "後綴陣列 SA + LCP",
+    "group": "字串進階",
+    "resources": [
+      { "name": "CP-Algorithms: Suffix Array", "url": "https://cp-algorithms.com/string/suffix-array.html", "lang": "en", "format": "article", "rating": 5 },
+      { "name": "OI Wiki: 後綴陣列", "url": "https://oi-wiki.org/string/sa/", "lang": "zh", "format": "article", "rating": 5 },
+      { "name": "USACO Guide: Suffix Array", "url": "https://usaco.guide/adv/suffix-array", "lang": "en", "format": "guide", "rating": 4 },
+      { "name": "USACO Guide: String Suffix", "url": "https://usaco.guide/adv/string-suffix", "lang": "en", "format": "guide", "rating": 4 }
+    ]
+  }
+]

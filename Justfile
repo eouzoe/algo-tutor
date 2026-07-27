@@ -104,6 +104,10 @@ profile *args:
 gen constraints *args:
     {{_forge}} gen "{{constraints}}" {{args}}
 
+# Zellij 工作區（重連舊 session 或由 layout 新建）
+workspace:
+    ^bash deploy/workspace.sh
+
 # 對拍：just stress sol.cpp brute.cpp
 stress sol brute *args:
     {{_forge}} stress {{sol}} {{brute}} {{args}}

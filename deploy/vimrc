@@ -1,0 +1,15 @@
+" ioi-forge — 賽場等級的基本 vim 設定（半模擬真實比賽環境，刻意不裝插件）
+syntax on
+filetype plugin indent on
+set number
+set autoindent smartindent
+set tabstop=4 shiftwidth=4 expandtab
+set showmatch
+set incsearch hlsearch
+set ruler laststatus=2
+set backspace=indent,eol,start
+set shell=/bin/bash
+" F5：存檔並編譯執行目前檔案（備用；平常由 AI 家教代跑）
+map <F5> :w<CR>:!g++ -O2 -std=c++17 -Wall -o /tmp/a % && /tmp/a<CR>
+" F8：存檔並跑 forge bench（詳細時間/記憶體/逐次分析）
+map <F8> :w<CR>:!bash deploy/bench.sh %<CR>
