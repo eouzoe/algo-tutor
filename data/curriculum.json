@@ -11,13 +11,13 @@
       "cin/cout",
       "算術運算與溢位概念"
     ],
-    "tutor": "從零教起，且『有概念』≠『有肌肉記憶』——就算學生聊過概念，仍要逐行拆解最小程式的每個字：#include 是什麼、main 與回傳值、cin>>/cout<< 的完整寫法、endl。確認學生能不看範例默寫整個骨架，才進檢核題。檢核題是秒級題：用速練模式（mode=speed）開題，目標 30 秒內寫完；寫不出來＝骨架沒熟，回課重打三遍再試。全程強調 long long 習慣。第一課同時告知工作區：主解答寫 work/sol.cpp、隨手練習寫 work/scratch/，存檔後說「看」即可。",
+    "tutor": "CS 視角：先講計算機裡「變數是命名的記憶體位置（int=4 bytes、long long=8 bytes）、編譯器把 C++ 翻譯成機器指令」。拆解骨架每一行：`#include` 告訴編譯器去哪裡找 cout/endl 的宣告；`main()` 是作業系統第一個呼叫的函式；`return 0` 跟系統說「正常結束」。從零教起，且『有概念』≠『有肌肉記憶』——就算學生聊過概念，仍要逐行拆解最小程式的每個字。確認學生能不看範例默寫整個骨架，才進檢核題。使用速練模式開題，目標 30 秒內寫完。全程強調 long long 習慣（CSAPP Ch2：int 只有 2³¹，一秒就溢位）。第一課告知工作區。教材參考：USACO Guide Input/Output + OI Wiki 語法基礎。",
     "phase_learn": {
       "topics": [
         {
           "id": "mt_u1_skeleton",
           "name": "C++ 程式骨架",
-          "description": "認識 #include、main 函式、return 0 的意義。每一行都要能解釋在做什麼",
+          "description": "認識 #include、main、return 0。CS 視角：`main()` 是 OS 的第一個呼叫點；`#include` 是文字插入（編譯器把 iostream 的內容貼進來）；`return 0` 是結束碼。每一行都要能解釋在做什麼",
           "syntax_template": "#include <iostream>\nusing namespace std;\nint main() {\n  return 0;\n}",
           "vim_drills": [
             "開 vim → i → 打 #include → Esc → :wq",
@@ -44,7 +44,7 @@
         {
           "id": "mt_u1_variables",
           "name": "變數宣告與型別",
-          "description": "int / long long / double / char / bool 的正確宣告與使用時機",
+          "description": "int / long long / double / char / bool 的宣告與使用時機。CS 視角：變數 = 一塊命名的記憶體（int=4B、long long=8B、char=1B、bool=1B）。CSAPP Ch2：二補數表示法讓溢出從正變負。用 long long 當預設整數型別（IOI 完全夠用，不會因 int overflow 送命）",
           "syntax_template": "int a = 10;\nlong long b = 1000000000000LL;\ndouble c = 3.14;\nchar d = 'A';\nbool e = true;\ncout << a << ' ' << b;",
           "vim_drills": [
             "宣告不同型別變數並輸出"
@@ -56,7 +56,7 @@
         {
           "id": "mt_u1_cin",
           "name": "cin >> 輸入",
-          "description": "cin >> 變數 讀入一筆資料；EOF 多筆輸入模式",
+          "description": "cin >> 變數。CS 視角：>> 是運算子重載（operator>>），把 stdin 的字串解析成變數的型別。EOF = End of File，while(cin>>x) 回傳 false 當讀不到東西",
           "syntax_template": "int x;\ncin >> x;\ncout << x * 2 << endl;",
           "vim_drills": [
             "寫一個「讀兩數→輸出和」的程式"
@@ -80,7 +80,7 @@
         {
           "id": "mt_u1_io_perf",
           "name": "IO 優化慣用語",
-          "description": "ios_base::sync_with_stdio(false); cin.tie(nullptr); 的意義（競賽方言，不是好工程）",
+          "description": "這兩行告訴 C++ 不要跟 C stdio 同步（cin/cout 與 scanf/printf 可以混用的代價就是每次都 flush）。競賽場景不需要混用，關掉同步換速度。注意：O3/C++17 不會自動幫你關，這是要手動的。加的時候理解為什麼，不是死記",
           "syntax_template": "ios_base::sync_with_stdio(false);\ncin.tie(nullptr);",
           "vim_drills": [],
           "evidence": [
@@ -142,14 +142,14 @@
       "巢狀迴圈",
       "break/continue"
     ],
-    "tutor": "用模擬類小題教條件與迴圈；教 while 讀到 EOF 的競賽輸入模式。檢核題偏機械：用速練模式開題，重點是寫得快且一次對，不是想很久。先展示完整語法結構，學生跟著打→理解→再自己寫。",
+    "tutor": "CS 視角：if = CPU 的條件跳躍指令（branch），CPU 比較暫存器值後決定下一條指令的位置；for/while = conditional branch backward。巢狀 if/for 對應多層比較與跳躍。不教：逗號運算子、三元運算子巢狀、for 宣告多變數——這些破壞可讀性，O3/C++17 編譯器也不會幫你優化。學生跟著打→理解→寫。檢核題用速練模式。教材：OI Wiki 控制流（https://oi-wiki.org/lang/if/）+ CSAPP Ch3.6（Condition Codes）",
     "phase_learn": {
       "topics": [
         {
           "id": "mt_u2_if",
           "name": "if / else if / else",
-          "description": "條件分支語法與常見寫法，==、!=、<、>、&&、||",
-          "syntax_template": "int x; cin >> x;\nif (x > 0) {\n  cout << \"positive\" << endl;\n} else if (x == 0) {\n  cout << \"zero\" << endl;\n} else {\n  cout << \"negative\" << endl;\n}",
+          "description": "條件分支。CS 視角：if/else 對應 CPU 的條件跳躍（je/jne/jg/jl），`==` 對應 CMP 指令。`=` 是賦值（把右值寫入左值的記憶體）、`==` 是比較——混淆時編譯器通常只給警告，不報錯。RAII 風格：條件本體一律用 `{}`（單行也要），避免未來加行忘記補括號",
+          "syntax_template": "int x;\ncin >> x;\nif (x > 0) {\n  cout << \"positive\" << '\\n';\n} else if (x == 0) {\n  cout << \"zero\" << '\\n';\n} else {\n  cout << \"negative\" << '\\n';\n}",
           "vim_drills": [
             "打出完整 if/else if/else 結構",
             "用 forge run 測試不同輸入"
@@ -162,8 +162,8 @@
         {
           "id": "mt_u2_for",
           "name": "for 迴圈",
-          "description": "for (init; condition; update) 三要素。巢狀 for",
-          "syntax_template": "for (int i = 0; i < 5; i++) {\n  cout << i << ' ';\n} // 輸出 0 1 2 3 4",
+          "description": "for (init; condition; update) 三要素。CS 視角：for(i=0;i<n;i++) 對應「設 i=0 → 比較 i<n → 執行本體 → i++ → 比較 i<n → …」。巢狀 for 只是外層每走一步內層跑完整輪。O3/C++17 編譯器會自動展開小迴圈、向量化，不須人工 loop unrolling。不教：逗號一次改多變數、空條件無限 for(;;)（用 while(true) 更清楚）",
+          "syntax_template": "for (int i = 0; i < 5; i++) {\n  cout << i << ' ';\n}\n// 輸出 0 1 2 3 4",
           "vim_drills": [
             "打 for 迴圈 3 次、巢狀 for 畫矩形"
           ],
@@ -229,14 +229,14 @@
       "回傳值",
       "遞迴的 base case 思維"
     ],
-    "tutor": "教函式拆分思維；遞迴只到階乘/費氏程度，深入放單元 9。先展示函式語法結構，學生跟著打，理解參數傳遞與回傳值。",
+    "tutor": "CS 視角（CSAPP Ch3.7）：函式呼叫 = 硬體 stack frame 的 push/pop。呼叫時 return address + 參數被 push 到 stack；回傳時 pop 還原。區域變數就在 stack frame 裡，函式結束自動釋放（不需要手動 free）。遞迴只是連續 push frame，深度太高會 stack overflow（競賽約 10⁶ 層會爆，提醒不要用遞迴做大規模走訪）。不教：函式指標、預設參數、overload 解析規則——這些是實務重要但競賽不常用，先跳過。教材：OI Wiki 函式（https://oi-wiki.org/lang/func/）+ CSAPP Ch3.7 程序機制",
     "phase_learn": {
       "topics": [
         {
           "id": "mt_u3_func_def",
           "name": "函式定義與呼叫",
-          "description": "回傳型別、函式名稱、參數列、return",
-          "syntax_template": "int add(int a, int b) {\n  return a + b;\n}\nint main() {\n  cout << add(3, 4) << endl;\n}",
+          "description": "回傳型別、函式名稱、參數列、return。CS 視角：每個函式呼叫 push 一個 stack frame（含區域變數和 return address）；回傳時 pop。傳值 = 複製數值到 stack；傳址（後學的參考） = 複製位址，不複製資料。讓學生先養成「重複出現的邏輯就抽成函式」的習慣，不要一個 main 寫到底",
+          "syntax_template": "int add(int a, int b) {\n  return a + b;\n}\nint main() {\n  int x = 3, y = 4;\n  cout << add(x, y) << '\\n';\n}",
           "vim_drills": [
             "寫五種不同函式（無參/多參/無回傳）"
           ],
@@ -247,7 +247,7 @@
         {
           "id": "mt_u3_recursion",
           "name": "遞迴入門",
-          "description": "base case + recursive call。階乘與費氏",
+          "description": "base case + recursive call = 遞迴。CS 視角：遞迴 = 不停 push stack frame。fact(5) 依序 push fact(5)→fact(4)→…→fact(1)，然後從 fact(1) 開始 pop 回傳。深度太深 → stack overflow（競賽 n>10⁶ 不該用遞迴）。先教階乘與費氏，進階放單元 9",
           "syntax_template": "int fact(int n) {\n  if (n <= 1) return 1;\n  return n * fact(n - 1);\n}",
           "vim_drills": [
             "打階乘遞迴、費氏遞迴"
@@ -301,13 +301,13 @@
       "string 基本操作",
       "二維陣列"
     ],
-    "tutor": "教 vector 為預設容器；string 遍歷與比較；越界是什麼。先展示語法結構再讓學生跟著打。",
+    "tutor": "CS 視角（CSAPP Ch3 + CS61C）：陣列 = 連續記憶體區塊，a[3] = *(a + 3) = 從基底位址跳過 3 × sizeof(元素) bytes。越界不報錯是因為 C/C++ 不做 bounds checking——讀到的只是隔壁的記憶體內容。vector 包裝了動態陣列（heap 上管理），push_back 平均 O(1) 因為 capacity 倍增策略。string 也是連續記憶體 + 長度。不教：C-style char[] 字串（用 std::string 就好）、new/delete 手動管理（競賽用 vector/stack/全域陣列）。教材參考：OI Wiki 陣列（https://oi-wiki.org/lang/array/）+ OI Wiki 字串（https://oi-wiki.org/lang/string/）+ CSAPP Ch3.8 陣列配置",
     "phase_learn": {
       "topics": [
         {
           "id": "mt_u4_array",
           "name": "陣列宣告與遍歷",
-          "description": "型別 名稱[大小]; 索引 0-based",
+          "description": "型別 名稱[大小]; 索引 0-based。CS 視角：int a[5] 告訴編譯器「我要 5×4=20 bytes 的連續記憶體」。a[3] 對應 movl (%rdx, %rcx, 4), %eax——從 a 的位址 + 3×4 載入 4 bytes。所以索引從 0 開始（跳 0×size = 第一個元素）。越界不會報錯，只會讀到隔壁的記憶體——是 C++ 最大的陷阱之一",
           "syntax_template": "int a[5] = {2, 4, 6, 8, 10};\nfor (int i = 0; i < 5; i++) {\n  cout << a[i] << ' ';\n}",
           "vim_drills": [
             "宣告陣列→填值→遍歷輸出"
@@ -319,7 +319,7 @@
         {
           "id": "mt_u4_vector",
           "name": "vector 動態陣列",
-          "description": "push_back、size、索引存取——競賽首選容器",
+          "description": "push_back、size、存取——競賽首選容器。CS 視角：vector 內部用 new[] 在 heap 上配置連續記憶體。容量滿時倍增（通常 ×1.5~2）再複製舊資料——少數 push_back 會 O(n) 但平均 O(1)。比原始陣列安全（有 .size()、會自動釋放）",
           "syntax_template": "vector<int> v;\nv.push_back(10);\nv.push_back(20);\ncout << v.size() << ' ' << v[0];",
           "vim_drills": [
             "寫 vector 讀 n 筆資料的程式"
@@ -331,7 +331,7 @@
         {
           "id": "mt_u4_string",
           "name": "string 操作",
-          "description": "length、[]、+ 串接、比較",
+          "description": "length、[]、+ 串接、比較。CS 視角：string 內部也是連續記憶體 + 長度欄位（類似 vector<char>）。s[3] 同樣是 *(s.data() + 3)。s + t 需要新配置記憶體——大量串接用 ostringstream 或 reserve()",
           "syntax_template": "string s = \"hello\";\ncout << s.length() << ' ' << s[0] << endl;\ns += \" world\";",
           "vim_drills": [
             "寫字串反轉程式"
@@ -397,7 +397,7 @@
       "自訂比較 lambda",
       "greater<>"
     ],
-    "tutor": "排序是競賽第一工具：教 sort + pair 排序 + lambda 比較器。",
+    "tutor": "CS 視角：sort 用的是 introsort（quicksort + heapsort 混合），平均 O(n log n)、最壞 O(n log n)。比較次數決定了速度——自訂比較器回傳 true 表示「a 應該在 b 前面」。pair 預設先比 first 再比 second，因為底層用 operator< 逐成員比較。不教：自訂排序演算法（競賽用 sort 就好）、qsort（C style）、不穩定的排序細節（O3 編譯器不會自動幫你排序，但 sort 本身已經夠快）。教材參考：OI Wiki 排序（https://oi-wiki.org/basic/sort/）+ CP-Algorithms 排序",
     "problems": ["cses/1621"],
     "exit": "能對任意結構排序",
     "usaco": ["2_Bronze/Intro_Sorting.mdx", "3_Silver/Sorting_Custom.mdx"],
@@ -424,7 +424,7 @@
       "priority_queue",
       "queue/stack/deque"
     ],
-    "tutor": "每個容器講「什麼時候想到它」：去重→set、計數→map、動態最值→priority_queue。",
+    "tutor": "CS 視角：set/map 是紅黑樹（平衡 BST），插入/刪除/查詢都是 O(log n)。priority_queue 是 binary heap（陣列實作），push/pop O(log n)、top O(1)。queue 是 FIFO（底層 deque），stack 是 LIFO。每個容器講「什麼時候想到它」：去重→set、計數→map、前 k 大→priority_queue、BFS→queue、DFS→stack。O3/C++17 不會幫你選容器——你得自己選對。教材參考：OI Wiki STL（https://oi-wiki.org/lang/csl/）+ CP-Algorithms 資料結構",
     "problems": ["cses/1090"],
     "exit": "能為需求選對容器並說出複雜度",
     "usaco": ["2_Bronze/Intro_Sets.mdx", "3_Silver/Priority_Queues.mdx"],
@@ -449,7 +449,7 @@
       "unique/reverse/max_element",
       "迭代器概念"
     ],
-    "tutor": "教有序容器上的二分家族；unique 去重慣用法。",
+    "tutor": "CS 視角：lower_bound 是二分搜在有序區間上 O(log n)。迭代器是泛型指針——vector::iterator 就是包裝過的 T*。unique 把重複元素移到末端並回傳新 end，搭配 erase 實現去重。O3/C++17 編譯器會內聯這些小函式。不教：iterator_traits、reverse_iterator 細節。教材：OI Wiki 迭代器（https://oi-wiki.org/lang/iterator/）+ cppreference.com",
     "problems": ["cses/1091"],
     "exit": "熟練 lower_bound 在陣列與 set/map 上的用法",
     "usaco": ["1_General/Lambda_Funcs.mdx"],
@@ -476,7 +476,7 @@
       "forge stress 對拍",
       "邊界清單習慣"
     ],
-    "tutor": "教「看到約束先算複雜度預算」；帶著跑一次完整對拍流程（含 forge gen）。",
+    "tutor": "CS 視角：big-O 是「當 n → ∞ 時運算次數的成長率」，不是精確時間。1e8 次簡單運算 ≈ 1 秒。用約束反推演算法：n ≤ 20 → O(2ⁿ)、n ≤ 5000 → O(n²)、n ≤ 10⁵ → O(n log n)、n ≤ 10⁷ → O(n)。O3/-O2 編譯器優化不改變 big-O。教 forge stress 對拍流程。教材：CSAPP Ch5（程式效能優化——先看懂瓶頸在哪再優化）+ USACO Guide 時間複雜度",
     "problems": [],
     "exit": "動筆前能寫出複雜度預算；獨立跑通一次對拍",
     "usaco": ["2_Bronze/Time_Comp.mdx", "1_General/Basic_Debugging.mdx"],
