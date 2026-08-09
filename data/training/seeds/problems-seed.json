@@ -1,0 +1,71 @@
+{
+  "$schema": "../../schema/problem-spec.json",
+  "problems": [
+    {
+      "id": "pr_001",
+      "type": "pattern_recognition",
+      "statement": "給定 n 個活動，每個活動有開始時間和結束時間。選出最多數量的活動使得它們互不重疊。n ≤ 10⁵。",
+      "constraints": { "n_range": "1 ≤ n ≤ 10⁵", "time_limit": "1s" },
+      "difficulty": 2,
+      "target_patterns": ["sort_then_scan", "interval_scheduling"],
+      "triggers": ["最多數量", "互不重疊", "開始時間", "結束時間"],
+      "solution": {
+        "approach": "按照結束時間排序，每次選擇最早結束的活動",
+        "complexity": "O(n log n)",
+        "key_insight": "選最早結束的能留更多空間給後面",
+        "reasoning_chain": "『最多數量』+『互不重疊』+『開始/結束時間』→ 這是經典的 interval scheduling → 排序關鍵字是結束時間 → greedy 選擇最早結束的"
+      },
+      "rubric": {
+        "L1": "說出這是貪心或排序相關",
+        "L2": "說出要按照結束時間排序 + 解釋為什麼",
+        "L3": "從反證法說明為什麼最早結束的最優",
+        "L4": "能延伸到帶權版本或證明交換論證"
+      },
+      "source": "cses/1629"
+    },
+    {
+      "id": "pr_002",
+      "type": "pattern_recognition",
+      "statement": "給定一個有序陣列和目標值，找到兩個數使得它們的和等於目標值。",
+      "constraints": { "n_range": "2 ≤ n ≤ 10⁵", "time_limit": "1s" },
+      "difficulty": 2,
+      "target_patterns": ["two_pointers"],
+      "triggers": ["有序", "兩數之和", "目標值"],
+      "solution": {
+        "approach": "左指針在頭、右指針在尾，根據和的大小移動指針",
+        "complexity": "O(n)",
+        "key_insight": "有序 + 雙指針 = 把 O(n²) 降為 O(n)",
+        "reasoning_chain": "『有序』+『兩數之和』→ 雙指針 → 左指針在 0、右指針在 n-1 → 如果和太小就左移，太大就右移"
+      },
+      "rubric": {
+        "L1": "說出這是雙指針或 hash map 題目",
+        "L2": "說出為什麼雙指針在有序情況下有效",
+        "L3": "比較雙指針 vs hash map 的優缺點",
+        "L4": "能延伸到三數之和並分析複雜度"
+      },
+      "source": "cses/1640"
+    },
+    {
+      "id": "pr_003",
+      "type": "pattern_recognition",
+      "statement": "給你 n 個整數，找出一個連續子陣列使得其和最大。n ≤ 2×10⁵。",
+      "constraints": { "n_range": "1 ≤ n ≤ 2×10⁵", "time_limit": "1s" },
+      "difficulty": 2,
+      "target_patterns": ["kadane", "dp_1d"],
+      "triggers": ["連續子陣列", "和最大", "最大子陣列"],
+      "solution": {
+        "approach": "Kadane's algorithm：維護當前和，若為負則重置",
+        "complexity": "O(n)",
+        "key_insight": "如果目前累加和是負的，不如從頭開始",
+        "reasoning_chain": "『連續子陣列』+『和最大』→ 想到 Kadane → 維護 curr_max 和 global_max → 如果 curr < 0 就重置"
+      },
+      "rubric": {
+        "L1": "說出這是 DP 或最大子陣列問題",
+        "L2": "說出 Kadane 的核心邏輯（負和重置）",
+        "L3": "能證明為什麼負和重置是正確的",
+        "L4": "能延伸到二維版本或環形版本"
+      },
+      "source": "cses/1643"
+    }
+  ]
+}

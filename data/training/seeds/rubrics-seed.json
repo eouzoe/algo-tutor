@@ -1,0 +1,109 @@
+{
+  "$schema": "../../schema/rubric-spec.json",
+  "rubrics": [
+    {
+      "subsystem": "pattern_recognition",
+      "levels": {
+        "L1": {
+          "description": "能認出見過的題型",
+          "criteria": ["看到題目能說出屬於哪一類", "需要提示才能想起來"],
+          "example_response": "「這是排序後掃描的題目」"
+        },
+        "L2": {
+          "description": "能主動識別並解釋為什麼",
+          "criteria": ["不需要提示就能識別", "能說出識別的依據（關鍵詞/結構）"],
+          "example_response": "「看到『最小化最大』和『區間』，所以是排序後掃描」"
+        },
+        "L3": {
+          "description": "能識別變形和偽裝",
+          "criteria": ["能認出加了 disguise 的題型", "能解釋變形的手法"],
+          "example_response": "「這題表面是圖論，但核心還是排序後掃描 — 先把邊排序...」"
+        },
+        "L4": {
+          "description": "能創造新題或跨域應用",
+          "criteria": ["能自己出同一題型的題目", "能把這個模式遷移到其他領域"],
+          "example_response": "「我把這個模式用在字串問題上 — 排序字元後掃描...」"
+        }
+      },
+      "passing_threshold": "L2"
+    },
+    {
+      "subsystem": "problem_analysis",
+      "levels": {
+        "L1": {
+          "description": "能說出表面約束",
+          "criteria": ["能寫出 n 的範圍", "能寫出時間限制"],
+          "example_response": "「n 最大是 10⁵，時間 1 秒」"
+        },
+        "L2": {
+          "description": "能推斷複雜度限制",
+          "criteria": ["從 n 的範圍推斷該用什麼複雜度", "能說出哪些複雜度會 TLE"],
+          "example_response": "「n≤10⁵ → O(n²) 會 TLE，至少要 O(n log n)」"
+        },
+        "L3": {
+          "description": "能找出隱藏條件和邊界",
+          "criteria": ["能找出題目沒寫但默認的條件", "能舉出 edge case"],
+          "example_response": "「題目沒說但數字可能是負的，n 可能為 0」"
+        },
+        "L4": {
+          "description": "能完整分析並提出多種方向",
+          "criteria": ["约束→複雜度→可能演算法→預期陷阱", "能評估各方向的可行性"],
+          "example_response": "「...所以 O(n log n) 可行。可能方向有 A、B、C。A 看起來最直接，但要注意...」"
+        }
+      },
+      "passing_threshold": "L3"
+    },
+    {
+      "subsystem": "static_analysis",
+      "levels": {
+        "L1": {
+          "description": "能追蹤單行賦值和算術",
+          "criteria": ["單一變數的賦值和基本運算"],
+          "example_response": "「a = 5, b = a + 3 → b 是 8」"
+        },
+        "L2": {
+          "description": "能追蹤迴圈和條件",
+          "criteria": ["單層迴圈的執行次數和結果", "if/else 的執行路徑"],
+          "example_response": "「這個 for 跑 n 次，每次 sum += i，所以 sum 最後是 n*(n+1)/2」"
+        },
+        "L3": {
+          "description": "能追蹤巢狀迴圈和遞迴",
+          "criteria": ["雙重迴圈的變數變化", "遞迴的呼叫樹和回傳值"],
+          "example_response": "「外層 n 次，內層 i 次，所以總共 n*(n+1)/2 次操作」"
+        },
+        "L4": {
+          "description": "能在不看執行的情況下證明正確性",
+          "criteria": ["用數學歸納法論證", "用不變量論證"],
+          "example_response": "「用 loop invariant：每次迭代後 sum 等於 1 到 i 的和」"
+        }
+      },
+      "passing_threshold": "L3"
+    },
+    {
+      "subsystem": "debugging",
+      "levels": {
+        "L1": {
+          "description": "能看懂 compiler error",
+          "criteria": ["從 compiler output 找到語法錯誤的位置"],
+          "example_response": "「第 5 行少了分號」"
+        },
+        "L2": {
+          "description": "能手跑簡單測資找 bug",
+          "criteria": ["用 1-2 個測資手動執行", "找到輸出不如预期的原因"],
+          "example_response": "「測資 [1,2,3] 應該輸出 6 但輸出 5 — 發現迴圈從 1 開始而非 0」"
+        },
+        "L3": {
+          "description": "能設計對拍測資",
+          "criteria": ["寫暴力解產生正確答案", "設計邊界測資", "使用 stress test 找 bug"],
+          "example_response": "「暴力 O(n²) 解 vs 我的 O(n log n)，隨機產生 1000 組測資比對」"
+        },
+        "L4": {
+          "description": "能系統性定位 bug",
+          "criteria": ["假說-驗證循環", "二分搜 bug 位置", "從錯誤反推原因"],
+          "example_response": "「輸出錯可能是三個地方之一 → 用 checkpoint 一一排除 → 鎖定到第 15 行...」"
+        }
+      },
+      "passing_threshold": "L3"
+    }
+  ]
+}

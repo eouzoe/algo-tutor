@@ -1,0 +1,110 @@
+{
+  "$schema": "../../schema/problem-spec.json",
+  "problems": [
+    {
+      "id": "ioi_io_basic",
+      "type": "ioi_syntax_diagnostic",
+      "category": "io",
+      "difficulty": 1,
+      "statement": "讀入兩個整數 a, b，輸出 a + b。",
+      "constraints": { "n_range": "1 ≤ a, b ≤ 10⁹", "time_limit": "1s" },
+      "target_concepts": ["cin", "cout", "variables", "arithmetic"],
+      "test_cases": [
+        { "input": "3 5", "expected": "8" },
+        { "input": "1 1", "expected": "2" }
+      ],
+      "mastery_indicator": "一次寫對、一次 AC"
+    },
+    {
+      "id": "ioi_io_eof",
+      "type": "ioi_syntax_diagnostic",
+      "category": "io",
+      "difficulty": 2,
+      "statement": "讀入多個整數直到 EOF，輸出它們的總和。",
+      "constraints": { "n_range": "未知筆數，每筆 ≤ 10⁹", "time_limit": "1s" },
+      "target_concepts": ["while_cin", "eof_pattern", "long_long"],
+      "test_cases": [
+        { "input": "1 2 3\n4 5\n", "expected": "15" }
+      ],
+      "mastery_indicator": "知道 while(cin >> x) 模式"
+    },
+    {
+      "id": "ioi_array_1d",
+      "type": "ioi_syntax_diagnostic",
+      "category": "array",
+      "difficulty": 2,
+      "statement": "讀入 n 和 n 個整數，輸出最大值。n ≤ 10⁵。",
+      "constraints": { "n_range": "1 ≤ n ≤ 10⁵", "time_limit": "1s" },
+      "target_concepts": ["array_or_vector", "loop", "max_tracking"],
+      "test_cases": [
+        { "input": "5\n3 1 4 1 5\n", "expected": "5" }
+      ],
+      "mastery_indicator": "能用 vector 或陣列 + 迴圈解決"
+    },
+    {
+      "id": "ioi_nested_loop",
+      "type": "ioi_syntax_diagnostic",
+      "category": "control",
+      "difficulty": 3,
+      "statement": "印出 n × n 的星號方塊。n ≤ 100。",
+      "constraints": { "n_range": "1 ≤ n ≤ 100", "time_limit": "1s" },
+      "target_concepts": ["nested_for", "cout_pattern"],
+      "test_cases": [
+        { "input": "3", "expected": "***\n***\n***\n" }
+      ],
+      "mastery_indicator": "能寫出正確的巢狀迴圈"
+    },
+    {
+      "id": "ioi_string_basic",
+      "type": "ioi_syntax_diagnostic",
+      "category": "string",
+      "difficulty": 2,
+      "statement": "讀入一個字串（無空白），輸出它的長度。",
+      "constraints": { "n_range": "length ≤ 10⁵", "time_limit": "1s" },
+      "target_concepts": ["string", "cin_string", "length"],
+      "test_cases": [
+        { "input": "hello", "expected": "5" }
+      ],
+      "mastery_indicator": "知道 string 和 .length()"
+    },
+    {
+      "id": "ioi_function",
+      "type": "ioi_syntax_diagnostic",
+      "category": "function",
+      "difficulty": 3,
+      "statement": "寫一個函式 int gcd(int a, int b) 用輾轉相除法求最大公因數。",
+      "constraints": { "n_range": "1 ≤ a, b ≤ 10⁹", "time_limit": "1s" },
+      "target_concepts": ["function_def", "recursion_or_loop", "return"],
+      "test_cases": [
+        { "input": "12 8", "expected": "4" }
+      ],
+      "mastery_indicator": "能定義函式 + 實作邏輯"
+    },
+    {
+      "id": "ioi_vector_sort",
+      "type": "ioi_syntax_diagnostic",
+      "category": "stl",
+      "difficulty": 3,
+      "statement": "讀入 n 和 n 個整數，由小到大排序後輸出。n ≤ 10⁵。",
+      "constraints": { "n_range": "1 ≤ n ≤ 10⁵", "time_limit": "1s" },
+      "target_concepts": ["vector", "sort", "include_algorithm"],
+      "test_cases": [
+        { "input": "5\n3 1 4 1 5\n", "expected": "1 1 3 4 5\n" }
+      ],
+      "mastery_indicator": "知道 vector + sort"
+    },
+    {
+      "id": "ioi_2d_array",
+      "type": "ioi_syntax_diagnostic",
+      "category": "array",
+      "difficulty": 4,
+      "statement": "讀入 n × n 的矩陣，輸出所有元素總和。n ≤ 100。",
+      "constraints": { "n_range": "1 ≤ n ≤ 100", "time_limit": "1s" },
+      "target_concepts": ["array_2d", "nested_for", "accumulation"],
+      "test_cases": [
+        { "input": "2\n1 2\n3 4\n", "expected": "10" }
+      ],
+      "mastery_indicator": "能宣告 + 遍歷二維陣列"
+    }
+  ]
+}

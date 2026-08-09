@@ -1,0 +1,23 @@
+{
+  "description": "18 單元知識圖譜骨架 — 僅包含 hard prerequisite 關係",
+  "units": [
+    { "id": 1, "name": "環境與第一支程式", "requires": [], "concepts": ["cpp_skeleton", "cout", "cin", "variables", "io_optimize"] },
+    { "id": 2, "name": "控制流", "requires": [1], "concepts": ["if_else", "for_loop", "while_loop", "nested_loop"] },
+    { "id": 3, "name": "函式與遞迴初步", "requires": [2], "concepts": ["function_def", "recursion_base", "call_stack"] },
+    { "id": 4, "name": "陣列、vector、字串", "requires": [2], "concepts": ["array_1d", "array_2d", "vector", "string_op", "index_0_based", "memory_continuous"] },
+    { "id": 5, "name": "STL 核心 I：排序", "requires": [4], "concepts": ["sorting_basics", "comparator", "sort_then_scan"] },
+    { "id": 6, "name": "STL 核心 II：關聯容器", "requires": [5], "concepts": ["set", "map", "priority_queue"] },
+    { "id": 7, "name": "STL 演算法與迭代器", "requires": [5], "concepts": ["lower_bound", "unique", "reverse", "iterator_basics"] },
+    { "id": 8, "name": "複雜度與對拍", "requires": [5], "concepts": ["big_o", "time_space_tradeoff", "stress_test"] },
+    { "id": 9, "name": "遞迴與完全搜索", "requires": [3, 8], "concepts": ["backtracking", "bitmask_enum", "pruning"] },
+    { "id": 10, "name": "貪心", "requires": [5, 9], "concepts": ["greedy_thinking", "exchange_argument", "interval_scheduling"] },
+    { "id": 11, "name": "二分搜", "requires": [7], "concepts": ["binary_search_basics", "binary_search_on_answer", "monotonicity"] },
+    { "id": 12, "name": "前綴和與雙指針", "requires": [4, 5], "concepts": ["prefix_sum", "two_pointers", "sliding_window"] },
+    { "id": 13, "name": "基礎 DP", "requires": [4, 9], "concepts": ["dp_basics", "memoization", "tabulation", "dp_1d", "dp_grid"] },
+    { "id": 14, "name": "圖論基礎", "requires": [4, 13], "concepts": ["adj_list", "adj_matrix", "dfs", "bfs", "flood_fill"] },
+    { "id": 15, "name": "最短路與拓撲", "requires": [14], "concepts": ["dijkstra", "bellman_ford", "topo_sort", "dag_dp"] },
+    { "id": 16, "name": "樹與 DSU", "requires": [14], "concepts": ["tree_traversal", "lca_basics", "dsu", "union_find"] },
+    { "id": 17, "name": "初選特化 I：區間資結", "requires": [7, 13], "concepts": ["segment_tree", "range_query", "point_update"] },
+    { "id": 18, "name": "初選特化 II：矩陣冪/哈希", "requires": [11, 13], "concepts": ["matrix_exp", "rolling_hash", "modular_arithmetic"] }
+  ]
+}

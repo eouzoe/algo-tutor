@@ -1,0 +1,83 @@
+{
+  "$schema": "../../schema/pattern-spec.json",
+  "patterns": [
+    {
+      "id": "sort_then_scan",
+      "name": "排序後掃描",
+      "description": "將資料排序後，用單次掃描找出答案。常見於區間、配对、貪心問題。",
+      "category": "greedy",
+      "triggers": ["最小化最大", "區間不重疊", "配對", "最少", "活動選擇", "字典序"],
+      "solution_template": {
+        "framework": "1. 確定排序關鍵字 → 2. 排序 → 3. 單次掃描做選擇 → 4. 返回結果",
+        "complexity": "O(n log n) 排序 + O(n) 掃描",
+        "key_insight": "排序後問題變簡單 — 無序時的區域性最優可以變成全局最優",
+        "common_pitfalls": ["排序關鍵字選錯", "穩定性需求沒注意", "掃描條件太嚴格或太鬆"]
+      },
+      "requires": ["sorting_basics", "greedy_thinking", "loop_pattern"],
+      "enables": ["interval_scheduling", "meeting_rooms", "fractional_knapsack"],
+      "similar_to": ["two_pointers", "sweep_line"],
+      "reasoning_chain_template": "「我看到關鍵字『最小化最大』或『區間』→ 想到排序可以簡化問題 → 排序後掃描通常能找到 greedy 解 → 我先確定排序關鍵字...」",
+      "mastery_indicator": "看到『區間』、『配對』、『最小化最大』等關鍵詞，5 秒內想到排序後掃描",
+      "difficulty": 2,
+      "units": [5, 10]
+    },
+    {
+      "id": "binary_search_on_answer",
+      "name": "二分搜答案",
+      "description": "當答案具有單調性時，對答案本身做二分搜而非對輸入做二分搜。",
+      "category": "search",
+      "triggers": ["最小化最大", "最大化最小", "至少 K 個", "第 K 個", "最小值最大"],
+      "solution_template": {
+        "framework": "1. 確定答案範圍 [lo, hi] → 2. 檢查 mid 是否可行 → 3. 調整搜尋範圍 → 4. 返回邊界值",
+        "complexity": "O(log(max_answer) × check_cost)",
+        "key_insight": "『最小化最大』= 二分搜答案；單調性是關鍵 — 如果 x 可行，則所有 >x 也可行（或也可不可行）",
+        "common_pitfalls": ["邊界的開閉搞混", "check function 寫錯", "忘記題目要的是最小還是最大"]
+      },
+      "requires": ["binary_search_basics", "monotonicity_concept", "feasibility_check"],
+      "enables": ["parametric_search", "aggressive_cows", "koko_eating_bananas"],
+      "reasoning_chain_template": "「題目問『最小化最大 X』→ 想到答案有單調性 → 對 X 做二分搜 → 寫一個 check(x) 判斷 x 是否可行 → 找到最小的可行 x」",
+      "mastery_indicator": "看到『最小化最大』就知道要二分搜答案而非二分搜索引",
+      "difficulty": 3,
+      "units": [11]
+    },
+    {
+      "id": "two_pointers",
+      "name": "雙指針掃描",
+      "description": "在有序數列或字串上用兩個同向或反向指針掃描，將 O(n²) 降為 O(n)。",
+      "category": "search",
+      "triggers": ["兩數之和", "三數之和", "有序數列", "子陣列", "移除元素", "回文"],
+      "solution_template": {
+        "framework": "1. 排序（如需要）→ 2. 初始化兩指針 → 3. 根據比較結果移動指針 → 4. 找到所有符合條件的組合",
+        "complexity": "O(n log n) 排序 + O(n) 掃描",
+        "key_insight": "指針移動是單向的，每個元素最多被訪問一次 — 暴力 O(n²) 的重複比較是多餘的",
+        "common_pitfalls": ["指針移動條件寫錯", "重複組合沒跳過", "忘記排序"]
+      },
+      "requires": ["sorting_basics", "array_traversal", "loop_pattern"],
+      "enables": ["3sum", "container_most_water", "trapping_rain_water"],
+      "similar_to": ["sort_then_scan", "sliding_window"],
+      "reasoning_chain_template": "「看到『有序』+『兩數之和』或『子陣列』→ 想到雙指針 → 左指針在頭、右指針在尾 → 根據和的大小決定移動哪個指針」",
+      "mastery_indicator": "看到有序數列的搜尋題，立刻想到雙指針而非 hash map",
+      "difficulty": 2,
+      "units": [12]
+    },
+    {
+      "id": "state_machine_dp",
+      "name": "狀態機 DP",
+      "description": "用狀態機模型處理有「持有/不持有」、「冷卻期」等狀態轉換的問題。",
+      "category": "dp",
+      "triggers": ["股票買賣", "冷却期", "手續費", "最多 K 次交易", "不能同時持有多個"],
+      "solution_template": {
+        "framework": "1. 定義狀態（持有/不持有/冷卻）→ 2. 寫狀態轉移方程 → 3. 初始化 → 4. 遍歷 → 5. 返回終態",
+        "complexity": "O(n × states)",
+        "key_insight": "每個狀態只依赖前一時刻的狀態 — 關鍵是找到正確的狀態定義和轉移條件",
+        "common_pitfalls": ["狀態定義不完整", "轉移方程漏情況", "邊界條件錯"]
+      },
+      "requires": ["dp_basics", "state_definition", "transition_equation"],
+      "enables": ["best_time_buy_sell_stock_series", "house_robber_variants"],
+      "reasoning_chain_template": "「看到『股票』、『冷却期』、『不能同時持有』→ 想到狀態機 DP → 定義 hold/not_hold/cooldown → 寫轉移...」",
+      "mastery_indicator": "能在 5 分鐘內定義出股票系列的狀態機 DP 狀態",
+      "difficulty": 4,
+      "units": [13]
+    }
+  ]
+}
