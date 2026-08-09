@@ -66,4 +66,8 @@ jobs:
       - name: WSL 內執行 bootstrap.sh（一行安裝全流程）
         shell: powershell
         run: |
-          wsl -d NixOS -- sh -lc "nix-shell -p curl git bash --command 'curl -fsSL https://raw.githubusercontent.com/eouzoe/ioi-forge/main/deploy/bootstrap.sh | sh'"
+          wsl -d NixOS -- sh -lc "nix-shell -p curl git bash --command 'curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/deploy/bootstrap.sh | sh'"
+      - name: WSL 環境驗證
+        shell: powershell
+        run: |
+          wsl -d NixOS -- sh -lc "cd ~/algo-tutor && devenv shell -- echo 'devenv OK'"
