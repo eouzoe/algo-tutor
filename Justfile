@@ -111,3 +111,49 @@ workspace:
 # 對拍：just stress sol.cpp brute.cpp
 stress sol brute *args:
     {{_forge}} stress {{sol}} {{brute}} {{args}}
+
+# ═══════════════════════════════════════════════════════════
+# MCP Server（LLM 介面）
+# ═══════════════════════════════════════════════════════════
+
+# 啟動 MCP server（stdio 模式，供 codex/Claude Desktop 連接）
+mcp:
+    bun run mcp/index.ts
+
+# 啟動 MCP server（HTTP 模式，供遠端連接）
+mcp-http port:
+    bun run mcp/index.ts http {{port}}
+
+# 驗證 MCP server 是否正常運作
+mcp-check:
+    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{}}" | bun run mcp/index.ts 2>/dev/null | python3 scripts/mcp_info.py'
+    echo '---'
+    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}" | bun run mcp/index.ts 2>/dev/null | python3 scripts/mcp_info.py'
+
+# ═══════════════════════════════════════════════════════════
+# 訓練系統（Training System）
+# ═══════════════════════════════════════════════════════════
+
+# 訓練系統狀態
+training:
+    just mcp-check
+
+# 列出所有訓練工具
+training-tools:
+    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\",\"params\":{}}" | bun run mcp/index.ts 2>/dev/null | python3 scripts/mcp_info.py --training
+
+# ═══════════════════════════════════════════════════════════
+# IOI 語法診斷
+# ═══════════════════════════════════════════════════════════
+
+# 診斷系統狀態
+diagnostic:
+    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"diagnostic_status\",\"arguments\":{}}}" | bun run mcp/index.ts 2>/dev/null | python3 -c "import sys,json; lines=sys.stdin.readlines(); [print(json.loads(l)[\"result\"][\"content\"][0][\"text\"]) for l in reversed(lines) if l.strip().startswith(\"{\")]"'
+
+# 診斷：取得第 N 題
+diagnostic-problem n:
+    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"diagnostic_problem\",\"arguments\":{\"index\":{{n}}}}}" | bun run mcp/index.ts 2>/dev/null | python3 -c "import sys,json; lines=sys.stdin.readlines(); [print(json.loads(l)[\"result\"][\"content\"][0][\"text\"]) for l in reversed(lines) if l.strip().startswith(\"{\")]"'
+
+# 診斷：檢查學生代碼
+diagnostic-check problem_id:
+    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"diagnostic_check\",\"arguments\":{\"problem_id\":\"{{problem_id}}\"}}}" | bun run mcp/index.ts 2>/dev/null | python3 -c "import sys,json; lines=sys.stdin.readlines(); [print(json.loads(l)[\"result\"][\"content\"][0][\"text\"]) for l in reversed(lines) if l.strip().startswith(\"{\")]"'
