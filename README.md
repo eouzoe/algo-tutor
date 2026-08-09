@@ -4,6 +4,22 @@
 
 ## 快速開始
 
+### NixOS / NixOS-WSL（推薦）
+
+一行安裝（devenv 會處理所有依賴）：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/deploy/bootstrap.sh | sh
+```
+
+進入環境：
+
+```bash
+cd ~/algo-tutor && devenv shell
+```
+
+### 手動安裝
+
 ```bash
 # 安裝依賴
 cd mcp && bun install && cd ..

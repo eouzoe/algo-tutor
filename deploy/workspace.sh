@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -e
-cd /home/eouzoe/src/active/ioi-forge
-if devenv shell -- zellij list-sessions 2>/dev/null | grep -qF "ioi-forge"; then
-  exec devenv shell -- zellij attach ioi-forge
+cd "${ALGO_TUTOR_DIR:-$HOME/algo-tutor}"
+SESSION="algo-tutor"
+if devenv shell -- zellij list-sessions 2>/dev/null | grep -qF "$SESSION"; then
+  exec devenv shell -- zellij attach "$SESSION"
 else
-  exec devenv shell -- zellij --new-session-with-layout deploy/workspace.kdl --session ioi-forge
+  exec devenv shell -- zellij --new-session-with-layout deploy/workspace.kdl --session "$SESSION"
 fi
