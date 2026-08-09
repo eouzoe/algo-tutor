@@ -1,80 +1,65 @@
-# ioi-forge
+# algo-learn
 
-三年（2026.08 → 2029.08）IOI 金牌訓練系統。一名學生，完全客製化。
+個人算法學習輔助系統。LLM 驅動的對話式教學，搭配 MCP 工具與認知引擎。
+
+## 快速開始
+
+```bash
+# 安裝依賴
+cd mcp && bun install && cd ..
+
+# 啟動 MCP server（stdio）
+just mcp
+
+# 啟動 MCP server（HTTP）
+just mcp-http 3000
+```
 
 ## 結構
 
 ```
-docs/methodology.md      訓練迴路、提示階梯、分期里程碑
-docs/error-taxonomy.md   錯誤分類法（日誌與診斷的地基）
-docs/schema.md           日誌資料格式定義
-data/curriculum.json     18 單元課綱（零語法 → 初選考點，對應 USACO Guide 模組）
-log/attempts.jsonl       每題一筆的解題日誌
-log/recognition.jsonl    識別訓練日誌
-.nu/forge.nu             核心邏輯（nushell）
-mcp/server.ts            MCP server——學生的主介面
-Justfile                 教練用終端包裝
+mcp/                    MCP server（LLM 介面）
+├── server.ts           核心 server（transport-agnostic）
+├── tools/              工具註冊
+├── transport/          傳輸層（stdio + HTTP）
+└── forge.ts            CLI 橋接
+
+packages/engine/        認知引擎（BKT / IRT / FSRS / KST）
+
+data/
+├── curriculum.json     課綱定義
+├── beyond-ioi-toolkit/ 進階工具包
+└── training/           訓練系統數據
+    ├── schema/         Layer 1: 結構定義
+    └── seeds/          Layer 2: 種子數據
+
+.nu/forge.nu            CLI 核心邏輯
+Justfile                指令包裝
 ```
 
 ## 兩個介面
 
-**學生：LLM 對話（MCP）。** 學生不打終端指令，直接跟接了 MCP 的 harness（codex 等）對話：「今天做什麼」「上課」「我要提示」。閘道、計時、日誌全在 server 端，LLM 繞不掉留痕。
+**學生：LLM 對話（MCP）**
+- 直接跟 LLM 對話，不打終端指令
+- 工具呼叫、計時、日誌全在 server 端
 
-**雙窗口工作流**：左邊 vim 打 `work/sol.cpp`（語法要手打、機械記憶），右邊 LLM 對話。存檔後對 LLM 說「看」→ 它讀代碼（read_code）、代為編譯執行（run_code）。不需要第三個 bash 窗口。
+**教練：終端（just）**
+- `just today` / `log` / `stats` / `report` 等人類可讀視圖
 
-codex 註冊（`~/.codex/config.toml`）：
-```toml
-[mcp_servers.ioi-forge]
-command = "bun"
-args = ["/path/to/ioi-forge/mcp/server.ts"]
-```
+## MCP 工具
 
-**教練：終端（just）。** `just today / log / stats / report / diagnose / anki` 看人類可讀視圖；JSONL 是機器層，人不直接讀。
-
-## 用法
-
-```nu
-use .nu/forge.nu *
-
-forge today      # 每日入口：複習→課綱→題單→識別訓練（just today）
-forge learn      # 當前課綱單元上課（LLM 家教：會的複習、不會的從零教）
-forge pass       # 檢核題全 AC 後推進單元（18 單元：零語法 → 初選考點）
-
-# 解題 session（推薦，時間自動計、提示有閘道）
-forge start cses/1621 -r 1100 -t sorting   # 開始計時
-forge status     # 進度與下一級提示倒數
-forge hint -n "卡在..."   # 申請提示（未到時限會拒絕並留痕）
-forge code       # 進入實作
-forge debug      # 首次提交失敗時打
-forge finish ac  # 收尾：問錯誤分類/摘要/線索卡，寫日誌
-
-forge add        # 手動補記一次解題（不經 session）
-forge due        # 今日到期的複習題（空白重推）
-forge done <id>  # 記錄複習結果（--failed 為失敗）
-forge rec        # 記錄一筆識別訓練
-forge stats      # 近況統計：解出率、錯誤分佈、弱點熱圖
-
-forge sync                 # 同步 CF 題庫快取（~11k 題）
-forge profile -r 1100      # 設定學生當前 rating
-forge pick                 # 今日題單：rating+200~400、排除已做、弱點加權（tags 預設隱藏，--spoil 顯示）
-forge pick -t dp -c 5 --lo 100 --hi 300   # 塊狀練習期鎖定主題
-
-forge report --save        # 訓練週報 markdown → reports/
-forge diagnose             # 週報 + 教練診斷 prompt → FORGE_LLM_CMD
-
-forge gen "n 1..1e5，n 個整數 1..1e9"   # LLM 生成測資生成器 gen.cpp
-forge stress sol.cpp brute.cpp          # 對拍到出反例（存 counterexample.txt）
-```
-
-所有命令也有 `just` 包裝：`just pick`、`just start cses/1621`、`just hint`、`just stress sol.cpp brute.cpp`…
-
-題面來源（識別訓練用）：CF 主站有 Cloudflare，但洛谷鏡像（luogu.com.cn/problem/CF{id}）、CSES、AtCoder 均可直接抓取。
-
-提示來源：設 `$env.FORGE_LLM_CMD`（如 `"codex exec -"`，從 stdin 讀提示詞）；
-未設定時印出提示詞，手動貼給任何 LLM。閘道防不了繞過，防的是無痕繞過。
+| 類別 | 工具 |
+|---|---|
+| 訓練 | `training_pattern` `training_analysis` `training_check` `training_patterns` `training_stats` |
+| 診斷 | `diagnostic_problem` `diagnostic_check` `diagnostic_result` `diagnostic_status` |
+| 課綱 | `lesson` `pass_unit` `concept_index` `concept_show` `drill_concept` |
+| 練習 | `start_problem` `hint` `finish_problem` `pick_problems` `reviews_due` |
+| 引擎 | `engine_bkt_update` `engine_irt_estimate` `engine_fsrs_retrievability` `engine_kst_fringe` |
+| 工具包 | `toolkit_list` `toolkit_show` `toolkit_lesson` |
+| 代碼 | `read_code` `run_code` `benchmark_code` |
 
 ## 原則
 
-- 日誌是地基：選題、診斷、複習全部從 `log/` 長出來
-- 工具跟著訓練長，不預先蓋系統
-- 所有資料 JSONL，nushell 直接可查
+- 日誌是地基
+- 工具跟著需求長，不預先蓋系統
+- 結構（schema）與數據（seeds）分離
