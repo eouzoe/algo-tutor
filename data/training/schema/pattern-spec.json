@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ioi-forge.local/schema/pattern-spec.json",
-  "title": "ioi-forge Pattern Specification",
+  "$id": "https://algo-tutor.local/schema/pattern-spec.json",
+  "title": "algo-tutor Pattern Specification",
   "description": "Schema for problem-solving patterns (題型)",
 
   "type": "object",

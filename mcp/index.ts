@@ -1,4 +1,4 @@
-// ioi-forge entry point — choose transport via argv, start server.
+// algo-tutor entry point — choose transport via argv, start server.
 
 import { createServer } from "./tools/registry.ts";
 import { serveStdio } from "./transport/stdio.ts";

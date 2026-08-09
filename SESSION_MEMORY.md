@@ -1,4 +1,4 @@
-# ioi-forge 會話脈絡交接檔
+# algo-tutor 會話脈絡交接檔
 
 > 2026-07-27，由 opencode 整理，供新會話無縫承接。
 
@@ -6,7 +6,7 @@
 
 ## 一、專案定位
 
-ioi-forge = 三年（2026.08 → 2029.08）IOI 金牌訓練系統。
+algo-tutor = 三年（2026.08 → 2029.08）IOI 金牌訓練系統。
 對象：一名高一升高二、因霸凌休學自學的台灣學生。目標 IOI 2029 金牌 → MIT。
 訓練量：5000–15000 小時（3 年，可每日 12h）。方法論已整合 Um_nik / Yoneda / Errichto / USACO Guide / 台灣選拔賽制。
 
@@ -25,7 +25,7 @@ ioi-forge = 三年（2026.08 → 2029.08）IOI 金牌訓練系統。
 ### 022eef9d — 主建造 session（Jul 26 20:34 → Jul 27 18:02, ~21h）
 - 「IOI 金牌 AI 自學計畫」 — 最大 session（2.6MB, 801 events, 198 user turns, 466 assistant turns）
 - 助理先回覆「不要先蓋系統」→ 但之後大量建造：Bash 73 / Edit 62 / Write 17 / TaskUpdate 10 / Read 7 / TaskCreate 6
-- **實際搭建了 ioi-forge 全部 15 個 commit**（init → methodology → session 狀態機 → 選題引擎 → report/diagnose → 對拍 → 課綱 18 單元 → USACO Guide → MCP server → doctor/CI → 雙窗口工作流 → WSL CI）
+- **實際搭建了 algo-tutor 全部 15 個 commit**（init → methodology → session 狀態機 → 選題引擎 → report/diagnose → 對拍 → 課綱 18 單元 → USACO Guide → MCP server → doctor/CI → 雙窗口工作流 → WSL CI）
 - 結束於 `/export`（匯出 `26-07-27ioi.txt`，419KB）+ `/exit`
 - 最後 commit `tmqmqnlr`（ci: wsl-bootstrap-windows 轉正式守門）
 
@@ -44,7 +44,7 @@ ioi-forge = 三年（2026.08 → 2029.08）IOI 金牌訓練系統。
 
 ---
 
-## 三、ioi-forge 系統狀態
+## 三、algo-tutor 系統狀態
 
 ### 3.1 架構總覽
 
@@ -321,16 +321,16 @@ forge vim -u 5        # 指定單元 5
 
 | 路徑 | 用途 |
 |------|------|
-| `~/src/active/ioi-forge/.nu/forge.nu` | 核心邏輯（37KB） |
-| `~/src/active/ioi-forge/mcp/server.ts` | MCP server（151 行） |
-| `~/src/active/ioi-forge/data/curriculum.json` | 18 單元課綱（vim field 待加） |
-| `~/src/active/ioi-forge/log/session.json` | 卡住的 session |
-| `~/src/active/ioi-forge/log/concepts.jsonl` | 模糊概念帳本（1 筆） |
-| `~/src/active/ioi-forge/sols/a001.cpp` | 學生第一題答案 |
-| `~/src/active/ioi-forge/docs/methodology.md` | 完整訓練方法論 |
-| `~/src/active/ioi-forge/docs/error-taxonomy.md` | 錯誤分類 R/K/P/M/I/B/E/T |
-| `~/src/active/ioi-forge/docs/schema.md` | 日誌 JSONL schema |
-| `~/src/active/ioi-forge/deploy/vimrc` | 學生 vim 設定（已 deploy） |
-| `~/src/active/ioi-forge/deploy/bootstrap.sh` | 一行安裝腳本 |
+| `~/src/active/algo-tutor/.nu/forge.nu` | 核心邏輯（37KB） |
+| `~/src/active/algo-tutor/mcp/server.ts` | MCP server（151 行） |
+| `~/src/active/algo-tutor/data/curriculum.json` | 18 單元課綱（vim field 待加） |
+| `~/src/active/algo-tutor/log/session.json` | 卡住的 session |
+| `~/src/active/algo-tutor/log/concepts.jsonl` | 模糊概念帳本（1 筆） |
+| `~/src/active/algo-tutor/sols/a001.cpp` | 學生第一題答案 |
+| `~/src/active/algo-tutor/docs/methodology.md` | 完整訓練方法論 |
+| `~/src/active/algo-tutor/docs/error-taxonomy.md` | 錯誤分類 R/K/P/M/I/B/E/T |
+| `~/src/active/algo-tutor/docs/schema.md` | 日誌 JSONL schema |
+| `~/src/active/algo-tutor/deploy/vimrc` | 學生 vim 設定（已 deploy） |
+| `~/src/active/algo-tutor/deploy/bootstrap.sh` | 一行安裝腳本 |
 | `~/.qoder/projects/-home-eouzoe-src-active-gstack-toolchain/*.jsonl` | 5 個歷史會話原文 |
 | `~/src/active/gstack-toolchain/26-07-27ioi.txt` | 主會話 TUI 渲染傾印（419KB） |

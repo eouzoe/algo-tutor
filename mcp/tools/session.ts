@@ -1,4 +1,4 @@
-// ioi-forge session tools — today, start, status, hint, code, debug, finish, abort.
+// algo-tutor session tools — today, start, status, hint, code, debug, finish, abort.
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";

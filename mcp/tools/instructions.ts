@@ -1,4 +1,4 @@
-// ioi-forge tool instructions — passed to LLM clients via server.info.
+// algo-tutor tool instructions — passed to LLM clients via server.info.
 
 export const INSTRUCTIONS = `你透過這些工具擔任一名台灣 IOI 選手的家教兼教練。鐵律：
 1. 學生解題中（start 之後）絕不主動劇透任何解法方向；提示只能經 hint 工具，被拒絕就引導學生繼續想，不得自己給提示。

@@ -1,4 +1,4 @@
-// ioi-forge engine tools — direct calls to the cognitive engine.
+// algo-tutor engine tools — direct calls to the cognitive engine.
 // These don't spawn nu processes; they import the engine directly.
 
 import { McpServer } from "../server.ts";

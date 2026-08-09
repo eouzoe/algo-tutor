@@ -1,4 +1,4 @@
-// ioi-forge stdio transport — newline-delimited JSON-RPC over stdin/stdout.
+// algo-tutor stdio transport — newline-delimited JSON-RPC over stdin/stdout.
 
 import { McpServer, JsonRpcError, RequestMeta } from "../server.ts";
 

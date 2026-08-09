@@ -1,5 +1,5 @@
 {
-  "name": "ioi-forge-engine",
+  "name": "algo-tutor-engine",
   "type": "module",
   "scripts": {
     "test": "bun test",

@@ -1,4 +1,4 @@
-// ioi-forge IOI 語法診斷工具 — 精確、高效、可測量
+// algo-tutor IOI 語法診斷工具 — 精確、高效、可測量
 
 import { McpServer, ToolResult } from "../server.ts";
 import { z } from "zod";

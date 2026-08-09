@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ioi-forge.local/schema/problem-spec.json",
-  "title": "ioi-forge Problem Specification",
-  "description": "Schema for training problems in the ioi-forge system",
+  "$id": "https://algo-tutor.local/schema/problem-spec.json",
+  "title": "algo-tutor Problem Specification",
+  "description": "Schema for training problems in the algo-tutor system",
 
   "type": "object",
   "required": ["id", "type", "statement", "constraints", "difficulty"],

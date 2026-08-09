@@ -1,4 +1,4 @@
-// ioi-forge tool utilities — shared helpers for all tool modules.
+// algo-tutor tool utilities — shared helpers for all tool modules.
 
 export function text(s: string) {
   return { content: [{ type: "text" as const, text: s }] };

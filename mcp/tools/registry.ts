@@ -1,4 +1,4 @@
-// ioi-forge tool registry — register all tools on the server.
+// algo-tutor tool registry — register all tools on the server.
 
 import { McpServer } from "../server.ts";
 
@@ -13,7 +13,7 @@ import { registerDiagnosticTools } from "./diagnostic.ts";
 import { INSTRUCTIONS } from "./instructions.ts";
 
 export function createServer(): McpServer {
-  const server = new McpServer("ioi-forge", "2.0.0", INSTRUCTIONS);
+  const server = new McpServer("algo-tutor", "2.0.0", INSTRUCTIONS);
 
   registerSessionTools(server);
   registerLearningTools(server);
@@ -24,7 +24,7 @@ export function createServer(): McpServer {
   registerTrainingTools(server);
   registerDiagnosticTools(server);
 
-  console.error(`ioi-forge: ${server.toolCount} tools registered`);
+  console.error(`algo-tutor: ${server.toolCount} tools registered`);
 
   return server;
 }

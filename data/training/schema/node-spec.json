@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ioi-forge.local/schema/node-spec.json",
-  "title": "ioi-forge Knowledge Graph Node Specification",
+  "$id": "https://algo-tutor.local/schema/node-spec.json",
+  "title": "algo-tutor Knowledge Graph Node Specification",
   "description": "Schema for knowledge graph nodes (concepts, patterns, templates, errors, strategies)",
 
   "type": "object",

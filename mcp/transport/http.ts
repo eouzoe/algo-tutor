@@ -1,4 +1,4 @@
-// ioi-forge Streamable HTTP transport — for remote deployment.
+// algo-tutor Streamable HTTP transport — for remote deployment.
 // Bun.serve() with no framework deps. Each request is self-contained.
 
 import { McpServer } from "../server.ts";
@@ -84,7 +84,7 @@ export function serveHttp(server: McpServer, config: HttpConfig = {}): void {
     },
   });
 
-  console.error(`ioi-forge MCP server listening on http://${host}:${port}`);
+  console.error(`algo-tutor MCP server listening on http://${host}:${port}`);
   console.error(`  GET  /discover — server info`);
   console.error(`  GET  /health   — health check`);
   console.error(`  POST /mcp      — JSON-RPC endpoint`);

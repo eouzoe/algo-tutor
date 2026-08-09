@@ -1,4 +1,4 @@
-# ioi-forge 訓練日誌工具
+# algo-tutor 訓練日誌工具
 # use .nu/forge.nu *
 
 const INTERVALS = [7 30 90]
@@ -8,7 +8,7 @@ def root [] {
     if ($env.PWD | path join ".nu/forge.nu" | path exists) {
       $env.PWD
     } else {
-      $env.HOME | path join "src/active/ioi-forge"
+      $env.HOME | path join "src/active/algo-tutor"
     }
   )
 }
@@ -780,20 +780,20 @@ export def "forge anki" [--tsv: string] {
   }
 
   try {
-    http post -t application/json http://127.0.0.1:8765 {action: "createDeck", version: 6, params: {deck: "ioi-forge"}} | ignore
+    http post -t application/json http://127.0.0.1:8765 {action: "createDeck", version: 6, params: {deck: "algo-tutor"}} | ignore
     let notes = ($cards | each {|r| {
-      deckName: "ioi-forge"
+      deckName: "algo-tutor"
       modelName: "Basic"
       fields: {
         Front: $"($r.problem)：這題的關鍵觸發線索與第一步是？"
         Back: $"($r.cue)<br>($r.summary)"
       }
       options: { allowDuplicate: false }
-      tags: ["ioi-forge" $r.id]
+      tags: ["algo-tutor" $r.id]
     }})
     let res = (http post -t application/json http://127.0.0.1:8765 {action: "addNotes", version: 6, params: {notes: $notes}})
     let added = ($res.result | where {|x| $x != null } | length)
-    print $"已推送 ($added)/($cards | length) 張新卡到 Anki 牌組 ioi-forge（重複自動跳過）"
+    print $"已推送 ($added)/($cards | length) 張新卡到 Anki 牌組 algo-tutor（重複自動跳過）"
   } catch {
     print "連不到 Anki：請開著 Anki 並安裝 AnkiConnect 插件（插件代碼 2055492159）"
     print "或改用 just anki --tsv cards.tsv 匯出手動匯入"
@@ -1227,7 +1227,7 @@ export def "forge doctor" [] {
       '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"doctor","version":"0"}}}' + (char newline)
       | ^timeout 5 bun (root | path join "mcp/server.ts")
     } | complete)
-    ($r.stdout | str contains '"name":"ioi-forge"')
+    ($r.stdout | str contains '"name":"algo-tutor"')
   } else { false }
   $rows = ($rows | append { check: "功能 MCP server", ok: $mcp_ok, required: true, fix: "cd mcp; bun install 後重試" })
 

@@ -1,4 +1,4 @@
-// ioi-forge concept tools — syntax concept index and drill.
+// algo-tutor concept tools — syntax concept index and drill.
 
 import { McpServer, ToolResult } from "../server.ts";
 import { z } from "zod";

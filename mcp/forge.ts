@@ -1,4 +1,4 @@
-// ioi-forge nu process wrapper — minimal process spawn for tools that still use forge.nu.
+// algo-tutor nu process wrapper — minimal process spawn for tools that still use forge.nu.
 // Future: migrate these to direct engine calls.
 
 import { spawnSync } from "node:child_process";

@@ -1,4 +1,4 @@
-// ioi-forge toolkit tools — beyond IOI toolkit concepts and lessons.
+// algo-tutor toolkit tools — beyond IOI toolkit concepts and lessons.
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";

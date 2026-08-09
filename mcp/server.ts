@@ -1,4 +1,4 @@
-// ioi-forge MCP server core — transport-agnostic, zero runtime deps beyond zod.
+// algo-tutor MCP server core — transport-agnostic, zero runtime deps beyond zod.
 // Targets MCP 2026-07-28 stateless spec. No session, no handshake, every request self-contained.
 
 import { z } from "zod";

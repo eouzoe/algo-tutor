@@ -1,4 +1,4 @@
-// ioi-forge training tools — pattern recognition, problem analysis, and training sessions.
+// algo-tutor training tools — pattern recognition, problem analysis, and training sessions.
 
 import { McpServer, ToolResult } from "../server.ts";
 import { z } from "zod";

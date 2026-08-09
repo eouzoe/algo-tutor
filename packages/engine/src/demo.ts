@@ -17,7 +17,7 @@ const student: ConceptState = {
   activeMisconceptions: [],
 }
 
-console.log("=== ioi-forge engine demo ===\n")
+console.log("=== algo-tutor engine demo ===\n")
 
 console.log(`Initial:   ${student.conceptId} @ ${student.phase} (P(L)=${student.pL.toFixed(3)})`)
 

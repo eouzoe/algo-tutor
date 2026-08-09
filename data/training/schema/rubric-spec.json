@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ioi-forge.local/schema/rubric-spec.json",
-  "title": "ioi-forge Rubric Specification",
+  "$id": "https://algo-tutor.local/schema/rubric-spec.json",
+  "title": "algo-tutor Rubric Specification",
   "description": "Grading rubrics for each training subsystem",
 
   "type": "object",

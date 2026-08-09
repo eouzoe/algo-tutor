@@ -1,4 +1,4 @@
-// ioi-forge learning tools — lesson, pass_unit, read_code, run_code, benchmark_code.
+// algo-tutor learning tools — lesson, pass_unit, read_code, run_code, benchmark_code.
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";

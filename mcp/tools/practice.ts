@@ -1,4 +1,4 @@
-// ioi-forge practice tools — pick, rec, stats, log, report, anki.
+// algo-tutor practice tools — pick, rec, stats, log, report, anki.
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";
