@@ -29,3 +29,6 @@ a.out
 # papers
 docs/papers/*.pdf
 data/profile.json
+data/curriculum-super.md
+docs/research-memory.md
+DeepTutor/
