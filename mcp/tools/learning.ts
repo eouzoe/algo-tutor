@@ -2,7 +2,7 @@
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";
-import { forge } from "../forge.ts";
+import { algo } from "../algo.ts";
 import { text, q } from "./util.ts";
 
 export function registerLearningTools(server: McpServer): void {
@@ -14,7 +14,7 @@ export function registerLearningTools(server: McpServer): void {
       unit: z.number().optional().describe("指定單元（預設當前進度）"),
     }),
     handler: async ({ unit }) =>
-      text(forge(`forge learn${unit ? ` -u ${unit}` : ""}`)),
+      text(algo(`algo learn${unit ? ` -u ${unit}` : ""}`)),
   });
 
   server.register({
@@ -25,7 +25,7 @@ export function registerLearningTools(server: McpServer): void {
       force: z.boolean().optional(),
     }),
     handler: async ({ force }) =>
-      text(forge(`forge pass${force ? " --force" : ""}`)),
+      text(algo(`algo pass${force ? " --force" : ""}`)),
   });
 
   server.register({
@@ -53,8 +53,8 @@ export function registerLearningTools(server: McpServer): void {
     }),
     handler: async ({ path, input }) =>
       text(
-        forge(
-          `forge run ${q(path ?? "work/sol.cpp")}${input != null ? ` -i ${q(input)}` : ""} | to json`,
+        algo(
+          `algo run ${q(path ?? "work/sol.cpp")}${input != null ? ` -i ${q(input)}` : ""} | to json`,
         ),
       ),
   });
@@ -70,8 +70,8 @@ export function registerLearningTools(server: McpServer): void {
     }),
     handler: async ({ path, input, times }) =>
       text(
-        forge(
-          `forge bench ${q(path ?? "work/sol.cpp")}${input != null ? ` -i ${q(input)}` : ""}${times != null ? ` -t ${times}` : ""}`,
+        algo(
+          `algo bench ${q(path ?? "work/sol.cpp")}${input != null ? ` -i ${q(input)}` : ""}${times != null ? ` -t ${times}` : ""}`,
         ),
       ),
   });
@@ -85,8 +85,8 @@ export function registerLearningTools(server: McpServer): void {
     }),
     handler: async ({ concept, note }) =>
       text(
-        forge(
-          `forge concept fuzzy ${q(concept)}${note ? ` -n ${q(note)}` : ""}`,
+        algo(
+          `algo concept fuzzy ${q(concept)}${note ? ` -n ${q(note)}` : ""}`,
         ),
       ),
   });
@@ -98,13 +98,13 @@ export function registerLearningTools(server: McpServer): void {
       concept: z.string(),
     }),
     handler: async ({ concept }) =>
-      text(forge(`forge concept ok ${q(concept)}`)),
+      text(algo(`algo concept ok ${q(concept)}`)),
   });
 
   server.register({
     name: "list_concepts",
     description: "列出待銷帳的模糊概念（複習時段的材料）。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge concept list | table -e")),
+    handler: async () => text(algo("algo concept list | table -e")),
   });
 }

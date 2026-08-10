@@ -26,7 +26,7 @@ ISO 日期字串（YYYY-MM-DD），可直接字典序比較。
 | summary | string | 費曼式解法摘要（≤3 句） |
 | cue | string | 線索卡：「下次遇到 __ 就 __」——間隔重複的卡片 |
 | needs_review | bool | 進複習排程：result 非乾淨 ac、或 hint>0、或主因 ∈ {K,P,M} |
-| hints | array | 提示使用軌跡 `[{level, at}]`（session 工具寫入；`forge add` 手記可缺） |
+| hints | array | 提示使用軌跡 `[{level, at}]`（session 工具寫入；`algo add` 手記可缺） |
 | hint_denied | int | 閘道拒絕次數——提前要提示的審計痕跡，複盤時看自律 |
 
 ### kind: "review" — 一次空白重推複習
@@ -52,7 +52,7 @@ ISO 日期字串（YYYY-MM-DD），可直接字典序比較。
 
 ## log/session.json — 進行中的 session（暫態）
 
-session 狀態機的工作檔，`forge finish/abort` 後即刪除，不進版本控制歷史分析。
+session 狀態機的工作檔，`algo finish/abort` 後即刪除，不進版本控制歷史分析。
 欄位：problem/rating/topics/mode/stuck_min/started/phase(`think`→`code`→`debug`)/events[]/hints[]/denied。
 時間全部由事件時間戳推算：t_think = start→code、t_code = code→debug、t_debug = debug→finish。
 

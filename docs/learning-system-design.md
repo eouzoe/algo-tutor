@@ -185,7 +185,7 @@ FSRS 原本只吃 recall success/fail + 自評 grade。加入 **verbal reasoning
 
 #### 與 Anki 雙向同步
 
-已有 `push_anki` tool。未來補 `pull_anki`（從 Anki 拉複習紀錄回 forge 模型）。
+已有 `push_anki` tool。未來補 `pull_anki`（從 Anki 拉複習紀錄回 algo 模型）。
 
 ---
 
@@ -1165,20 +1165,20 @@ prerequisites 在插入時做 cycle detection（DFS back-edge check）。發現�
 4. 學生學完根節點後逐步展開圖
 ```
 
-### 5.7 CLI 交互設計（forge 命令）
+### 5.7 CLI 交互設計（algo 命令）
 
-forge 是主入口：
+algo 是主入口：
 
 ```
-forge today          # 今日面板：複習到期 + 當前概念 + 建議（等同 today tool）
-forge start cses-xx  # 開始一題（自動決定 phase）
-forge next           # 下一步（觸發 scheduling → content generation）
-forge hint           # 當前題的下一級提示（只在 exam phase 提供）
-forge drill          # 強制進入 drill session（手動觸發）
-forge status         # 當前概念掌握度一覽
-forge log            # 最近訓練日誌
-forge review         # 到期複習列表
-forge submit         # 提交當前作答，更新模型
+algo today          # 今日面板：複習到期 + 當前概念 + 建議（等同 today tool）
+algo start cses-xx  # 開始一題（自動決定 phase）
+algo next           # 下一步（觸發 scheduling → content generation）
+algo hint           # 當前題的下一級提示（只在 exam phase 提供）
+algo drill          # 強制進入 drill session（手動觸發）
+algo status         # 當前概念掌握度一覽
+algo log            # 最近訓練日誌
+algo review         # 到期複習列表
+algo submit         # 提交當前作答，更新模型
 ```
 
 ### 5.8 Study Reference

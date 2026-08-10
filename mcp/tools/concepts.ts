@@ -1,14 +1,9 @@
 // algo-tutor concept tools — syntax concept index and drill.
 
-import { McpServer, ToolResult } from "../server.ts";
+import { McpServer } from "../server.ts";
 import { z } from "zod";
-import { forge } from "../forge.ts";
-
-function text(s: string): ToolResult {
-  return { content: [{ type: "text", text: s }] };
-}
-
-const q = (s: string) => `"${s.replace(/(["$\\])/g, "\\$1")}"`;
+import { algo } from "../algo.ts";
+import { text, q } from "./util.ts";
 
 export function registerConceptTools(server: McpServer): void {
   server.register({
@@ -20,8 +15,8 @@ export function registerConceptTools(server: McpServer): void {
     }),
     handler: async ({ query }) =>
       text(
-        forge(
-          `forge concept index${query ? ` -q ${q(query)}` : ""} | table -e`,
+        algo(
+          `algo concept index${query ? ` -q ${q(query)}` : ""} | table -e`,
         ),
       ),
   });
@@ -34,7 +29,7 @@ export function registerConceptTools(server: McpServer): void {
       concept: z.string(),
     }),
     handler: async ({ concept }) =>
-      text(forge(`forge concept show ${q(concept)}`)),
+      text(algo(`algo concept show ${q(concept)}`)),
   });
 
   server.register({
@@ -51,8 +46,8 @@ export function registerConceptTools(server: McpServer): void {
     }),
     handler: async ({ concept, mode, problem }) =>
       text(
-        forge(
-          `forge drill ${q(concept)}${mode ? ` --mode ${mode}` : ""}${problem ? ` --problem ${q(problem)}` : ""}`,
+        algo(
+          `algo drill ${q(concept)}${mode ? ` --mode ${mode}` : ""}${problem ? ` --problem ${q(problem)}` : ""}`,
         ) + " | table -e",
       ),
   });

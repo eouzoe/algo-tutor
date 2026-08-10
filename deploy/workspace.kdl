@@ -1,10 +1,10 @@
-// ioi-forge 練習工作區（zellij layout）
+// algo-tutor 練習工作區（zellij layout）
 // 啟動方式：just workspace
 
 layout {
     pane split_direction="vertical" {
-        pane size="70%" command="vim" cwd="/home/eouzoe/src/active/ioi-forge" {
-            args "sols/a001.cpp"
+        pane size="70%" command="vim" cwd="." {
+            args "work/sol.cpp"
         }
         pane size="30%"
     }

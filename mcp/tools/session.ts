@@ -2,7 +2,7 @@
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";
-import { forge } from "../forge.ts";
+import { algo } from "../algo.ts";
 import { text, q } from "./util.ts";
 
 export function registerSessionTools(server: McpServer): void {
@@ -10,14 +10,14 @@ export function registerSessionTools(server: McpServer): void {
     name: "today",
     description: "今日訓練面板：複習到期、當前課綱單元、題單。學生問「今天做什麼」時呼叫。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge today")),
+    handler: async () => text(algo("algo today")),
   });
 
   server.register({
     name: "session_status",
     description: "目前解題進度與下一級提示倒數。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge status")),
+    handler: async () => text(algo("algo status")),
   });
 
   server.register({
@@ -41,8 +41,8 @@ export function registerSessionTools(server: McpServer): void {
     }),
     handler: async (a) =>
       text(
-        forge(
-          `forge start ${q(a.problem)}${a.rating ? ` -r ${a.rating}` : ""}${a.topics ? ` -t ${q(a.topics)}` : ""}${a.phase ? ` --phase ${a.phase}` : ""}${a.stuck_min != null ? ` --stuck-min ${a.stuck_min}` : ""}`,
+        algo(
+          `algo start ${q(a.problem)}${a.rating ? ` -r ${a.rating}` : ""}${a.topics ? ` -t ${q(a.topics)}` : ""}${a.phase ? ` --phase ${a.phase}` : ""}${a.stuck_min != null ? ` --stuck-min ${a.stuck_min}` : ""}`,
         ),
       ),
   });
@@ -55,21 +55,21 @@ export function registerSessionTools(server: McpServer): void {
       notes: z.string().optional().describe("學生目前的思路與卡點"),
     }),
     handler: async (a) =>
-      text(forge(`forge hint${a.notes ? ` -n ${q(a.notes)}` : ""}`)),
+      text(algo(`algo hint${a.notes ? ` -n ${q(a.notes)}` : ""}`)),
   });
 
   server.register({
     name: "mark_coding",
     description: "學生開始寫代碼時呼叫（記錄思考時間）。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge code")),
+    handler: async () => text(algo("algo code")),
   });
 
   server.register({
     name: "mark_debugging",
     description: "學生第一次提交失敗、進入除錯時呼叫。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge debug")),
+    handler: async () => text(algo("algo debug")),
   });
 
   server.register({
@@ -86,8 +86,8 @@ export function registerSessionTools(server: McpServer): void {
     }),
     handler: async (a) =>
       text(
-        forge(
-          `forge finish ${a.result}${a.score != null ? ` --score ${a.score}` : ""} --err ${q(a.err)} --err2 ${q(a.err2 ?? "")} -s ${q(a.summary)} -c ${q(a.cue)}`,
+        algo(
+          `algo finish ${a.result}${a.score != null ? ` --score ${a.score}` : ""} --err ${q(a.err)} --err2 ${q(a.err2 ?? "")} -s ${q(a.summary)} -c ${q(a.cue)}`,
         ),
       ),
   });
@@ -96,14 +96,14 @@ export function registerSessionTools(server: McpServer): void {
     name: "abort_problem",
     description: "放棄目前題目（不寫日誌）。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge abort")),
+    handler: async () => text(algo("algo abort")),
   });
 
   server.register({
     name: "reviews_due",
     description: "到期的複習題（空白重推）。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge due | table -e")),
+    handler: async () => text(algo("algo due | table -e")),
   });
 
   server.register({
@@ -114,6 +114,6 @@ export function registerSessionTools(server: McpServer): void {
       recalled: z.boolean(),
     }),
     handler: async ({ id, recalled }) =>
-      text(forge(`forge done ${q(id)}${recalled ? "" : " --failed"}`)),
+      text(algo(`algo done ${q(id)}${recalled ? "" : " --failed"}`)),
   });
 }

@@ -58,7 +58,7 @@
         { "id": "bubble_sort", "reason": "基礎排序實作" },
         { "id": "brute_force_search", "reason": "窮舉所有配對" }
       ],
-      "trields": ["每一對", "所有組合", "雙重迴圈", "時間複雜度 n 平方"],
+      "triggers": ["每一對", "所有組合", "雙重迴圈", "時間複雜度 n 平方"],
       "common_mistakes": [
         "內層迴圈起始條件錯誤",
         "複雜度估算錯誤（以為是 O(n)）",

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-# algo-tutor — one-command bootstrap for NixOS / NixOS-WSL
-# 用法: curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/deploy/bootstrap.sh | sh
+# algo-tutor — one-command bootstrap for Ubuntu / NixOS / WSL
+# Usage: curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/deploy/bootstrap.sh | sh
 set -eu
 
 REPO="https://github.com/eouzoe/algo-tutor"
@@ -9,21 +9,27 @@ REPO_DIR="$DEST"
 
 echo "==> 1/5 檢查 Nix"
 if ! command -v nix >/dev/null 2>&1; then
-  echo "安裝 Nix..."
+  echo "  安裝 Nix (Determinate Systems)..."
   curl -fsSL https://install.determinate.systems/nix | sh -s -- install --no-confirm
   # shellcheck disable=SC1091
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  if [ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+    . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  elif [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
+    . ~/.nix-profile/etc/profile.d/nix.sh
+  fi
 fi
-echo "  Nix OK"
+echo "  Nix OK ($(nix --version))"
 
 echo "==> 2/5 檢查 devenv"
 if ! command -v devenv >/dev/null 2>&1; then
+  echo "  安裝 devenv..."
   nix profile install nixpkgs#devenv
 fi
-echo "  devenv OK"
+echo "  devenv OK ($(devenv --version))"
 
 echo "==> 3/5 下載 algo-tutor"
 if [ ! -d "$REPO_DIR" ]; then
+  echo "  克隆 $REPO..."
   git clone "$REPO" "$REPO_DIR"
 else
   echo "  已存在，pull 最新"
@@ -45,4 +51,7 @@ echo "    cd $REPO_DIR && devenv shell"
 echo ""
 echo "  啟動 MCP server："
 echo "    just mcp"
+echo ""
+echo "  開始診斷（初學者入口）："
+echo "    just diagnostic"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

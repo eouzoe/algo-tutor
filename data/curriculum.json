@@ -35,7 +35,7 @@
           "syntax_template": "cout << \"Hello, world!\" << endl;\ncout << \"數字：\" << 42 << endl;",
           "vim_drills": [
             "在 return 前插入 cout 行",
-            "用 :w 存檔，用 forge run 看結果"
+            "用 :w 存檔，用 algo run 看結果"
           ],
           "evidence": [
             "能輸出文字 + 數字 + 換行"
@@ -95,26 +95,50 @@
       "exam_ready": "能不看參考，從空白檔案默寫完整 hello world 程式"
     },
     "phase_practice": {
-      "syntax_ref_provided": false,
       "problems": [
         "zj/a001",
         "zj/a002"
       ],
-      "exam_ready": "兩題各在 2 分鐘內 AC（速練模式）"
+      "syntax_ref_provided": false
     },
     "phase_exam": {
-      "problems": [],
-      "description": "此單元無獨立考試題。直接進入 phase_practice 即可"
+      "problems": [
+        "cf/2230A",
+        "cf/2228A"
+      ],
+      "instructions": "From blank file, no reference. Simple IO problems."
     },
     "knowledge_map": [
-      { "id": "kn_cpp_file", "name": "C++ 原始檔概念", "type": "conceptual" },
-      { "id": "kn_compilation", "name": "編譯→執行流程", "type": "procedural" },
-      { "id": "kn_vim_survival", "name": "vim 存活操作", "type": "procedural" },
-      { "id": "kn_oj_submit", "name": "OJ 提交與回饋閱讀", "type": "procedural" }
+      {
+        "id": "kn_cpp_file",
+        "name": "C++ 原始檔概念",
+        "type": "conceptual"
+      },
+      {
+        "id": "kn_compilation",
+        "name": "編譯→執行流程",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_vim_survival",
+        "name": "vim 存活操作",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_oj_submit",
+        "name": "OJ 提交與回饋閱讀",
+        "type": "procedural"
+      }
     ],
-    "problems": ["zj/a001", "zj/a002"],
+    "problems": [
+      "zj/a001",
+      "zj/a002"
+    ],
     "exit": "能獨立寫出讀入→計算→輸出的完整程式",
-    "usaco": ["1_General/Input_Output.mdx", "1_General/Data_Types.mdx"],
+    "usaco": [
+      "1_General/Input_Output.mdx",
+      "1_General/Data_Types.mdx"
+    ],
     "vim": [
       "vim 四種模式：Normal／Insert／Visual／Command-line（先記四種存在，不用會全部）",
       "hjkl 移動——用鍵盤找到 h/j/k/l 位置，試一次只按一個鍵",
@@ -129,7 +153,9 @@
   {
     "id": 2,
     "name": "控制流",
-    "prerequisites": [1],
+    "prerequisites": [
+      1
+    ],
     "prerequisite_topics": [
       "程式骨架默寫",
       "cin/cout 基本操作",
@@ -152,7 +178,7 @@
           "syntax_template": "int x;\ncin >> x;\nif (x > 0) {\n  cout << \"positive\" << '\\n';\n} else if (x == 0) {\n  cout << \"zero\" << '\\n';\n} else {\n  cout << \"negative\" << '\\n';\n}",
           "vim_drills": [
             "打出完整 if/else if/else 結構",
-            "用 forge run 測試不同輸入"
+            "用 algo run 測試不同輸入"
           ],
           "evidence": [
             "能寫出三路分支",
@@ -185,40 +211,71 @@
           ]
         }
       ],
-      "follow_along": ["work/templates/u2_if.cpp", "work/templates/u2_loop.cpp"],
+      "follow_along": [
+        "work/templates/u2_if.cpp",
+        "work/templates/u2_loop.cpp"
+      ],
       "exam_ready": "能不看參考寫出巢狀迴圈"
     },
     "phase_practice": {
-      "syntax_ref_provided": false,
-      "problems": ["cses/1068", "zj/a003"],
-      "exam_ready": "兩題各在 5 分鐘內 AC"
+      "problems": [
+        "cses/1068",
+        "zj/a003"
+      ],
+      "syntax_ref_provided": false
     },
     "phase_exam": {
-      "problems": [],
-      "description": "家教人工出模擬情境題，驗證控制流熟練度"
+      "problems": [
+        "cf/2241A",
+        "cf/2238A"
+      ],
+      "instructions": "Loop + condition. Independent work."
     },
     "knowledge_map": [
-      { "id": "kn_condition", "name": "條件判斷", "type": "procedural" },
-      { "id": "kn_loop", "name": "迴圈結構", "type": "procedural" },
-      { "id": "kn_nested_loop", "name": "巢狀迴圈", "type": "procedural" },
-      { "id": "kn_eof_input", "name": "EOF 多筆輸入", "type": "procedural" }
+      {
+        "id": "kn_condition",
+        "name": "條件判斷",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_loop",
+        "name": "迴圈結構",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_nested_loop",
+        "name": "巢狀迴圈",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_eof_input",
+        "name": "EOF 多筆輸入",
+        "type": "procedural"
+      }
     ],
-    "problems": ["cses/1068", "zj/a003"],
+    "problems": [
+      "cses/1068",
+      "zj/a003"
+    ],
     "exit": "巢狀迴圈畫圖形、模擬簡單過程不卡",
-    "usaco": ["2_Bronze/Simulation.mdx"],
+    "usaco": [
+      "2_Bronze/Simulation.mdx"
+    ],
     "vim": [
       "Normal 快速移動：w/b/e（單字跳）、0/$（行首尾）、%（配對括號跳）",
       "dd 刪除行、x 刪除字元、p 貼在游標後、P 貼在游標前",
       "yy 複製行、用 dd+p 練習移行、u 復原任何失手",
       "/pattern 搜尋、n/N 下/上一個",
       "o 下方開新行（Insert）、O 上方開新行",
-      "練習：程式碼重新排版——先用 vim 的 >> << 縮排，再用 forge fmt 對照差異"
+      "練習：程式碼重新排版——先用 vim 的 >> << 縮排，再用 algo fmt 對照差異"
     ]
   },
   {
     "id": 3,
     "name": "函式與遞迴初步",
-    "prerequisites": [2],
+    "prerequisites": [
+      2
+    ],
     "prerequisite_topics": [
       "if/else",
       "for/while",
@@ -258,22 +315,41 @@
           ]
         }
       ],
-      "follow_along": ["work/templates/u3_func.cpp"],
+      "follow_along": [
+        "work/templates/u3_func.cpp"
+      ],
       "exam_ready": "能自己定義函式並寫出階乘遞迴"
     },
     "phase_practice": {
-      "syntax_ref_provided": false,
-      "problems": [],
-      "description": "此單元目前無線上新題，家教人工出函式拆分練習"
+      "problems": [
+        "cf/2242A",
+        "cf/2192A"
+      ],
+      "syntax_ref_provided": false
     },
     "phase_exam": {
-      "problems": [],
-      "description": "家教人工出題：需要自訂函式解決的模擬題"
+      "problems": [
+        "cf/2200C",
+        "cf/2225B"
+      ],
+      "instructions": "String/function problems. Independent work."
     },
     "knowledge_map": [
-      { "id": "kn_function", "name": "函式定義/呼叫", "type": "procedural" },
-      { "id": "kn_param_pass", "name": "參數傳遞（值傳遞）", "type": "conceptual" },
-      { "id": "kn_recursion", "name": "遞迴=base+遞迴呼叫", "type": "conceptual" }
+      {
+        "id": "kn_function",
+        "name": "函式定義/呼叫",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_param_pass",
+        "name": "參數傳遞（值傳遞）",
+        "type": "conceptual"
+      },
+      {
+        "id": "kn_recursion",
+        "name": "遞迴=base+遞迴呼叫",
+        "type": "conceptual"
+      }
     ],
     "problems": [],
     "exit": "能把重複邏輯抽成函式；手寫階乘遞迴",
@@ -290,7 +366,9 @@
   {
     "id": 4,
     "name": "陣列、vector、字串",
-    "prerequisites": [2],
+    "prerequisites": [
+      2
+    ],
     "prerequisite_topics": [
       "for 迴圈遍歷",
       "函式定義"
@@ -353,28 +431,60 @@
           ]
         }
       ],
-      "follow_along": ["work/templates/u4_array.cpp"],
+      "follow_along": [
+        "work/templates/u4_array.cpp"
+      ],
       "exam_ready": "能使用 vector 與 string 處理資料"
     },
     "phase_practice": {
-      "syntax_ref_provided": false,
-      "problems": ["cses/1069", "cses/1083"],
-      "exam_ready": "兩題各在 10 分鐘內 AC"
+      "problems": [
+        "cses/1069",
+        "cses/1083"
+      ],
+      "syntax_ref_provided": false
     },
     "phase_exam": {
-      "problems": [],
-      "description": "家教人工出混合題：陣列+字串操作"
+      "problems": [
+        "cf/2229A",
+        "cf/2233A"
+      ],
+      "instructions": "Array problems. Independent work."
     },
     "knowledge_map": [
-      { "id": "kn_array", "name": "陣列與索引", "type": "procedural" },
-      { "id": "kn_vector", "name": "vector 動態陣列", "type": "procedural" },
-      { "id": "kn_string", "name": "string 類別", "type": "procedural" },
-      { "id": "kn_2d_array", "name": "二維陣列", "type": "procedural" },
-      { "id": "kn_out_of_bounds", "name": "越界錯誤", "type": "conceptual" }
+      {
+        "id": "kn_array",
+        "name": "陣列與索引",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_vector",
+        "name": "vector 動態陣列",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_string",
+        "name": "string 類別",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_2d_array",
+        "name": "二維陣列",
+        "type": "procedural"
+      },
+      {
+        "id": "kn_out_of_bounds",
+        "name": "越界錯誤",
+        "type": "conceptual"
+      }
     ],
-    "problems": ["cses/1069", "cses/1083"],
+    "problems": [
+      "cses/1069",
+      "cses/1083"
+    ],
     "exit": "能處理一維/二維資料與字串掃描",
-    "usaco": ["2_Bronze/Intro_DS.mdx"],
+    "usaco": [
+      "2_Bronze/Intro_DS.mdx"
+    ],
     "vim": [
       "Ctrl+w 視窗操作：s（水平分）、v（垂直分）、hjkl（切換視窗）",
       ":e 檔名 開新檔案；:b 編號 或 :b 部分檔名 切換 buffer",
@@ -386,7 +496,9 @@
   {
     "id": 5,
     "name": "STL 核心 I：排序",
-    "prerequisites": [4],
+    "prerequisites": [
+      4
+    ],
     "prerequisite_topics": [
       "vector push_back/size",
       "陣列遍歷"
@@ -398,9 +510,14 @@
       "greater<>"
     ],
     "tutor": "CS 視角：sort 用的是 introsort（quicksort + heapsort 混合），平均 O(n log n)、最壞 O(n log n)。比較次數決定了速度——自訂比較器回傳 true 表示「a 應該在 b 前面」。pair 預設先比 first 再比 second，因為底層用 operator< 逐成員比較。不教：自訂排序演算法（競賽用 sort 就好）、qsort（C style）、不穩定的排序細節（O3 編譯器不會自動幫你排序，但 sort 本身已經夠快）。教材參考：OI Wiki 排序（https://oi-wiki.org/basic/sort/）+ CP-Algorithms 排序",
-    "problems": ["cses/1621"],
+    "problems": [
+      "cses/1621"
+    ],
     "exit": "能對任意結構排序",
-    "usaco": ["2_Bronze/Intro_Sorting.mdx", "3_Silver/Sorting_Custom.mdx"],
+    "usaco": [
+      "2_Bronze/Intro_Sorting.mdx",
+      "3_Silver/Sorting_Custom.mdx"
+    ],
     "vim": [
       ":Ex 或 :Lex 檔案總管（netrw）——瀏覽/開啟同目錄檔案",
       ":find 檔名 搜尋 path 內檔案",
@@ -412,7 +529,9 @@
   {
     "id": 6,
     "name": "STL 核心 II：關聯容器",
-    "prerequisites": [5],
+    "prerequisites": [
+      5
+    ],
     "prerequisite_topics": [
       "sort",
       "pair",
@@ -425,9 +544,14 @@
       "queue/stack/deque"
     ],
     "tutor": "CS 視角：set/map 是紅黑樹（平衡 BST），插入/刪除/查詢都是 O(log n)。priority_queue 是 binary heap（陣列實作），push/pop O(log n)、top O(1)。queue 是 FIFO（底層 deque），stack 是 LIFO。每個容器講「什麼時候想到它」：去重→set、計數→map、前 k 大→priority_queue、BFS→queue、DFS→stack。O3/C++17 不會幫你選容器——你得自己選對。教材參考：OI Wiki STL（https://oi-wiki.org/lang/csl/）+ CP-Algorithms 資料結構",
-    "problems": ["cses/1090"],
+    "problems": [
+      "cses/1090"
+    ],
     "exit": "能為需求選對容器並說出複雜度",
-    "usaco": ["2_Bronze/Intro_Sets.mdx", "3_Silver/Priority_Queues.mdx"],
+    "usaco": [
+      "2_Bronze/Intro_Sets.mdx",
+      "3_Silver/Priority_Queues.mdx"
+    ],
     "vim": [
       "qa 開始錄製巨集到 register a、q 停止、@a 播放、@@ 重播上次",
       "使用巨集一次修改多個同結構位置：record → j → @a → ...",
@@ -439,7 +563,9 @@
   {
     "id": 7,
     "name": "STL 演算法與迭代器",
-    "prerequisites": [6],
+    "prerequisites": [
+      6
+    ],
     "prerequisite_topics": [
       "set/map 操作",
       "priority_queue 操作"
@@ -450,9 +576,13 @@
       "迭代器概念"
     ],
     "tutor": "CS 視角：lower_bound 是二分搜在有序區間上 O(log n)。迭代器是泛型指針——vector::iterator 就是包裝過的 T*。unique 把重複元素移到末端並回傳新 end，搭配 erase 實現去重。O3/C++17 編譯器會內聯這些小函式。不教：iterator_traits、reverse_iterator 細節。教材：OI Wiki 迭代器（https://oi-wiki.org/lang/iterator/）+ cppreference.com",
-    "problems": ["cses/1091"],
+    "problems": [
+      "cses/1091"
+    ],
     "exit": "熟練 lower_bound 在陣列與 set/map 上的用法",
-    "usaco": ["1_General/Lambda_Funcs.mdx"],
+    "usaco": [
+      "1_General/Lambda_Funcs.mdx"
+    ],
     "vim": [
       ":!指令 執行外部指令——如 :!g++ -O2 -Wall % 直接編譯目前檔案",
       ":r !指令 把外部指令輸出插入到游標位置——如 :r !date",
@@ -465,7 +595,9 @@
   {
     "id": 8,
     "name": "複雜度與對拍工作流",
-    "prerequisites": [4],
+    "prerequisites": [
+      4
+    ],
     "prerequisite_topics": [
       "vector 操作熟練",
       "g++ 編譯流程"
@@ -473,13 +605,16 @@
     "goals": [
       "big-O 直覺",
       "由 n 規模選演算法（1e5→O(n log n)）",
-      "forge stress 對拍",
+      "algo stress 對拍",
       "邊界清單習慣"
     ],
-    "tutor": "CS 視角：big-O 是「當 n → ∞ 時運算次數的成長率」，不是精確時間。1e8 次簡單運算 ≈ 1 秒。用約束反推演算法：n ≤ 20 → O(2ⁿ)、n ≤ 5000 → O(n²)、n ≤ 10⁵ → O(n log n)、n ≤ 10⁷ → O(n)。O3/-O2 編譯器優化不改變 big-O。教 forge stress 對拍流程。教材：CSAPP Ch5（程式效能優化——先看懂瓶頸在哪再優化）+ USACO Guide 時間複雜度",
+    "tutor": "CS 視角：big-O 是「當 n → ∞ 時運算次數的成長率」，不是精確時間。1e8 次簡單運算 ≈ 1 秒。用約束反推演算法：n ≤ 20 → O(2ⁿ)、n ≤ 5000 → O(n²)、n ≤ 10⁵ → O(n log n)、n ≤ 10⁷ → O(n)。O3/-O2 編譯器優化不改變 big-O。教 algo stress 對拍流程。教材：CSAPP Ch5（程式效能優化——先看懂瓶頸在哪再優化）+ USACO Guide 時間複雜度",
     "problems": [],
     "exit": "動筆前能寫出複雜度預算；獨立跑通一次對拍",
-    "usaco": ["2_Bronze/Time_Comp.mdx", "1_General/Basic_Debugging.mdx"],
+    "usaco": [
+      "2_Bronze/Time_Comp.mdx",
+      "1_General/Basic_Debugging.mdx"
+    ],
     "vim": [
       ":make 編譯（需設 makeprg）、:copen 開 quickfix 視窗",
       ":cn/:cp 跳下/上一個錯誤、:cfirst/:clast",
@@ -491,7 +626,9 @@
   {
     "id": 9,
     "name": "遞迴與完全搜索",
-    "prerequisites": [3],
+    "prerequisites": [
+      3
+    ],
     "prerequisite_topics": [
       "遞迴=base+遞迴呼叫",
       "for 迴圈"
@@ -503,9 +640,15 @@
       "位元枚舉"
     ],
     "tutor": "從遞迴樹圖像教回溯；APCS/能競常靠完全搜索撈分。",
-    "problems": ["cses/1623", "cses/1624"],
+    "problems": [
+      "cses/1623",
+      "cses/1624"
+    ],
     "exit": "能寫出子集/排列枚舉並估算可行規模",
-    "usaco": ["2_Bronze/Intro_Complete.mdx", "2_Bronze/Complete_Rec.mdx"],
+    "usaco": [
+      "2_Bronze/Intro_Complete.mdx",
+      "2_Bronze/Complete_Rec.mdx"
+    ],
     "vim": [
       "zf 建立摺疊（選取區）、zo 打開摺疊、zc 關閉、zR 全開、zM 全關",
       "za 切換摺疊狀態——搜尋時自動展開摺疊",
@@ -517,7 +660,9 @@
   {
     "id": 10,
     "name": "貪心",
-    "prerequisites": [5],
+    "prerequisites": [
+      5
+    ],
     "prerequisite_topics": [
       "sort + 自訂比較",
       "pair"
@@ -528,9 +673,14 @@
       "區間排程"
     ],
     "tutor": "教「貪心要有理由」：用交換論證檢驗；反例意識（對拍驗貪心）。",
-    "problems": ["cses/1629"],
+    "problems": [
+      "cses/1629"
+    ],
     "exit": "能陳述貪心策略為何正確",
-    "usaco": ["2_Bronze/Intro_Greedy.mdx", "3_Silver/Greedy_Sorting.mdx"],
+    "usaco": [
+      "2_Bronze/Intro_Greedy.mdx",
+      "3_Silver/Greedy_Sorting.mdx"
+    ],
     "vim": [
       "register 全家：\"\"（預設）、\"0（最後 yank）、\"-（小刪）、\"=（表達式）",
       "\"=5+3<Enter>p 在文件中插入運算結果",
@@ -542,7 +692,10 @@
   {
     "id": 11,
     "name": "二分搜",
-    "prerequisites": [5, 8],
+    "prerequisites": [
+      5,
+      8
+    ],
     "prerequisite_topics": [
       "sort",
       "big-O",
@@ -554,9 +707,13 @@
       "浮點二分"
     ],
     "tutor": "教「答案具單調性→二分答案」的識別線索；邊界收斂模板。",
-    "problems": ["cses/1620"],
+    "problems": [
+      "cses/1620"
+    ],
     "exit": "手寫二分無 off-by-one；能識別答案二分題",
-    "usaco": ["3_Silver/Binary_Search.mdx"],
+    "usaco": [
+      "3_Silver/Binary_Search.mdx"
+    ],
     "vim": [
       "全域 substitute：:%s/old/new/g 基礎、:%s/old/new/gc 逐一確認",
       "%s//new/g 用最近搜尋模式作為 pattern",
@@ -569,7 +726,10 @@
   {
     "id": 12,
     "name": "前綴和與雙指針",
-    "prerequisites": [4, 7],
+    "prerequisites": [
+      4,
+      7
+    ],
     "prerequisite_topics": [
       "陣列遍歷",
       "lower_bound/upper_bound"
@@ -580,9 +740,15 @@
       "差分"
     ],
     "tutor": "教「區間和查詢→前綴和」「有序+配對→雙指針」的觸發線索。",
-    "problems": ["cses/1640", "cses/1661"],
+    "problems": [
+      "cses/1640",
+      "cses/1661"
+    ],
     "exit": "兩類線索能即時觸發",
-    "usaco": ["3_Silver/Prefix_Sums.mdx", "3_Silver/Two_Pointers.mdx"],
+    "usaco": [
+      "3_Silver/Prefix_Sums.mdx",
+      "3_Silver/Two_Pointers.mdx"
+    ],
     "vim": [
       "自己的競賽 .vimrc 逐漸長大：map leader 為逗號",
       "nnoremap <leader>w :w<CR> 自訂存檔快捷",
@@ -595,7 +761,10 @@
   {
     "id": 13,
     "name": "基礎 DP",
-    "prerequisites": [9, 12],
+    "prerequisites": [
+      9,
+      12
+    ],
     "prerequisite_topics": [
       "遞迴",
       "陣列/vector",
@@ -609,9 +778,17 @@
       "網格 DP"
     ],
     "tutor": "DP 是大坎：先教「狀態=子問題答案」的定義訓練，再轉移。多花時間，變體練習加倍。",
-    "problems": ["cses/1633", "cses/1158", "cses/1638"],
+    "problems": [
+      "cses/1633",
+      "cses/1158",
+      "cses/1638"
+    ],
     "exit": "能自己定義狀態並寫出轉移，不背模板",
-    "usaco": ["4_Gold/Intro_DP.mdx", "4_Gold/Knapsack_DP.mdx", "4_Gold/Paths_Grids.mdx"],
+    "usaco": [
+      "4_Gold/Intro_DP.mdx",
+      "4_Gold/Knapsack_DP.mdx",
+      "4_Gold/Paths_Grids.mdx"
+    ],
     "vim": [
       ":mksession 儲存當前工作區（vim 視窗配置、buffer 列表、選取）",
       "vim -S Session.vim 還原工作區",
@@ -623,7 +800,10 @@
   {
     "id": 14,
     "name": "圖論基礎",
-    "prerequisites": [9, 12],
+    "prerequisites": [
+      9,
+      12
+    ],
     "prerequisite_topics": [
       "遞迴/回溯",
       "vector 二維",
@@ -637,9 +817,16 @@
       "BFS 最短路+還原路徑"
     ],
     "tutor": "教建圖慣用法與 DFS/BFS 模板；網格圖是能競常客。",
-    "problems": ["cses/1192", "cses/1666"],
+    "problems": [
+      "cses/1192",
+      "cses/1666"
+    ],
     "exit": "圖/網格的遍歷題 15 分鐘內出手",
-    "usaco": ["2_Bronze/Intro_Graphs.mdx", "3_Silver/Graph_Traversal.mdx", "3_Silver/Flood_Fill.mdx"],
+    "usaco": [
+      "2_Bronze/Intro_Graphs.mdx",
+      "3_Silver/Graph_Traversal.mdx",
+      "3_Silver/Flood_Fill.mdx"
+    ],
     "vim": [
       "vim 內 git 工作流：:!git diff % 看目前檔案變更",
       ":!git add % && git commit -m 'msg' 快速提交",
@@ -651,7 +838,9 @@
   {
     "id": 15,
     "name": "最短路與拓撲",
-    "prerequisites": [14],
+    "prerequisites": [
+      14
+    ],
     "prerequisite_topics": [
       "BFS",
       "鄰接表",
@@ -663,9 +852,14 @@
       "DAG 上 DP"
     ],
     "tutor": "教 priority_queue 版 Dijkstra 與 toposort；何時用哪個的判斷。",
-    "problems": ["cses/1671", "cses/1679"],
+    "problems": [
+      "cses/1671",
+      "cses/1679"
+    ],
     "exit": "兩模板能默寫並知道適用條件",
-    "usaco": ["4_Gold/Shortest_Paths.mdx"],
+    "usaco": [
+      "4_Gold/Shortest_Paths.mdx"
+    ],
     "vim": [
       "ctags 安裝 + 產生：:!ctags -R .（或在 .vimrc 設自動產生）",
       "Ctrl+] 跳到標籤定義、g] 列出所有匹配的標籤",
@@ -677,7 +871,10 @@
   {
     "id": 16,
     "name": "樹與 DSU",
-    "prerequisites": [14, 15],
+    "prerequisites": [
+      14,
+      15
+    ],
     "prerequisite_topics": [
       "DFS/BFS",
       "鄰接表",
@@ -688,9 +885,15 @@
       "並查集"
     ],
     "tutor": "教樹=無環連通圖的遞迴思維；DSU 模板與「動態連通性→DSU」線索。",
-    "problems": ["cses/1674", "cses/1676"],
+    "problems": [
+      "cses/1674",
+      "cses/1676"
+    ],
     "exit": "DSU 默寫；樹遍歷計數不卡",
-    "usaco": ["3_Silver/Intro_Tree.mdx", "4_Gold/DSU.mdx"],
+    "usaco": [
+      "3_Silver/Intro_Tree.mdx",
+      "4_Gold/DSU.mdx"
+    ],
     "vim": [
       "vim 作為 IDE 的極限：makeprg+errorformat+quickfix 三件套",
       "set makeprg=g++\\ -O2\\ -std=c++17\\ -Wall\\ %\\ -o\\ %<",
@@ -702,7 +905,10 @@
   {
     "id": 17,
     "name": "初選特化 I：區間資結",
-    "prerequisites": [13, 16],
+    "prerequisites": [
+      13,
+      16
+    ],
     "prerequisite_topics": [
       "prefix sum",
       "DP 思維",
@@ -714,9 +920,14 @@
       "區間改懶標入門"
     ],
     "tutor": "初選考點：從 BIT 到基礎線段樹，模板+觸發線索（區間查詢+修改→線段樹）。",
-    "problems": ["cses/1648", "cses/1649"],
+    "problems": [
+      "cses/1648",
+      "cses/1649"
+    ],
     "exit": "兩模板默寫；能改造線段樹維護不同資訊",
-    "usaco": ["4_Gold/PURS.mdx"],
+    "usaco": [
+      "4_Gold/PURS.mdx"
+    ],
     "vim": [
       ":bufdo %s/old/new/g | update 在所有 buffer 中取代並存檔",
       ":argdo %s/old/new/g | wnext 在 arglist 的所有檔案上執行",
@@ -729,7 +940,10 @@
   {
     "id": 18,
     "name": "初選特化 II：矩陣快速冪、哈希、子題策略",
-    "prerequisites": [13, 17],
+    "prerequisites": [
+      13,
+      17
+    ],
     "prerequisite_topics": [
       "DP",
       "線段樹/BIT",
@@ -742,9 +956,15 @@
       "子題撈分策略"
     ],
     "tutor": "初選考點收尾：線性遞推→矩陣冪、字串匹配→哈希；教「先掃全部子題撈保底分」的考試策略。",
-    "problems": ["cses/1722", "cses/1753"],
+    "problems": [
+      "cses/1722",
+      "cses/1753"
+    ],
     "exit": "初選模擬卷能撈到安全分數線",
-    "usaco": ["4_Gold/Hashing.mdx", "4_Gold/Modular.mdx"],
+    "usaco": [
+      "4_Gold/Hashing.mdx",
+      "4_Gold/Modular.mdx"
+    ],
     "vim": [
       "完全 vim 主義者——vim 是第二語言，不是工具",
       "速度目標：編輯同樣程式碼比入門期快 20%+",

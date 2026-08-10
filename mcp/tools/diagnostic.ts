@@ -97,7 +97,7 @@ export function registerDiagnosticTools(server: McpServer): void {
           stdin: tc.input,
           stdout: "pipe",
           stderr: "pipe",
-        });
+        }, { timeout: 30_000 });
 
         const output = new TextDecoder().decode(runResult.stdout).trim();
         const expected = tc.expected.trim();

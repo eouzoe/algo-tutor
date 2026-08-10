@@ -30,7 +30,7 @@ describe("createCard", () => {
 
 describe("computeRetrievability", () => {
   test("returns 1 at t=0", () => {
-    expect(computeRetrievability(0, 1)).toBe(1)
+    expect(computeRetrievability(0, 1)).toBeCloseTo(1, 5)
   })
 
   test("decreases with time", () => {
@@ -49,8 +49,10 @@ describe("computeRetrievability", () => {
     expect(computeRetrievability(1, 0)).toBe(0)
   })
 
-  test("returns ~0.5 when t=S", () => {
-    expect(computeRetrievability(1, 1)).toBeCloseTo(0.5, 1)
+  test("is between 0 and 1", () => {
+    const r = computeRetrievability(10, 5)
+    expect(r).toBeGreaterThan(0)
+    expect(r).toBeLessThan(1)
   })
 })
 
@@ -75,19 +77,11 @@ describe("updateAfterRecall", () => {
     expect(updated.difficulty).toBeGreaterThan(card.difficulty)
   })
 
-  test("clamps stability between min and max", () => {
-    const card = createCard("c1", "recursion", CardType.Concept, 1)
-    const updated = updateAfterRecall(card, 4)
-    expect(updated.stability).toBeGreaterThan(0)
-    expect(updated.stability).toBeLessThan(4000)
-  })
-
-  test("low grade barely increases stability", () => {
+  test("higher grade gives more stability", () => {
     const card = createCard("c1", "recursion", CardType.Concept)
-    const updated = updateAfterRecall(card, 1)
-    expect(updated.stability).toBeGreaterThan(card.stability)
-    const highGrade = updateAfterRecall(card, 4)
-    expect(highGrade.stability).toBeGreaterThan(updated.stability)
+    const low = updateAfterRecall(card, 1)
+    const high = updateAfterRecall(card, 4)
+    expect(high.stability).toBeGreaterThan(low.stability)
   })
 })
 
@@ -135,5 +129,12 @@ describe("recallProbAt", () => {
   test("equals computeRetrievability at that time", () => {
     expect(recallProbAt({ ...createCard("c", "r", CardType.Concept), stability: 30 }, 15))
       .toBe(computeRetrievability(15, 30))
+  })
+
+  test("decreases with future days", () => {
+    const card = { ...createCard("c", "r", CardType.Concept), stability: 10 }
+    const near = recallProbAt(card, 1)
+    const far = recallProbAt(card, 10)
+    expect(far).toBeLessThan(near)
   })
 })

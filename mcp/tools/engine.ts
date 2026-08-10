@@ -194,10 +194,31 @@ export function registerEngineTools(server: McpServer): void {
     }),
     handler: async ({ session, correct }) => {
       try {
-        const updated = advanceDrill(JSON.parse(session), correct);
-        return text(JSON.stringify(updated));
+        const updated = advanceDrill(JSON.parse(session), correct)
+        return text(JSON.stringify(updated))
       } catch (e) {
-        return errText(e);
+        return errText(e)
+      }
+    },
+  });
+
+  server.register({
+    name: "engine_reset_progress",
+    description: "重置學習進度。scope='all' 重置全部，或指定 conceptId 重置特定概念。",
+    inputSchema: z.object({
+      scope: z.string().describe("'all' 或 conceptId"),
+    }),
+    handler: async ({ scope }) => {
+      try {
+        const { execSync } = await import("node:child_process")
+        const root = process.env.ALGO_ROOT ?? process.cwd()
+        const result = execSync(
+          `bun run ${root}/packages/engine/src/cli.ts reset-progress ${scope}`,
+          { encoding: "utf8", timeout: 10_000 }
+        )
+        return text(result.trim())
+      } catch (e) {
+        return errText(e)
       }
     },
   });

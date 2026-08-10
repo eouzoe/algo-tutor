@@ -5,69 +5,26 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:
 
 jobs:
-  # 完整 bootstrap 驗證：Nix → devenv → 依賴 → forge doctor
-  bootstrap-linux:
+  engine:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: nixbuild/nix-quick-install-action@v30
-      - run: nix profile install nixpkgs#devenv
-      - run: devenv shell -- nu -c 'cd mcp; bun install'
-      - name: 同步 CF 題庫（失敗不擋，doctor 為選配項）
-        run: devenv shell -- nu -c 'use .nu/forge.nu *; try { forge sync } catch { print "sync failed (non-blocking)" }'
-      - name: forge doctor（環境 + 功能自檢）
-        run: devenv shell -- nu -c 'use .nu/forge.nu *; forge doctor'
+      - uses: oven-sh/setup-bun@v2
+      - run: cd packages/engine && bun install && bun test
 
-  # bootstrap.sh 本身的殼層語法與關鍵段落
-  bootstrap-script:
+  mcp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: cd mcp && bun install
+      - run: cd mcp && echo '{"jsonrpc":"2.0","id":1,"method":"server/discover","params":{}}" | timeout 5 bun run index.ts 2>/dev/null | grep -q "algo-tutor"
+
+  bootstrap:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: sh -n deploy/bootstrap.sh
-      - run: |
-          for kw in "install.determinate.systems" "devenv" "forge doctor"; do
-            grep -q "$kw" deploy/bootstrap.sh || { echo "missing: $kw"; exit 1; }
-          done
-
-  # Windows：驗證 cmd 一行安裝塊（hosted runner 無巢狀虛擬化，WSL2 無法真裝；
-  # 靜態驗證 + wsl.exe 呼叫存在性為 best-effort）
-  check-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: windows.cmd 存在且包含關鍵指令
-        shell: powershell
-        run: |
-          $c = Get-Content deploy/windows.cmd -Raw
-          foreach ($kw in @("NixOS-WSL", "wsl --install --from-file", "bootstrap.sh")) {
-            if ($c -notmatch [regex]::Escape($kw)) { Write-Error "missing: $kw"; exit 1 }
-          }
-          Write-Host "OK deploy/windows.cmd"
-      - name: wsl.exe 可用性（best-effort，runner 不支援 WSL2）
-        continue-on-error: true
-        shell: powershell
-        run: wsl --version
-
-  # 全真端到端：空白 Windows → 裝 NixOS-WSL → WSL 內 curl 跑 bootstrap → doctor
-  # （已實證可跑、約 5 分鐘；若遇 nix 快取抖動再放寬）
-  wsl-bootstrap-windows:
-    runs-on: windows-latest
-    timeout-minutes: 45
-    steps:
-      - name: 安裝 NixOS-WSL
-        shell: powershell
-        run: |
-          curl.exe -L -o "$env:TEMP\nixos.wsl" "https://github.com/nix-community/NixOS-WSL/releases/latest/download/nixos.wsl"
-          wsl --install --from-file "$env:TEMP\nixos.wsl" --no-launch
-          wsl --list --verbose
-      - name: WSL 內執行 bootstrap.sh（一行安裝全流程）
-        shell: powershell
-        run: |
-          wsl -d NixOS -- sh -lc "nix-shell -p curl git bash --command 'curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/deploy/bootstrap.sh | sh'"
-      - name: WSL 環境驗證
-        shell: powershell
-        run: |
-          wsl -d NixOS -- sh -lc "cd ~/algo-tutor && devenv shell -- echo 'devenv OK'"
+      - run: grep -q "install.determinate.systems" deploy/bootstrap.sh

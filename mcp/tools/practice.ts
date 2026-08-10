@@ -2,7 +2,7 @@
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";
-import { forge } from "../forge.ts";
+import { algo } from "../algo.ts";
 import { text, q } from "./util.ts";
 
 export function registerPracticeTools(server: McpServer): void {
@@ -16,8 +16,8 @@ export function registerPracticeTools(server: McpServer): void {
     }),
     handler: async (a) =>
       text(
-        forge(
-          `forge pick${a.count ? ` -c ${a.count}` : ""}${a.topic ? ` -t ${q(a.topic)}` : ""} | table -e`,
+        algo(
+          `algo pick${a.count ? ` -c ${a.count}` : ""}${a.topic ? ` -t ${q(a.topic)}` : ""} | table -e`,
         ),
       ),
   });
@@ -34,8 +34,8 @@ export function registerPracticeTools(server: McpServer): void {
     }),
     handler: async (a) =>
       text(
-        forge(
-          `forge rec ${q(a.problem)} ${q(a.topic)} ${q(a.guess)}${a.correct ? "" : " --wrong"}${a.sec != null ? ` -s ${a.sec}` : ""}`,
+        algo(
+          `algo rec ${q(a.problem)} ${q(a.topic)} ${q(a.guess)}${a.correct ? "" : " --wrong"}${a.sec != null ? ` -s ${a.sec}` : ""}`,
         ),
       ),
   });
@@ -47,7 +47,7 @@ export function registerPracticeTools(server: McpServer): void {
       days: z.number().optional(),
     }),
     handler: async ({ days }) =>
-      text(forge(`forge stats${days ? ` -d ${days}` : ""} | table -e`)),
+      text(algo(`algo stats${days ? ` -d ${days}` : ""} | table -e`)),
   });
 
   server.register({
@@ -57,7 +57,7 @@ export function registerPracticeTools(server: McpServer): void {
       days: z.number().optional(),
     }),
     handler: async ({ days }) =>
-      text(forge(`forge diagnose${days ? ` -d ${days}` : ""}`)),
+      text(algo(`algo diagnose${days ? ` -d ${days}` : ""}`)),
   });
 
   server.register({
@@ -67,7 +67,7 @@ export function registerPracticeTools(server: McpServer): void {
       limit: z.number().optional(),
     }),
     handler: async ({ limit }) =>
-      text(forge(`forge log${limit ? ` -l ${limit}` : ""} | table -e`)),
+      text(algo(`algo log${limit ? ` -l ${limit}` : ""} | table -e`)),
   });
 
   server.register({
@@ -75,6 +75,6 @@ export function registerPracticeTools(server: McpServer): void {
     description:
       "把線索卡直推學生本機 Anki（需開著 Anki + AnkiConnect）。",
     inputSchema: z.object({}),
-    handler: async () => text(forge("forge anki")),
+    handler: async () => text(algo("algo anki")),
   });
 }

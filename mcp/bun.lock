@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "ioi-forge-mcp",
+      "name": "algo-tutor-mcp",
       "dependencies": {
         "zod": "^4.4.3",
       },
