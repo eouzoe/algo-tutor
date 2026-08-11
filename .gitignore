@@ -32,6 +32,19 @@ a.out
 *.swp
 *.swo
 
+# developer-only (never commit)
+mcp/CLAUDE.md
+mcp/tsconfig.json
+packages/engine/tsconfig.json
+packages/engine/src/cli.ts
+packages/engine/src/demo.ts
+packages/engine/bun.lock
+mcp/bun.lock
+scripts/mcp_info.py
+data/training/schema/
+data/training/seeds/
+data/training/graph/
+
 # papers
 docs/papers/*.pdf
 AGENTS.md
