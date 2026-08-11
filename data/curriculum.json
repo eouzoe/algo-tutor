@@ -11,14 +11,14 @@
       "cin/cout",
       "算術運算與溢位概念"
     ],
-    "tutor": "CS 視角：先講計算機裡「變數是命名的記憶體位置（int=4 bytes、long long=8 bytes）、編譯器把 C++ 翻譯成機器指令」。拆解骨架每一行：`#include` 告訴編譯器去哪裡找 cout/endl 的宣告；`main()` 是作業系統第一個呼叫的函式；`return 0` 跟系統說「正常結束」。從零教起，且『有概念』≠『有肌肉記憶』——就算學生聊過概念，仍要逐行拆解最小程式的每個字。確認學生能不看範例默寫整個骨架，才進檢核題。使用速練模式開題，目標 30 秒內寫完。全程強調 long long 習慣（CSAPP Ch2：int 只有 2³¹，一秒就溢位）。第一課告知工作區。教材參考：USACO Guide Input/Output + OI Wiki 語法基礎。",
+    "tutor": "CS 視角：先講計算機裡「變數是命名的記憶體位置（int=4 bytes、i64=8 bytes）、編譯器把 C++ 翻譯成機器指令」。拆解骨架每一行：`#include` 告訴編譯器去哪裡找 cout/'\\n' 的宣告；`main()` 是作業系統第一個呼叫的函式；`return 0` 跟系統說「正常結束」。從零教起，且『有概念』≠『有肌肉記憶』——就算學生聊過概念，仍要逐行拆解最小程式的每個字。確認學生能不看範例默寫整個骨架，才進檢核題。使用速練模式開題，目標 30 秒內寫完。全程強調 i64 習慣（CSAPP Ch2：int 只有 2³¹，一秒就溢位）。第一課告知工作區。教材參考：USACO Guide Input/Output + OI Wiki 語法基礎。",
     "phase_learn": {
       "topics": [
         {
           "id": "mt_u1_skeleton",
           "name": "C++ 程式骨架",
           "description": "認識 #include、main、return 0。CS 視角：`main()` 是 OS 的第一個呼叫點；`#include` 是文字插入（編譯器把 iostream 的內容貼進來）；`return 0` 是結束碼。每一行都要能解釋在做什麼",
-          "syntax_template": "#include <iostream>\nusing namespace std;\nint main() {\n  return 0;\n}",
+          "syntax_template": "#include <bits/stdc++.h>\nusing namespace std;\nusing i64 = long long;\n\nint main() {\n  ios::sync_with_stdio(false);\n  cin.tie(nullptr);\n  return 0;\n}",
           "vim_drills": [
             "開 vim → i → 打 #include → Esc → :wq",
             "hjkl 移動到每一行位置",
@@ -31,8 +31,8 @@
         {
           "id": "mt_u1_cout",
           "name": "cout 輸出",
-          "description": "cout << \"文字\" << endl; 輸出文字與換行",
-          "syntax_template": "cout << \"Hello, world!\" << endl;\ncout << \"數字：\" << 42 << endl;",
+          "description": "cout << \"文字\" << '\\n'; 輸出文字與換行",
+          "syntax_template": "cout << \"Hello, world!\" << '\\n';\ncout << \"數字：\" << 42 << '\\n';",
           "vim_drills": [
             "在 return 前插入 cout 行",
             "用 :w 存檔，用 algo run 看結果"
@@ -44,8 +44,8 @@
         {
           "id": "mt_u1_variables",
           "name": "變數宣告與型別",
-          "description": "int / long long / double / char / bool 的宣告與使用時機。CS 視角：變數 = 一塊命名的記憶體（int=4B、long long=8B、char=1B、bool=1B）。CSAPP Ch2：二補數表示法讓溢出從正變負。用 long long 當預設整數型別（IOI 完全夠用，不會因 int overflow 送命）",
-          "syntax_template": "int a = 10;\nlong long b = 1000000000000LL;\ndouble c = 3.14;\nchar d = 'A';\nbool e = true;\ncout << a << ' ' << b;",
+          "description": "int / i64 / double / char / bool 的宣告與使用時機。CS 視角：變數 = 一塊命名的記憶體（int=4B、i64=8B、char=1B、bool=1B）。CSAPP Ch2：二補數表示法讓溢出從正變負。用 i64 當預設整數型別（IOI 完全夠用，不會因 int overflow 送命）",
+          "syntax_template": "int a = 10;\ni64 b = 1000000000000LL;\ndouble c = 3.14;\nchar d = 'A';\nbool e = true;\ncout << a << ' ' << b;",
           "vim_drills": [
             "宣告不同型別變數並輸出"
           ],
@@ -57,7 +57,7 @@
           "id": "mt_u1_cin",
           "name": "cin >> 輸入",
           "description": "cin >> 變數。CS 視角：>> 是運算子重載（operator>>），把 stdin 的字串解析成變數的型別。EOF = End of File，while(cin>>x) 回傳 false 當讀不到東西",
-          "syntax_template": "int x;\ncin >> x;\ncout << x * 2 << endl;",
+          "syntax_template": "int x;\ncin >> x;\ncout << x * 2 << '\\n';",
           "vim_drills": [
             "寫一個「讀兩數→輸出和」的程式"
           ],
@@ -69,7 +69,7 @@
           "id": "mt_u1_eof",
           "name": "EOF 多筆輸入（while cin >>）",
           "description": "while(cin >> s) 處理未知筆數輸入",
-          "syntax_template": "string s;\nwhile (cin >> s) {\n  cout << \"hello, \" << s << endl;\n}",
+          "syntax_template": "string s;\nwhile (cin >> s) {\n  cout << \"hello, \" << s << '\\n';\n}",
           "vim_drills": [
             "寫 zj/a001 的 EOF 寫法"
           ],
@@ -202,7 +202,7 @@
           "id": "mt_u2_while",
           "name": "while 迴圈與 EOF 讀入",
           "description": "while(cin>>x) 搭配 break/continue",
-          "syntax_template": "int x, sum = 0;\nwhile (cin >> x) {\n  if (x < 0) continue;\n  if (x > 100) break;\n  sum += x;\n}\ncout << sum << endl;",
+          "syntax_template": "int x, sum = 0;\nwhile (cin >> x) {\n  if (x < 0) continue;\n  if (x > 100) break;\n  sum += x;\n}\ncout << sum << '\\n';",
           "vim_drills": [
             "寫 while EOF 求和程式"
           ],
@@ -410,7 +410,7 @@
           "id": "mt_u4_string",
           "name": "string 操作",
           "description": "length、[]、+ 串接、比較。CS 視角：string 內部也是連續記憶體 + 長度欄位（類似 vector<char>）。s[3] 同樣是 *(s.data() + 3)。s + t 需要新配置記憶體——大量串接用 ostringstream 或 reserve()",
-          "syntax_template": "string s = \"hello\";\ncout << s.length() << ' ' << s[0] << endl;\ns += \" world\";",
+          "syntax_template": "string s = \"hello\";\ncout << s.length() << ' ' << s[0] << '\\n';\ns += \" world\";",
           "vim_drills": [
             "寫字串反轉程式"
           ],
