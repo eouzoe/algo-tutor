@@ -1,9 +1,10 @@
-// algo-tutor practice tools — pick, rec, stats, log, report, anki.
+// algo-tutor practice tools — pick, rec, stats, log, report, anki, sync.
 
 import { McpServer } from "../server.ts";
 import { z } from "zod";
 import { algo } from "../algo.ts";
 import { text, q } from "./util.ts";
+import { execSync } from "node:child_process";
 
 export function registerPracticeTools(server: McpServer): void {
   server.register({
@@ -76,5 +77,58 @@ export function registerPracticeTools(server: McpServer): void {
       "把線索卡直推學生本機 Anki（需開著 Anki + AnkiConnect）。",
     inputSchema: z.object({}),
     handler: async () => text(algo("algo anki")),
+  });
+
+  server.register({
+    name: "anki_sync_failed",
+    description:
+      "Sync failed problems to Anki via CLI for spaced repetition. Converts failed problems into Anki cards.",
+    inputSchema: z.object({
+      deck: z.string().optional().default("algo-tutor-failed").describe("Anki deck name"),
+    }),
+    handler: async ({ deck }) => {
+      try {
+        // Get failed problems from log
+        const result = execSync(
+          `algo log --failed --json 2>/dev/null | head -50`,
+          { encoding: "utf8", timeout: 10_000 },
+        );
+
+        if (!result.trim()) {
+          return text("No failed problems to sync.");
+        }
+
+        // Parse and create Anki cards
+        const lines = result.trim().split("\n");
+        let synced = 0;
+
+        for (const line of lines) {
+          try {
+            const entry = JSON.parse(line);
+            if (entry.result === "fail" || entry.result === "partial") {
+              const front = `Problem: ${entry.problem || "Unknown"}\nTopic: ${entry.topics?.join(", ") || "Unknown"}`;
+              const back = `Error: ${entry.error_primary || "Unknown"}\nSummary: ${entry.summary || "No summary"}`;
+
+              // Use Anki CLI to add card (if available)
+              try {
+                execSync(
+                  `anki add-card --deck "${deck}" --front "${front.replace(/"/g, '\\"')}" --back "${back.replace(/"/g, '\\"')}" 2>/dev/null`,
+                  { encoding: "utf8", timeout: 5_000 },
+                );
+                synced++;
+              } catch {
+                // Anki CLI not available, skip
+              }
+            }
+          } catch {
+            // Skip malformed lines
+          }
+        }
+
+        return text(`Synced ${synced} failed problems to Anki deck "${deck}".`);
+      } catch (e) {
+        return text(`Anki sync failed: ${e}`);
+      }
+    },
   });
 }
