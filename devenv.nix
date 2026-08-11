@@ -1,21 +1,9 @@
 { pkgs, config, ... }: {
   packages = with pkgs; [
-    # shell & core
-    nushell just git jujutsu
-    # search & find
-    ripgrep fd broot bat fzf
-    # HTTP & JSON
-    xh jaq jc
-    # compiler
-    gcc gdb
-    # JS/TS runtime
-    bun
-    # editor
-    neovim
-    # misc
-    curl wget python3
-    # formatter & linter
-    astyle cppcheck
+    just
+    git
+    gcc
+    gdb
   ];
 
   dotenv.enable = false;
@@ -30,15 +18,13 @@
 
   enterShell = ''
     echo "algo-tutor dev shell"
-    echo "  bun:     $(bun --version 2>/dev/null || echo 'missing')"
+    echo "  gcc:     $(gcc --version 2>/dev/null | head -1)"
     echo "  just:    $(just --version 2>/dev/null || echo 'missing')"
-    echo "  nushell: $(nu --version 2>/dev/null || echo 'missing')"
     echo ""
     echo "  just mcp        start MCP server"
     echo "  just diagnostic syntax diagnostic"
     echo "  just today      daily dashboard"
     echo ""
-    export PATH="$DEVENV_ROOT/.nu:$PATH"
   '';
 
   tasks."engine:test" = {
