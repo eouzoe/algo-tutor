@@ -1,38 +1,39 @@
 # algo-tutor
 
-LLM 驅動的競程教練。學生在 vim 寫 code，LLM 透過 MCP 教學、出題、改題。
+LLM-driven competitive programming tutor. Student codes in vim, LLM teaches via MCP.
 
-## 安裝
+## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/deploy/bootstrap.sh | sh
+curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/start.sh | bash
 cd ~/algo-tutor && devenv shell
 ```
 
-## 啟動
+Works on WSL Ubuntu and WSL NixOS.
+
+## Usage
 
 ```bash
-just mcp              # stdio 模式（連 Claude Code / Codex）
-just mcp-http 3000    # HTTP 模式（遠端連接）
+just mcp              # stdio mode (connect to Claude Code / Codex)
+just mcp-http 3000    # HTTP mode (remote)
 ```
 
-## 怎麼用
+## How it works
 
-1. 学生在 vim 打開 `work/sol.cpp`
-2. `:vert term` 打開終端，啟動 AI 工具（Claude Code / Codex）
-3. 跟 LLM 對話，它會透過 MCP 工具教你、出題、改題
+1. Student opens `work/sol.cpp` in vim
+2. `:vert term` opens terminal, starts AI tool (Claude Code / Codex)
+3. LLM teaches via MCP tools: lessons, drills, problems, grading
 
-## 架構
+## Architecture
 
 ```
-mcp/              MCP server（LLM 介面，50 個工具）
-packages/engine/   認知引擎（BKT / IRT / FSRS / KST）
-data/             課綱、概念索引、工具包、訓練數據
-deploy/           一鍵安裝腳本
+mcp/              MCP server (50 tools, TypeScript/Bun)
+packages/engine/   cognitive engine (BKT/IRT/FSRS/KST)
+data/              curriculum, concept index, toolkit
+start.sh           one-command bootstrap
 ```
 
-## 要求
+## Requirements
 
-- Python 3.11+ 或 Node.js 20+
 - Bun 1.3+
-- Nix + devenv（推薦，一句指令搞定環境）
+- Nix + devenv (auto-installed by start.sh)

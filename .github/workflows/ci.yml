@@ -12,19 +12,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-      - run: cd packages/engine && bun install && bun test
+      - run: cd packages/engine && bun test
 
   mcp:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - run: cd mcp && bun install
-      - run: cd mcp && echo '{"jsonrpc":"2.0","id":1,"method":"server/discover","params":{}}" | timeout 5 bun run index.ts 2>/dev/null | grep -q "algo-tutor"
+      - uses: nixbuild/nix-quick-install-action@v30
+      - run: nix profile install nixpkgs#devenv
+      - run: devenv allow
+      - run: devenv test
 
-  bootstrap:
-    runs-on: ubuntu-latest
+  wsl-ubuntu:
+    runs-on: windows-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - run: sh -n deploy/bootstrap.sh
-      - run: grep -q "install.determinate.systems" deploy/bootstrap.sh
+      - name: Install WSL Ubuntu
+        shell: powershell
+        run: wsl --install -d Ubuntu --no-launch
+      - name: Bootstrap and test inside WSL Ubuntu
+        shell: powershell
+        run: |
+          wsl -d Ubuntu -- bash -c "curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/start.sh | bash"
+
+  wsl-nixos:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install NixOS-WSL
+        shell: powershell
+        run: |
+          curl.exe -L -o "$env:TEMP\nixos.wsl" "https://github.com/nix-community/NixOS-WSL/releases/latest/download/nixos.wsl"
+          wsl --install --from-file "$env:TEMP\nixos.wsl" --no-launch
+      - name: Bootstrap and test inside WSL NixOS
+        shell: powershell
+        run: |
+          wsl -d NixOS -- sh -lc "nix-shell -p curl git bash --command 'curl -fsSL https://raw.githubusercontent.com/eouzoe/algo-tutor/main/start.sh | bash'"

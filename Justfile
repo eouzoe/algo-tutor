@@ -81,9 +81,6 @@ profile *args:
 gen constraints *args:
     {{_algo}} gen "{{constraints}}" {{args}}
 
-workspace:
-    ^bash deploy/workspace.sh
-
 stress sol brute *args:
     {{_algo}} stress {{sol}} {{brute}} {{args}}
 
@@ -112,3 +109,9 @@ diagnostic-problem n:
 
 diagnostic-check problem_id:
     ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"diagnostic_check\",\"arguments\":{\"problem_id\":\"{{problem_id}}\"}}}" | bun run mcp/index.ts 2>/dev/null | python3 -c "import sys,json; lines=sys.stdin.readlines(); [print(json.loads(l)[\"result\"][\"content\"][0][\"text\"]) for l in reversed(lines) if l.strip().startswith(\"{\")]"'
+
+engine:test:
+    cd packages/engine && bun test
+
+mcp:check:
+    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{}}" | timeout 5 bun run mcp/index.ts 2>/dev/null | grep -q "algo-tutor" && echo "MCP OK" || echo "MCP FAIL"

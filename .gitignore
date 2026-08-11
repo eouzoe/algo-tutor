@@ -16,6 +16,10 @@ cogsci-foundations.md
 work/
 sols/
 log/
+data/profile.json
+data/curriculum-super.md
+docs/research-memory.md
+DeepTutor/
 
 # large data
 data/cf-problems.json
@@ -28,7 +32,4 @@ a.out
 
 # papers
 docs/papers/*.pdf
-data/profile.json
-data/curriculum-super.md
-docs/research-memory.md
-DeepTutor/
+AGENTS.md
