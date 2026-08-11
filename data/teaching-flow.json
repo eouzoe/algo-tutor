@@ -1,0 +1,152 @@
+{
+  "_doc": "Teaching flow methodology for algo-tutor. Defines how lectures, quizzes, practice, and exams are structured.",
+
+  "teaching_flow": {
+    "unit_structure": {
+      "lecture": {
+        "description": "LLM tutor teaches the concept with syntax template and CS perspective",
+        "tools": ["lesson"],
+        "deliverable": "Student understands the concept"
+      },
+      "in_class_quiz": {
+        "description": "Immediately after lecture, apply the concept with guidance",
+        "tools": ["drill_concept"],
+        "difficulty": "easy",
+        "guidance": "high - partial code, hints allowed",
+        "goal": "Reinforce immediate understanding"
+      },
+      "guided_practice": {
+        "description": "Problems that require the concept with partial scaffolding",
+        "tools": ["start_problem", "hint"],
+        "difficulty": "medium",
+        "guidance": "medium - hints available but limited",
+        "goal": "Build confidence with support"
+      },
+      "blank_problem": {
+        "description": "Simulate real contest - no guidance, blank file",
+        "tools": ["start_problem"],
+        "difficulty": "medium-hard",
+        "guidance": "none - student works independently",
+        "goal": "Verify independent problem-solving ability"
+      }
+    },
+
+    "chapter_exam": {
+      "description": "At end of big chapter, mixed-topic exam",
+      "tools": ["start_problem", "finish_problem"],
+      "difficulty": "mixed",
+      "features": [
+        "interleaved_practice": "Mix topics from entire chapter",
+        "record_failures": "Failed problems saved for review",
+        "feynman_verbal": "Student must explain solution verbally"
+      ]
+    },
+
+    "spaced_review": {
+      "description": "Spaced repetition based on forgetting curve",
+      "tools": ["reviews_due", "done"],
+      "engine": "FSRS (Free Spaced Repetition Scheduler)",
+      "intervals": [1, 3, 7, 21],
+      "integration": {
+        "anki_cli": "Sync failed problems to Anki for memorization",
+        "obsidian": "Optional: student notes for concept connections"
+      }
+    }
+  },
+
+  "phase_config": {
+    "phase_0": {
+      "name": "Survival Syntax",
+      "duration": "1-2 weeks",
+      "goal": "Can solve USACO Bronze easiest / Codeforces 800",
+      "teaching_method": "demonstrate -> imitate -> practice",
+      "vim_level": "basic (hjkl, i, :wq, :w, :q)",
+      "tools": ["g++ -O2 -std=c++17 -Wall", "astyle"],
+      "concepts": [
+        "using namespace std;",
+        "using i64 = long long;",
+        "cin/cout with fast I/O",
+        "if/else, for, while (always braces)",
+        "vector, string, map, set",
+        "sort, reverse",
+        "functions (definition, call, pass by reference)",
+        "static arrays for cache locality",
+        "basic bitwise operations"
+      ]
+    },
+
+    "phase_1": {
+      "name": "Basic Algorithms",
+      "duration": "2-3 months",
+      "goal": "Can solve USACO Silver / Codeforces 1000-1200",
+      "teaching_method": "problem-driven + deliberate practice",
+      "vim_level": "intermediate (macros, regex, splits)",
+      "tools": ["g++ with -Wextra -Wshadow", "gdb basics", "assert"],
+      "concepts": [
+        "sorting, searching, two pointers",
+        "prefix sums, difference arrays",
+        "greedy algorithms",
+        "recursion, backtracking",
+        "BFS, DFS, graph representation",
+        "basic dynamic programming",
+        "structured bindings, auto, CTAD",
+        "lambda comparators"
+      ]
+    },
+
+    "phase_2": {
+      "name": "Advanced Algorithms",
+      "duration": "ongoing",
+      "goal": "Can solve IOI medal problems",
+      "teaching_method": "independent thinking + debugging training",
+      "vim_level": "advanced (terminal, quickfix)",
+      "tools": ["sanitizers", "gdb advanced", "cppcheck", "hyperfine"],
+      "concepts": [
+        "advanced data structures (segment tree, BIT, DSU)",
+        "advanced graph algorithms (Dijkstra, SCC, flow)",
+        "advanced DP (digit DP, bitmask, tree DP)",
+        "number theory, combinatorics",
+        "string algorithms (KMP, Z, hash)",
+        "cache optimization (CSR, flat arrays)",
+        "custom hash for unordered_map"
+      ]
+    }
+  },
+
+  "memory_techniques": {
+    "active_recall": {
+      "description": "Try before looking - blank problem, time limit, no peeking",
+      "implementation": "start_problem with timer, no hints for blank problems"
+    },
+    "spaced_repetition": {
+      "description": "Review at increasing intervals based on forgetting curve",
+      "implementation": "FSRS engine in packages/engine/src/fsrs.ts",
+      "sync": "Anki CLI for external review"
+    },
+    "interleaved_practice": {
+      "description": "Mix different topics in chapter exams",
+      "implementation": "chapter_exam selects problems from multiple units"
+    },
+    "elaborative_review": {
+      "description": "Feynman technique - student explains solution verbally",
+      "implementation": "LLM tutor demonstrates first, then student tries"
+    }
+  },
+
+  "deliberate_practice": {
+    "description": "Break skills into subskills, practice one with 100% focus, get feedback",
+    "problem_ratio": {
+      "easy": 0.15,
+      "medium": 0.70,
+      "hard": 0.15
+    },
+    "feedback_loop": "immediate via MCP tools",
+    "failure_log": "save failed problems, review monthly"
+  },
+
+  "knowledge_markers": {
+    "A_application": "Implementation ability - practice problems",
+    "S_structure": "Conceptual understanding - lessons",
+    "P_procedure": "Systematic methods - drills and debugging"
+  }
+}
