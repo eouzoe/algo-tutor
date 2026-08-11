@@ -4,22 +4,26 @@
     git
     gcc
     gdb
+    bun
+    nushell
+    astyle
   ];
 
   dotenv.enable = false;
 
   scripts = {
     "check-env".exec = ''
-      echo "bun:      $(bun --version 2>/dev/null || echo 'missing')"
-      echo "just:     $(just --version 2>/dev/null || echo 'missing')"
-      echo "nushell:  $(nu --version 2>/dev/null || echo 'missing')"
+      echo "gcc:     $(gcc --version 2>/dev/null | head -1)"
+      echo "just:    $(just --version 2>/dev/null || echo 'missing')"
+      echo "bun:     $(bun --version 2>/dev/null || echo 'missing')"
     '';
   };
 
   enterShell = ''
-    echo "algo-tutor dev shell"
+    echo "algo-tutor student shell"
     echo "  gcc:     $(gcc --version 2>/dev/null | head -1)"
     echo "  just:    $(just --version 2>/dev/null || echo 'missing')"
+    echo "  bun:     $(bun --version 2>/dev/null || echo 'missing')"
     echo ""
     echo "  just mcp        start MCP server"
     echo "  just diagnostic syntax diagnostic"
