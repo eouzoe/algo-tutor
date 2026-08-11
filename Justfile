@@ -3,9 +3,6 @@ set quiet := true
 
 _algo := "use .nu/algo.nu *; algo"
 
-check-env:
-    {{_algo}} doctor
-
 today:
     {{_algo}} today
 
@@ -84,34 +81,5 @@ gen constraints *args:
 stress sol brute *args:
     {{_algo}} stress {{sol}} {{brute}} {{args}}
 
-mcp:
-    bun run mcp/index.ts
-
-mcp-http port:
-    bun run mcp/index.ts http {{port}}
-
-mcp-check:
-    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{}}" | bun run mcp/index.ts 2>/dev/null | python3 scripts/mcp_info.py'
-    echo '---'
-    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/list\",\"params\":{}}" | bun run mcp/index.ts 2>/dev/null | python3 scripts/mcp_info.py'
-
-training:
-    just mcp-check
-
-training-tools:
-    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\",\"params\":{}}" | bun run mcp/index.ts 2>/dev/null | python3 scripts/mcp_info.py --training
-
-diagnostic:
-    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"diagnostic_status\",\"arguments\":{}}}" | bun run mcp/index.ts 2>/dev/null | python3 -c "import sys,json; lines=sys.stdin.readlines(); [print(json.loads(l)[\"result\"][\"content\"][0][\"text\"]) for l in reversed(lines) if l.strip().startswith(\"{\")]"'
-
-diagnostic-problem n:
-    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"diagnostic_problem\",\"arguments\":{\"index\":{{n}}}}}" | bun run mcp/index.ts 2>/dev/null | python3 -c "import sys,json; lines=sys.stdin.readlines(); [print(json.loads(l)[\"result\"][\"content\"][0][\"text\"]) for l in reversed(lines) if l.strip().startswith(\"{\")]"'
-
-diagnostic-check problem_id:
-    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"diagnostic_check\",\"arguments\":{\"problem_id\":\"{{problem_id}}\"}}}" | bun run mcp/index.ts 2>/dev/null | python3 -c "import sys,json; lines=sys.stdin.readlines(); [print(json.loads(l)[\"result\"][\"content\"][0][\"text\"]) for l in reversed(lines) if l.strip().startswith(\"{\")]"'
-
-engine:test:
-    cd packages/engine && bun test
-
-mcp:check:
-    ^bash -c 'echo "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{}}" | timeout 5 bun run mcp/index.ts 2>/dev/null | grep -q "algo-tutor" && echo "MCP OK" || echo "MCP FAIL"
+workspace:
+    ^bash deploy/workspace.sh
