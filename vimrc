@@ -1,5 +1,10 @@
 " algo-tutor student vimrc
 " Place at ~/.vimrc or ~/.config/nvim/init.vim
+"
+" Progressive vim teaching:
+" Phase 0: hjkl, i, Esc, :w, :q, :wq, dd, yy, p, u, Ctrl+r
+" Phase 1: v, V, Ctrl+v, :s/, /pattern, :%s/, macros (q)
+" Phase 2: :term, :split, :vsplit, :cn, :cp, :make, quickfix
 
 set nocompatible
 set number relativenumber
@@ -210,6 +215,24 @@ nnoremap <Leader>3 :e problem_c.cpp<CR>
 
 " Leader+0: test all problems
 nnoremap <Leader>0 :!for f in problem_*.cpp; do g++ -O2 -std=c++17 -o ${f%.cpp} $f && echo "=== $f ===" && ./${f%.cpp} < input.txt; done<CR>
+
+" ============================================================
+" Anki Integration (Phase 1+)
+" ============================================================
+" Leader+as: sync failed problems to Anki
+nnoremap <Leader>as :!anki sync-failed<CR>
+
+" Leader+an: add current problem as Anki card
+nnoremap <Leader>an :!anki add-card --deck "algo-tutor" --front "%:p" --back "Error: " <CR>
+
+" ============================================================
+" Feynman Practice (Phase 1+)
+" ============================================================
+" Leader+fe: open Feynman practice file
+nnoremap <Leader>fe :e feynman_practice.md<CR>
+
+" Leader+fs: save Feynman notes
+nnoremap <Leader>fs :w<CR>:echo "Feynman notes saved"<CR>
 
 " ============================================================
 " Show Build Info
