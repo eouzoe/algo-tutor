@@ -14,6 +14,8 @@
     neovim
     # misc
     curl wget python3
+    # formatter & linter
+    astyle cppcheck
   ];
 
   dotenv.enable = false;

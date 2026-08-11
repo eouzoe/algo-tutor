@@ -1,0 +1,10 @@
+style=stroustrup
+indent=spaces=4
+max-code-length=100
+break-closing-braces
+break-elseifs
+add-braces
+align-pointer=name
+pad-oper
+pad-header
+convert-tabs
