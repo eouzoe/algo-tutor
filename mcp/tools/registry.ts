@@ -10,6 +10,7 @@ import { registerToolkitTools } from "./toolkit.ts";
 import { registerConceptTools } from "./concepts.ts";
 import { registerTrainingTools } from "./training.ts";
 import { registerDiagnosticTools } from "./diagnostic.ts";
+import { registerTeachingTools } from "./teaching.ts";
 import { INSTRUCTIONS } from "./instructions.ts";
 
 export function createServer(): McpServer {
