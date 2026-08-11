@@ -1,0 +1,329 @@
+{
+  "_doc": "Problem pattern templates for LLM to generate problems. Each pattern includes: description, constraints, sample problems, and solution templates.",
+
+  "patterns": {
+    "io_basic": {
+      "name": "Basic I/O",
+      "description": "Problems that test basic input/output operations",
+      "difficulty": "800-1000",
+      "concepts": ["cin", "cout", "string", "vector"],
+      "template": {
+        "statement": "Read {input_description} and output {output_description}.",
+        "constraints": "{n} ≤ {max_n}",
+        "input_format": "First line: {n}. Second line: {values}.",
+        "output_format": "Single line with result."
+      },
+      "variations": [
+        "Sum of N numbers",
+        "Max/min of N numbers",
+        "Count occurrences",
+        "Reverse output"
+      ]
+    },
+
+    "array_traversal": {
+      "name": "Array Traversal",
+      "description": "Problems requiring linear scan of array",
+      "difficulty": "800-1100",
+      "concepts": ["vector", "for loop", "accumulator"],
+      "template": {
+        "statement": "Given an array of {n} integers, find {target}.",
+        "constraints": "1 ≤ {n} ≤ 10^5, |a_i| ≤ 10^9",
+        "input_format": "First line: n. Second line: n integers.",
+        "output_format": "Single integer."
+      },
+      "variations": [
+        "Find max/min",
+        "Count elements satisfying condition",
+        "Prefix sum",
+        "Two sum"
+      ]
+    },
+
+    "string_basic": {
+      "name": "Basic String Operations",
+      "description": "Problems testing string manipulation",
+      "difficulty": "800-1100",
+      "concepts": ["string", "length", "substr", "find"],
+      "template": {
+        "statement": "Given a string s, {task}.",
+        "constraints": "1 ≤ |s| ≤ 10^5",
+        "input_format": "Single line with string s.",
+        "output_format": "Result string or integer."
+      },
+      "variations": [
+        "Count vowels/consonants",
+        "Check palindrome",
+        "Find substring",
+        "Character frequency"
+      ]
+    },
+
+    "simulation": {
+      "name": "Simulation",
+      "description": "Problems that simulate a process step by step",
+      "difficulty": "900-1200",
+      "concepts": ["loop", "condition", "state"],
+      "template": {
+        "statement": "Simulate {process}. Given {input}, determine {result}.",
+        "constraints": "1 ≤ {n} ≤ 10^5, time limit 1s",
+        "input_format": "First line: n. Next lines: operations.",
+        "output_format": "Final state or count."
+      },
+      "variations": [
+        "Queue simulation",
+        "Game simulation",
+        "Time-based simulation",
+        "Grid simulation"
+      ]
+    },
+
+    "greedy_basic": {
+      "name": "Basic Greedy",
+      "description": "Problems solvable by greedy strategy",
+      "difficulty": "1000-1300",
+      "concepts": ["sort", "greedy", "proof"],
+      "template": {
+        "statement": "Given {items}, select {subset} to {optimize} {objective}.",
+        "constraints": "1 ≤ {n} ≤ 10^5, time limit 1s",
+        "input_format": "First line: n. Next n lines: item descriptions.",
+        "output_format": "Maximum/minimum value."
+      },
+      "variations": [
+        "Activity selection",
+        "Minimum coin change",
+        "Interval scheduling",
+        "Task assignment"
+      ]
+    },
+
+    "recursion_basic": {
+      "name": "Basic Recursion",
+      "description": "Problems that naturally use recursion",
+      "difficulty": "1000-1300",
+      "concepts": ["recursion", "base case", "recursive case"],
+      "template": {
+        "statement": "Compute {recursive_function} for given {input}.",
+        "constraints": "1 ≤ {n} ≤ {max_n}, recursion depth ≤ 1000",
+        "input_format": "Single integer n.",
+        "output_format": "Computed result."
+      },
+      "variations": [
+        "Factorial",
+        "Fibonacci",
+        "Tower of Hanoi",
+        "Binary tree traversal"
+      ]
+    },
+
+    "graph_bfs": {
+      name: "BFS Traversal",
+      description: "Problems solvable by breadth-first search",
+      difficulty: "1100-1400",
+      concepts: ["graph", "queue", "visited", "shortest path"],
+      template: {
+        statement: "Given a graph with {n} nodes and {m} edges, find {shortest_path}.",
+        constraints: "1 ≤ n ≤ 10^5, 0 ≤ m ≤ 2×10^5",
+        input_format: "First line: n m. Next m lines: edges u v.",
+        output_format: "Distance or path."
+      },
+      variations: [
+        "Shortest path in unweighted graph",
+        "Connected components",
+        "Bipartite check",
+        "Minimum steps to reach target"
+      ]
+    },
+
+    "graph_dfs": {
+      "name": "DFS Traversal",
+      "description": "Problems solvable by depth-first search",
+      "difficulty": "1100-1400",
+      "concepts": ["graph", "recursion", "visited", "backtracking"],
+      "template": {
+        "statement": "Given a graph with {n} nodes and {m} edges, find {connected_components}.",
+        "constraints": "1 ≤ n ≤ 10^5, 0 ≤ m ≤ 2×10^5",
+        "input_format": "First line: n m. Next m lines: edges u v.",
+        "output_format": "Count or list."
+      },
+      "variations": [
+        "Count connected components",
+        "Find path",
+        "Topological sort",
+        "Cycle detection"
+      ]
+    },
+
+    "dp_basic": {
+      "name": "Basic Dynamic Programming",
+      "description": "Problems with overlapping subproblems",
+      "difficulty": "1200-1500",
+      "concepts": ["dp", "memoization", "optimal substructure"],
+      "template": {
+        "statement": "Given {input}, compute {optimal_value} using DP.",
+        "constraints": "1 ≤ {n} ≤ 1000, time limit 1s",
+        "input_format": "First line: n. Next line: values.",
+        "output_format": "Optimal value."
+      },
+      "variations": [
+        "Climbing stairs",
+        "Coin change (min coins)",
+        "Longest increasing subsequence",
+        "0/1 knapsack"
+      ]
+    },
+
+    "binary_search": {
+      "name": "Binary Search",
+      "description": "Problems solvable by binary search on sorted array or answer",
+      "difficulty": "1100-1400",
+      "concepts": ["binary search", "sorted", "monotonic"],
+      "template": {
+        "statement": "Given a sorted array and target, find {position}.",
+        "constraints": "1 ≤ n ≤ 10^5, time limit 1s",
+        "input_format": "First line: n target. Second line: sorted array.",
+        "output_format": "Index or -1."
+      },
+      "variations": [
+        "Find element in sorted array",
+        "Find first/last occurrence",
+        "Binary search on answer",
+        "Lower/upper bound"
+      ]
+    },
+
+    "two_pointers": {
+      "name": "Two Pointers",
+      "description": "Problems solvable by two pointers on sorted array",
+      "difficulty": "1100-1400",
+      "concepts": ["two pointers", "sorted", "linear scan"],
+      "template": {
+        "statement": "Given a sorted array, find {pair} that satisfies {condition}.",
+        "constraints": "1 ≤ n ≤ 10^5, time limit 1s",
+        "input_format": "First line: n. Second line: sorted array.",
+        "output_format": "Pair indices or values."
+      },
+      "variations": [
+        "Two sum in sorted array",
+        "Three sum",
+        "Remove duplicates",
+        "Container with most water"
+      ]
+    },
+
+    "prefix_sum": {
+      "name": "Prefix Sum",
+      "description": "Problems requiring range sum queries",
+      "difficulty": "1000-1300",
+      "concepts": ["prefix sum", "range query", "O(1) query"],
+      "template": {
+        "statement": "Given an array and {q} queries, answer each query for {range_sum}.",
+        "constraints": "1 ≤ n, q ≤ 10^5, time limit 1s",
+        "input_format": "First line: n q. Second line: array. Next q lines: l r.",
+        "output_format": "One answer per line."
+      },
+      "variations": [
+        "Static range sum",
+        "2D prefix sum",
+        "Difference array",
+        "Range update point query"
+      ]
+    },
+
+    "sliding_window": {
+      "name": "Sliding Window",
+      "description": "Problems solvable by sliding window technique",
+      "difficulty": "1200-1500",
+      "concepts": ["sliding window", "two pointers", "monotonic queue"],
+      "template": {
+        "statement": "Given an array of {n} elements, find {optimal_subarray} of size {k}.",
+        "constraints": "1 ≤ n ≤ 10^5, time limit 1s",
+        "input_format": "First line: n k. Second line: array.",
+        "output_format": "Optimal value."
+      },
+      "variations": [
+        "Maximum sum subarray of size k",
+        "Longest substring without repeating",
+        "Minimum window substring",
+        "Sliding window maximum"
+      ]
+    }
+  },
+
+  "analysis_guide": {
+    "description": "Guide for LLM tutor to analyze problems with students",
+    "steps": [
+      {
+        "step": "read_and_restate",
+        "description": "Read problem statement, restate in own words",
+        "questions": [
+          "What is the input?",
+          "What is the output?",
+          "What are the constraints?"
+        ]
+      },
+      {
+        "step": "identify_patterns",
+        "description": "Identify problem patterns and prerequisites",
+        "questions": [
+          "What data structures are needed?",
+          "What algorithms apply?",
+          "What is the time complexity target?"
+        ]
+      },
+      {
+        "step": "brute_force",
+        "description": "Start with brute force approach",
+        "questions": [
+          "What is the naive solution?",
+          "What is its time complexity?",
+          "Where is the bottleneck?"
+        ]
+      },
+      {
+        "step": "optimize",
+        "description": "Optimize from brute force",
+        "questions": [
+          "What patterns can be reused?",
+          "What precomputations help?",
+          "Can we use a better data structure?"
+        ]
+      },
+      {
+        "step": "implement",
+        "description": "Write clean, readable code",
+        "reminders": [
+          "Use meaningful variable names",
+          "Always use braces",
+          "Add comments for invariants"
+        ]
+      },
+      {
+        "step": "verify",
+        "description": "Verify correctness",
+        "questions": [
+          "Does it pass sample cases?",
+          "What about edge cases?",
+          "What about maximum constraints?"
+        ]
+      }
+    ]
+  },
+
+  "generation_guide": {
+    "description": "Guide for LLM to generate practice problems",
+    "principles": [
+      "Start from pattern template",
+      "Vary the story/context",
+      "Keep constraints realistic",
+      "Ensure solution uses taught concepts",
+      "Include edge cases in test data"
+    ],
+    "difficulty_calibration": {
+      "800": "Single concept, direct application",
+      "1000": "Two concepts combined",
+      "1200": "Multiple concepts, requires insight",
+      "1400": "Non-obvious approach, careful implementation"
+    }
+  }
+}
