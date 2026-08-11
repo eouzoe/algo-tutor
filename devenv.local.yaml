@@ -1,5 +1,0 @@
-# Local devenv overrides (do not commit)
-# Copy this to devenv.local.yaml and customize
-
-# shell: nu
-# inputs: {}

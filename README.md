@@ -35,5 +35,4 @@ start.sh           one-command bootstrap
 
 ## Requirements
 
-- Bun 1.3+
-- Nix + devenv (auto-installed by start.sh)
+None. `start.sh` auto-installs Nix, devenv, and all dependencies.
