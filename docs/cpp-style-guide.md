@@ -7,7 +7,7 @@ This style guide prioritizes:
 2. **High debuggability** - easy to debug with gdb and static analysis
 3. **Competition-first** - optimized for speed of writing and correctness
 4. **Modern C++17** - leveraging the latest features for safety and clarity
-5. **Linux/K&R philosophy** - minimal, clean, no clutter
+5. **Cache-friendly** - prefer flat arrays over nested vectors for performance
 
 ## Formatting
 
@@ -78,7 +78,7 @@ foo(a, b, c);  // NOT: foo(a,b,c)
 ### Rules
 | Element | Convention | Example |
 |---------|-----------|---------|
-| Variables | snake_case | `node_count`, `ans` |
+| Variables | snake_case | `node_count`, `max_depth` |
 | Functions | snake_case | `solve()`, `dfs()` |
 | Types/Structs | PascalCase | `SegmentTree`, `Graph` |
 | Constants | UPPER_CASE | `MAX_N`, `MOD`, `INF` |
@@ -89,7 +89,7 @@ foo(a, b, c);  // NOT: foo(a,b,c)
 
 ### Variable Naming Philosophy
 - **Simple loop variables**: `i`, `j`, `k`, `n`, `m`, `x`, `y`
-- **Temporary in small scope**: single letters OK
+- **Temporary in small scope**: single letters OK for simple cases
 - **Complex logic**: descriptive names required
 - **Global/core structures**: extremely specific, complete naming
 
@@ -101,8 +101,8 @@ for (int i = 0; i < n; i++) {
 
 // OK: complex logic needs names
 int node_count = 0;
-int edge_count = 0;
 int max_depth = 0;
+int current_component_size = 0;
 
 // BAD: complex logic with single letters
 int a = 0;  // what is 'a'?
@@ -110,35 +110,6 @@ int b = 0;  // unclear
 ```
 
 ## Types & Declarations
-
-### Pointer Declaration
-```cpp
-// Star attaches to variable name, not type
-int *ptr = nullptr;     // NOT: int* ptr
-const char *str = "";   // NOT: const char* str
-
-// Multiple declarations: one per line
-int *p = nullptr;
-int *q = nullptr;
-// NOT: int *p, *q;
-```
-
-### Variable Declaration
-```cpp
-// All variables at function top, aligned
-int solve(int n, int m)
-{
-    int              node_count = 0;
-    int              edge_count = 0;
-    long long        total_cost = 0;
-    vector<int>      neighbors;
-    vector<char>     visited(n, 0);
-
-    // ... logic ...
-
-    return node_count;
-}
-```
 
 ### Type Aliases
 ```cpp
@@ -162,14 +133,60 @@ constexpr long long INF = 4e18;
 // NOT: const int MAX_N = 200000;
 ```
 
+### Variable Declaration
+```cpp
+// Variables declared when needed, not all at top
+int n;
+cin >> n;
+
+vector<int> numbers(n);
+for (int i = 0; i < n; i++) {
+    cin >> numbers[i];
+}
+```
+
+### Pointer Declaration
+```cpp
+// Star attaches to variable name, not type
+int *ptr = nullptr;     // NOT: int* ptr
+const char *str = "";   // NOT: const char* str
+
+// Multiple declarations: one per line
+int *p = nullptr;
+int *q = nullptr;
+// NOT: int *p, *q;
+```
+
 ## Modern C++17 Features
+
+### Using namespace
+```cpp
+// OK in competitive programming (short code, no conflicts)
+using namespace std;
+
+// Bring in specific names
+using std::cin;
+using std::cout;
+```
+
+### Auto and Type Deduction
+```cpp
+// Use auto to reduce typing
+auto numbers = vector<int>(n);
+auto [min_val, max_val] = minmax_element(numbers.begin(), numbers.end());
+
+// Iterator with auto
+auto it = lower_bound(numbers.begin(), numbers.end(), x);
+```
 
 ### Structured Bindings
 ```cpp
-auto [min_val, max_val] = minmax_element(v);
-for (auto &[key, val] : dict) {
-    process(key, val);
+// Clear unpacking of pairs/tuples
+for (const auto &[key, value] : distance_map) {
+    cout << key << ": " << value << '\n';
 }
+
+auto [a, b] = solve();
 ```
 
 ### if/switch with Initializer
@@ -184,55 +201,119 @@ switch (auto type = get_type(x); type) {
 }
 ```
 
-### std::array over C Arrays
-```cpp
-// Prefer std::array
-array<int, MAX_N> arr;           // NOT: int arr[MAX_N];
-array<array<int, 100>, 100> grid; // NOT: int grid[100][100];
-
-// For dynamic size, use vector
-vector<int> dyn(n);
-```
-
-### std::string_view for Zero-Copy
-```cpp
-// Use string_view instead of const char* or const string&
-void process(string_view name)
-{
-    if (name == "start") { }
-}
-```
-
 ### CTAD (Class Template Argument Deduction)
-```cpp
-pair p{1, 2.5};        // NOT: pair<int, double> p{1, 2.5};
-vector v = {1, 2, 3};  // NOT: vector<int> v = {1, 2, 3};
+```pair p{1, 2.5};        // NOT: pair<int, double> p{1, 2.5};
+array arr = {1, 2, 3};  // NOT: array<int, 3> arr = {1, 2, 3};
 ```
 
 ## Arrays & Memory
 
-### 1D Array for Multi-Dimensional (Cache Optimization)
+### Prefer Flat Arrays for Cache Locality
 ```cpp
-// Simulate 2D array with 1D for cache performance
-int grid[MAX_N * MAX_N];
+// GOOD: flat array, cache-friendly
+constexpr int MAX_N = 200'000;
+constexpr int MAX_M = 400'000;
 
-// Access: grid[i * MAX_N + j] instead of grid[i][j]
-auto idx = [&](int r, int c) { return r * MAX_N + c; };
-grid[idx(r, c)] = value;
+int head[MAX_N], to[MAX_M], nxt[MAX_M], edge_cnt;
+
+void init_graph(int node_count)
+{
+    fill(head, head + node_count, -1);
+    edge_cnt = 0;
+}
+
+void add_edge(int from, int to_node)
+{
+    to[edge_cnt] = to_node;
+    nxt[edge_cnt] = head[from];
+    head[from] = edge_cnt++;
+}
+
+// Traverse neighbors of node u
+for (int i = head[u]; i != -1; i = nxt[i]) {
+    int v = to[i];
+    // process neighbor v
+}
 ```
 
-### No new/malloc - Static Allocation
+### When to Use vector
 ```cpp
-// Global static allocation
-int arr[MAX_N];
-Graph g[MAX_N];
+// OK for small graphs or when size unknown
+vector<vector<int>> graph(n);
 
-int main()
-{
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    // ... solve ...
-    return 0;
+// BETTER for known max size: static array of vectors
+vector<pair<int, int>> graph[MAX_N];
+
+// BEST for performance: flat arrays (see above)
+```
+
+### Why Cache Locality Matters
+```cpp
+// BAD: vector of vectors (pointer chasing, cache misses)
+vector<vector<pair<int, int>>> graph(n);
+// Each inner vector allocates separately on heap
+// Traversal causes cache misses
+
+// GOOD: static array of vectors (better)
+vector<pair<int, int>> graph[MAX_N];
+// Array is contiguous, vectors are small
+
+// BEST: flat arrays (no allocations, fully contiguous)
+// See example above
+```
+
+## Bit Manipulation
+
+### Basic Operations
+```cpp
+// Check odd/even
+if (x & 1) { /* odd */ }
+
+// Set bit
+x |= (1 << k);
+
+// Clear bit
+x &= ~(1 << k);
+
+// Toggle bit
+x ^= (1 << k);
+
+// Check bit
+if (x & (1 << k)) { /* bit k is set */ }
+
+// Lowest set bit
+int lowbit = x & (-x);
+
+// Remove lowest set bit
+x &= (x - 1);
+
+// Power of two check
+bool is_power_of_two = (x & (x - 1)) == 0;
+```
+
+### Compiler Builtins
+```cpp
+// Count set bits
+int bits = __builtin_popcount(x);      // 32-bit
+int bits = __builtin_popcountll(x);    // 64-bit
+
+// Count trailing zeros
+int tz = __builtin_ctz(x);
+
+// Count leading zeros
+int lz = __builtin_clz(x);
+```
+
+### Subset Enumeration
+```cpp
+// Enumerate all subsets of set of size n
+for (int mask = 0; mask < (1 << n); mask++) {
+    // process subset
+}
+
+// Enumerate subsets of a mask
+for (int sub = mask; sub; sub = (sub - 1) & mask) {
+    // process sub-mask
 }
 ```
 
@@ -244,37 +325,7 @@ int main()
 {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    // ... your code ...
-    return 0;
-}
-```
-
-### Fast Read for Large Input
-```cpp
-// fread buffer for massive input
-static char buf[1 << 20];
-static size_t idx = 0, size = 0;
-
-inline char next_char()
-{
-    if (idx >= size) {
-        size = fread(buf, 1, sizeof(buf), stdin);
-        idx = 0;
-        if (size == 0) return EOF;
-    }
-    return buf[idx++];
-}
-
-int read_int()
-{
-    char c;
-    do { c = next_char(); } while (c <= ' ');
-    int x = 0;
-    while (c > ' ') {
-        x = x * 10 + (c - '0');
-        c = next_char();
-    }
-    return x;
+    // ...
 }
 ```
 
@@ -283,7 +334,7 @@ int read_int()
 // Use '\n', never endl
 cout << answer << '\n';
 
-// Space-separated output with trick
+// Space-separated output trick
 for (int i = 0; i < n; i++) {
     cout << arr[i] << " \n"[i == n - 1];
 }
@@ -294,10 +345,10 @@ for (int i = 0; i < n; i++) {
 ### Always Use Braces
 ```cpp
 // NEVER omit braces
-if (x > 0)          // BAD
+if (x)          // BAD
     do_something();
 
-if (x > 0) {        // GOOD
+if (x) {        // GOOD
     do_something();
 }
 
@@ -310,22 +361,12 @@ for (int i = 0; i < n; i++) {  // GOOD
 }
 ```
 
-### Ternary Operator
-```cpp
-// Use for simple conditional values
-int ans = (x > 0) ? x : -x;
-
-// DON'T nest ternaries - use if/else instead
-int z = (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);  // BAD
-```
-
 ### Early Returns (Fail Fast)
 ```cpp
 int solve(int n)
 {
     if (n == 0) return 0;
     if (n == 1) return 1;
-    if (n < 0) return -1;  // error case
 
     // ... main logic ...
 
@@ -333,7 +374,7 @@ int solve(int n)
 }
 ```
 
-### Flattened goto for Error Handling
+### Goto for Error Handling
 ```cpp
 int process()
 {
@@ -347,46 +388,6 @@ cleanup:
     release_resources();
     return -1;
 }
-```
-
-## Safety & Defensive Programming
-
-### Assert Over Comments
-```cpp
-// Use assert instead of comments for invariants
-assert(n > 0 && "n must be positive");
-assert(idx >= 0 && idx < n && "index out of bounds");
-
-// NOT: // n must be positive
-```
-
-### Explicit Overflow Prevention
-```cpp
-// Large number operations: explicit cast
-i64 result = (i64)a * b;  // prevent int overflow
-i64 sum = (i64)n * (n + 1) / 2;
-
-// NOT: int result = a * b;  // may overflow
-```
-
-### No Implicit Conversions
-```cpp
-// Explicit conversions only
-int x = static_cast<int>(d);
-i64 y = static_cast<i64>(x);
-double z = static_cast<double>(x);
-
-// NOT: int x = d;  // implicit
-```
-
-### Defensive Comparisons
-```cpp
-// Compare same types only
-if ((i64)a == b) { }  // NOT: if (a == b) where different types
-
-// Explicit boolean checks
-if (ptr == nullptr) { }  // NOT: if (!ptr) - ambiguous
-if (count == 0) { }      // NOT: if (!count)
 ```
 
 ## Functions
@@ -461,17 +462,14 @@ i++;
 ## Anti-Patterns (FORBIDDEN)
 
 ```cpp
-// FORBIDDEN: using namespace std;
-using namespace std;
-
-// FORBIDDEN: #define for types
-#define int long long
-
-// FORBIDDEN: global mutable arrays without prefix
-int arr[MAX_N];  // should be g_arr or inside solve()
+// FORBIDDEN: using namespace std; + custom vector type
+// (conflicts with std::vector)
 
 // FORBIDDEN: std::endl (slow)
 cout << x << endl;
+
+// FORBIDDEN: vector<bool> (bitset specialization, slower)
+vector<bool> v(n);
 
 // FORBIDDEN: implicit conversions
 int x = 3.14;
@@ -490,47 +488,67 @@ int z = (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
 
 ```cpp
 #include <bits/stdc++.h>
+using namespace std;
 using i64 = long long;
+using pii = pair<int, int>;
 
 constexpr int MAX_N = 200'000;
-constexpr int MOD = 1'000'000'007;
+constexpr int MAX_M = 400'000;
 
-int g_n, m;
-vector<int> g_graph[MAX_N];
-char g_visited[MAX_N];
+int node_count = 0;
+int edge_count = 0;
+int head[MAX_N], to[MAX_M], nxt[MAX_M], weight[MAX_M];
+char visited[MAX_N];
 
-void dfs(int u, int depth, int &max_depth)
+void init_graph(int n)
 {
-    g_visited[u] = 1;
-    max_depth = max(max_depth, depth);
+    fill(head, head + n, -1);
+    edge_count = 0;
+}
 
-    for (int v : g_graph[u]) {
-        if (g_visited[v]) continue;
-        dfs(v, depth + 1, max_depth);
+void add_edge(int from, int to_node, int w)
+{
+    to[edge_count] = to_node;
+    weight[edge_count] = w;
+    nxt[edge_count] = head[from];
+    head[from] = edge_count++;
+}
+
+void dfs(int current_node, int current_depth, int &max_depth)
+{
+    assert(current_node >= 0 && current_node < node_count);
+    visited[current_node] = 1;
+    max_depth = max(max_depth, current_depth);
+
+    for (int i = head[current_node]; i != -1; i = nxt[i]) {
+        int neighbor = to[i];
+        int w = weight[i];
+        if (visited[neighbor]) {
+            continue;
+        }
+        dfs(neighbor, current_depth + 1, max_depth);
     }
 }
 
-int solve()
+i64 solve()
 {
-    cin >> g_n >> m;
+    int n, m;
+    cin >> n >> m;
+
+    init_graph(n);
+    node_count = n;
 
     for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-        g_graph[u].push_back(v);
-        g_graph[v].push_back(u);
+        int u, v, w;
+        cin >> u >> v >> w;
+        add_edge(u, v, w);
+        add_edge(v, u, w);
     }
 
-    int result = 0;
-    for (int i = 1; i <= g_n; i++) {
-        if (!g_visited[i]) {
-            int depth = 0;
-            dfs(i, 1, depth);
-            result = max(result, depth);
-        }
-    }
+    int max_depth = 0;
+    dfs(0, 1, max_depth);
 
-    return result;
+    return max_depth;
 }
 
 int main()
@@ -538,9 +556,25 @@ int main()
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int answer = solve();
-    cout << answer << '\n';
+    cout << solve() << '\n';
 
     return 0;
 }
+```
+
+## Performance Guide
+
+### When to Use What
+
+| Scenario | Use | Why |
+|----------|-----|-----|
+| Small graph (n < 1000) | `vector<vector<int>>` | Simple, readable |
+| Medium graph (n < 50000) | `vector<pii> g[MAXN]` | Balance of speed and simplicity |
+| Large graph (n > 50000) | Flat arrays | Maximum performance |
+| Unknown size | `vector<vector<int>>` | Flexibility |
+
+### Optimization Progression
+1. Start with `vector<vector<int>>` for clarity
+2. If TLE: switch to `vector<pii> g[MAXN]`
+3. If still TLE: switch to flat arrays (forward star)
 ```
