@@ -142,7 +142,11 @@ export class McpServer {
     return {
       protocolVersions: ["2026-07-28"],
       serverInfo: { name: this.name, version: this.version },
-      capabilities: { tools: {} },
+      capabilities: {
+        tools: {},
+        // 2026-07-28: extensions framework
+        extensions: {},
+      },
       instructions: this.instructions,
     };
   }

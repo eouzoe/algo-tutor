@@ -79,7 +79,12 @@ export async function dispatch(
         return successResponse(id, server.discover());
 
       case "tools/list":
-        return successResponse(id, { tools: server.listTools() });
+        return successResponse(id, {
+          tools: server.listTools(),
+          // 2026-07-28: cache hints for list responses
+          ttlMs: 3_600_000,
+          cacheScope: "public",
+        });
 
       case "tools/call": {
         const name = params.name;

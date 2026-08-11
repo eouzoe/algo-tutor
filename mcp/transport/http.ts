@@ -56,8 +56,57 @@ export function serveHttp(server: McpServer, config: HttpConfig = {}): void {
           );
         }
 
+        // 2026-07-28: validate Mcp-Method and Mcp-Name headers
+        const mcpMethod = req.headers.get("Mcp-Method");
+        const mcpName = req.headers.get("Mcp-Name");
+        if (!mcpMethod) {
+          return jsonResponse(
+            {
+              jsonrpc: "2.0",
+              id: null,
+              error: {
+                code: -32020,
+                message: "Header mismatch: Mcp-Method header required",
+              },
+            },
+            400,
+            "2026-07-28",
+          );
+        }
+
         try {
           const body = await req.json();
+
+          // Validate headers match body
+          if (body.method && mcpMethod !== body.method) {
+            return jsonResponse(
+              {
+                jsonrpc: "2.0",
+                id: null,
+                error: {
+                  code: -32020,
+                  message: "Header mismatch: Mcp-Method does not match body method",
+                },
+              },
+              400,
+              "2026-07-28",
+            );
+          }
+          if (body.params?.name && mcpName !== body.params.name) {
+            return jsonResponse(
+              {
+                jsonrpc: "2.0",
+                id: null,
+                error: {
+                  code: -32020,
+                  message: "Header mismatch: Mcp-Name does not match body params.name",
+                },
+              },
+              400,
+              "2026-07-28",
+            );
+          }
+
           const response = await dispatch(server, body);
 
           // Notifications (no id) → 204
@@ -65,7 +114,20 @@ export function serveHttp(server: McpServer, config: HttpConfig = {}): void {
             return new Response(null, { status: 204 });
           }
 
-          return jsonResponse(response, 200, "2026-07-28");
+          // 2026-07-28: add cache headers for list responses
+          const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+            "MCP-Protocol-Version": "2026-07-28",
+          };
+
+          if (response.result && typeof response.result === "object") {
+            const result = response.result as Record<string, unknown>;
+            if (result.tools || result.prompts || result.resources) {
+              headers["Cache-Control"] = "max-age=3600";
+            }
+          }
+
+          return new Response(JSON.stringify(response), { status: 200, headers });
         } catch {
           return jsonResponse(
             {
