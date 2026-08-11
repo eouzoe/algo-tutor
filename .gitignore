@@ -10,7 +10,6 @@ devenv.local.nix
 devenv.local.yaml
 
 # local only
-.nu/
 opencode.json
 SESSION_MEMORY.md
 DIAGNOSTIC_PROMPT.md

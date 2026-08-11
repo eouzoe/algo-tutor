@@ -5,8 +5,8 @@
     gcc
     gdb
     bun
-    nushell
     astyle
+    python3
   ];
 
   dotenv.enable = false;
@@ -16,6 +16,7 @@
       echo "gcc:     $(gcc --version 2>/dev/null | head -1)"
       echo "just:    $(just --version 2>/dev/null || echo 'missing')"
       echo "bun:     $(bun --version 2>/dev/null || echo 'missing')"
+      echo "python3: $(python3 --version 2>/dev/null || echo 'missing')"
     '';
   };
 
@@ -24,6 +25,7 @@
     echo "  gcc:     $(gcc --version 2>/dev/null | head -1)"
     echo "  just:    $(just --version 2>/dev/null || echo 'missing')"
     echo "  bun:     $(bun --version 2>/dev/null || echo 'missing')"
+    echo "  python3: $(python3 --version 2>/dev/null || echo 'missing')"
     echo ""
     echo "  just mcp        start MCP server"
     echo "  just diagnostic syntax diagnostic"

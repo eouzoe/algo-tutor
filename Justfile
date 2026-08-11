@@ -1,85 +1,86 @@
-set shell := ["nu", "-c"]
-set quiet := true
-
-_algo := "use .nu/algo.nu *; algo"
+_default:
+    @just --list
 
 today:
-    {{_algo}} today
+    @python3 cli.py status
 
 learn *args:
-    {{_algo}} learn {{args}}
+    @python3 cli.py learn {{args}}
 
 pass *args:
-    {{_algo}} pass {{args}}
+    @python3 cli.py pass {{args}}
 
 pick *args:
-    {{_algo}} pick {{args}}
+    @python3 cli.py pick {{args}}
 
 start problem *args:
-    {{_algo}} start {{problem}} {{args}}
+    @python3 cli.py start {{problem}} {{args}}
 
 status:
-    {{_algo}} status
+    @python3 cli.py status
 
 hint *args:
-    {{_algo}} hint {{args}}
+    @python3 cli.py hint {{args}}
 
 code:
-    {{_algo}} code
+    @python3 cli.py code
 
 debug:
-    {{_algo}} debug
+    @python3 cli.py debug
 
 finish result *args:
-    {{_algo}} finish {{result}} {{args}}
+    @python3 cli.py finish {{result}} {{args}}
 
 abort:
-    {{_algo}} abort
+    @python3 cli.py abort
 
 due:
-    {{_algo}} due
+    @python3 cli.py due
 
 done id *args:
-    {{_algo}} done {{id}} {{args}}
+    @python3 cli.py done {{id}} {{args}}
 
 rec *args:
-    {{_algo}} rec {{args}}
+    @python3 cli.py rec {{args}}
 
 stats *args:
-    {{_algo}} stats {{args}}
+    @python3 cli.py stats {{args}}
 
 report *args:
-    {{_algo}} report {{args}}
+    @python3 cli.py report {{args}}
 
 diagnose *args:
-    {{_algo}} diagnose {{args}}
+    @python3 cli.py diagnose {{args}}
 
 anki *args:
-    {{_algo}} anki {{args}}
+    @python3 cli.py anki {{args}}
 
 doctor:
-    {{_algo}} doctor
+    @python3 cli.py doctor
 
 run *args:
-    {{_algo}} run {{args}}
+    @python3 cli.py run {{args}}
 
 concept *args:
-    {{_algo}} concept {{args}}
+    @python3 cli.py concept {{args}}
+
+fmt:
+    @python3 cli.py fmt
 
 setup:
-    cd mcp; ^bun install; cd ..; {{_algo}} sync; {{_algo}} doctor
+    cd mcp && bun install && cd .. && python3 cli.py sync && python3 cli.py doctor
 
 sync:
-    {{_algo}} sync
+    @python3 cli.py sync
 
 profile *args:
-    {{_algo}} profile {{args}}
+    @python3 cli.py profile {{args}}
 
 gen constraints *args:
-    {{_algo}} gen "{{constraints}}" {{args}}
+    @python3 cli.py gen "{{constraints}}" {{args}}
 
 stress sol brute *args:
-    {{_algo}} stress {{sol}} {{brute}} {{args}}
+    @python3 cli.py stress {{sol}} {{brute}} {{args}}
 
 workspace:
     ^bash deploy/workspace.sh
